@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Missoes IA | UOL EdTech</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main id="appShell" class="app-shell">
+      <button id="deviceToggle" class="device-toggle" type="button" aria-pressed="false">Modo mobile</button>
+
+      <section id="loginView" class="login-view">
+        <div class="brand-panel">
+          <div class="brand-mark">AI</div>
+          <span class="brand-kicker">UOL EdTech</span>
+          <h1>Missoes IA</h1>
+          <p>Desafios praticos, envios simples e progresso visivel para acelerar os primeiros passos com IA.</p>
+          <div class="uol-logo-lockup" aria-label="UOL EdTech">
+            <span class="uol-orbit"></span>
+            <strong>uol</strong>
+            <em>edtech</em>
+          </div>
+        </div>
+
+        <form id="loginForm" class="login-card">
+          <span class="eyebrow">Entrar na trilha</span>
+          <h2>Acesse seu progresso</h2>
+          <label>
+            Nome completo
+            <input id="userName" type="text" placeholder="Ex: Willian Murakami" required />
+          </label>
+          <label>
+            E-mail
+            <input id="userEmail" type="email" placeholder="seuemail@gmail.com" required />
+          </label>
+          <label>
+            Senha
+            <input id="userPassword" type="password" placeholder="Minimo 6 caracteres" minlength="6" required />
+          </label>
+          <label>
+            Area ou squad
+            <input id="userArea" type="text" placeholder="Ex: Negocios B2B" required />
+          </label>
+          <button type="submit">Entrar ou criar conta</button>
+          <small id="authStatus" class="auth-status"></small>
+        </form>
+      </section>
+
+      <section id="homeView" class="home-view hidden">
+        <header class="topbar">
+          <div>
+            <span class="brand-kicker">UOL EdTech</span>
+            <h1>Missoes IA</h1>
+          </div>
+          <div class="user-chip">
+            <span id="userInitials">WM</span>
+            <div>
+              <strong id="userDisplay">Participante</strong>
+              <small id="userAreaDisplay">Area</small>
+            </div>
+            <button id="logoutBtn" class="ghost-button" type="button">Sair</button>
+          </div>
+        </header>
+
+        <section class="hero-board">
+          <div>
+            <span class="eyebrow">Trilha corporativa</span>
+            <h2>Complete missoes curtas e avance ate o mini projeto final.</h2>
+          </div>
+          <div class="hero-visual" aria-hidden="true">
+            <span class="visual-card visual-card-one"></span>
+            <span class="visual-card visual-card-two"></span>
+            <span class="visual-card visual-card-three"></span>
+          </div>
+        </section>
+
+        <section class="progress-panel">
+          <div>
+            <span class="eyebrow">Progresso individual</span>
+            <h2><span id="completedCount">0</span>/<span id="totalCount">0</span> missoes concluidas</h2>
+          </div>
+          <div class="progress-track" aria-label="Progresso das missoes">
+            <span id="progressBar"></span>
+            <i class="milestone-marker milestone-prize" title="Concurso com premios">4</i>
+            <i class="milestone-marker milestone-certificate" title="Certificado de conclusao">6</i>
+          </div>
+          <strong id="progressPercent">0%</strong>
+          <div class="milestone-legend">
+            <span><i class="milestone-dot prize"></i> Desafio 4: concurso com premios</span>
+            <span><i class="milestone-dot certificate"></i> Desafio 6: certificado completo</span>
+          </div>
+        </section>
+
+        <section class="mission-section">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Desafios principais</span>
+              <h2>Conclua ate o desafio 4 para concorrer aos premios.</h2>
+            </div>
+            <strong>Obrigatorios</strong>
+          </div>
+          <section id="mainMissionGrid" class="mission-grid" aria-label="Desafios principais"></section>
+        </section>
+
+        <section class="mission-section optional-section">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Desafios complementares</span>
+              <h2>Para quem quiser ir alem e buscar a conclusao completa da trilha.</h2>
+            </div>
+            <strong>Opcionais</strong>
+          </div>
+          <section id="optionalMissionGrid" class="mission-grid optional-grid" aria-label="Desafios complementares"></section>
+        </section>
+      </section>
+
+      <section id="detailView" class="detail-view hidden">
+        <button id="backHomeBtn" class="back-button" type="button">Voltar para home</button>
+        <article class="mission-detail">
+          <div class="detail-main">
+            <span id="detailType" class="status-pill">Missao</span>
+            <h1 id="detailTitle"></h1>
+            <p id="detailDescription"></p>
+            <ul id="detailSteps"></ul>
+            <div id="resourceList" class="resource-list"></div>
+            <section id="readingPanel" class="reading-panel hidden">
+              <div id="readingContent" class="reading-content" tabindex="0"></div>
+              <button id="markReadingBtn" class="mark-reading-button" type="button" disabled>Marcar leitura como feita</button>
+            </section>
+          </div>
+
+          <form id="submissionForm" class="submission-card">
+            <span class="eyebrow">Entrega da missao</span>
+            <label>
+              Comentario ou resposta
+              <textarea id="submissionText" rows="5" placeholder="Descreva o que voce fez, aprendizados ou link do material."></textarea>
+            </label>
+            <label>
+              Evidencia
+              <input id="submissionFile" type="file" accept="image/*,.pdf,.doc,.docx,.ppt,.pptx" />
+            </label>
+            <button type="submit">Enviar missao</button>
+          </form>
+        </article>
+
+        <section class="backlog-section">
+          <div>
+            <span class="eyebrow">Backlog de envios</span>
+            <h2>Registros desta missao</h2>
+          </div>
+          <div id="backlogList" class="backlog-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
