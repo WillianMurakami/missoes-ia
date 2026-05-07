@@ -117,24 +117,14 @@ const state = {
   user: null,
   selectedMissionId: null,
   submissions: [],
-  authMode: "signin",
 };
 
 const $ = (selector) => document.querySelector(selector);
 
 async function loadState() {
   if (db) {
-    const { data } = await db.auth.getSession();
-    if (!data.session) return;
-    const authUser = data.session.user;
-    const { data: profile } = await db.from("profiles").select("*").eq("id", authUser.id).single();
-    state.user = {
-      id: authUser.id,
-      name: profile?.name || authUser.email,
-      area: profile?.area || "Sem area",
-      email: authUser.email,
-    };
-    await loadCloudSubmissions();
+    state.user = JSON.parse(localStorage.getItem(sessionKey) || "null");
+    if (state.user) await loadCloudSubmissions();
     return;
   }
 
@@ -149,7 +139,7 @@ function persistSubmissions() {
 
 async function loadCloudSubmissions() {
   const { data, error } = await db
-    .from("submissions")
+    .from("app_submissions")
     .select("*")
     .eq("user_id", state.user.id)
     .order("created_at", { ascending: false });
@@ -179,20 +169,11 @@ function setAuthStatus(message) {
   if (status) status.textContent = message || "";
 }
 
-function setAuthMode(mode) {
-  state.authMode = mode;
-  const isSignup = mode === "signup";
-  $("#loginForm").classList.toggle("signup-mode", isSignup);
-  $("#signInModeBtn").classList.toggle("active", !isSignup);
-  $("#signUpModeBtn").classList.toggle("active", isSignup);
-  $("#authTitle").textContent = isSignup ? "Crie sua conta" : "Acesse seu progresso";
-  $("#authHelp").textContent = isSignup
-    ? "Preencha seus dados uma vez. Depois, voce entra apenas com e-mail e senha."
-    : "Use seu e-mail e senha cadastrados para continuar sua trilha.";
-  $("#authSubmitBtn").textContent = isSignup ? "Criar conta" : "Entrar";
-  $("#userName").required = isSignup;
-  $("#userArea").required = isSignup;
-  setAuthStatus("");
+function loginLocally({ id, name, area, email }) {
+  state.user = { id, name, area, email };
+  localStorage.setItem(sessionKey, JSON.stringify(state.user));
+  state.submissions = JSON.parse(localStorage.getItem(storageKey) || "[]");
+  renderHome();
 }
 
 function show(viewId) {
@@ -349,64 +330,48 @@ function renderBacklog() {
 
 async function handleLogin(event) {
   event.preventDefault();
-  const name = $("#userName").value.trim();
-  const area = $("#userArea").value.trim();
+  const name = $("#userName").value.trim() || "Participante";
+  const area = $("#userArea").value.trim() || "Nao informado";
   const email = $("#userEmail").value.trim();
-  const password = $("#userPassword").value;
+  const userId = email.toLowerCase().replace(/[^a-z0-9@._-]/g, "");
+  if (!userId) {
+    setAuthStatus("Digite um e-mail ou identificador para acessar.");
+    return;
+  }
 
   if (db) {
-    setAuthStatus(state.authMode === "signup" ? "Criando conta..." : "Entrando...");
-
-    if (state.authMode === "signup") {
-      const result = await db.auth.signUp({
-        email,
-        password,
-        options: { data: { name, area } },
-      });
-
-      if (result.error) {
-        setAuthStatus(result.error.message);
-        return;
-      }
-
-      const session = result.data.session;
-      if (!session) {
-        setAuthStatus("Conta criada. Agora confirme o e-mail recebido e depois volte em Entrar.");
-        setAuthMode("signin");
-        $("#userPassword").value = "";
-        return;
-      }
-      const authUser = session.user;
-
-      await db.from("profiles").upsert({
-        id: authUser.id,
-        name,
-        area,
-        email,
-        updated_at: new Date().toISOString(),
-      });
-
-      state.user = { id: authUser.id, name, area, email };
-      await loadCloudSubmissions();
-      setAuthStatus("");
-      renderHome();
+    setAuthStatus("Acessando trilha...");
+    const { data: existingProfile, error: profileReadError } = await db
+      .from("app_profiles")
+      .select("*")
+      .eq("id", userId)
+      .maybeSingle();
+    if (profileReadError) {
+      setAuthStatus("Banco ainda nao configurado. Abrindo pre-visualizacao local sem salvar na nuvem.");
+      loginLocally({ id: userId, name, area, email });
       return;
     }
-
-    const result = await db.auth.signInWithPassword({ email, password });
-    if (result.error) {
-      setAuthStatus("Nao foi possivel entrar. Confira e-mail/senha ou confirme seu e-mail antes.");
-      return;
-    }
-
-    const authUser = result.data.session.user;
-    const { data: profile } = await db.from("profiles").select("*").eq("id", authUser.id).single();
-    state.user = {
-      id: authUser.id,
-      name: profile?.name || authUser.email,
-      area: profile?.area || "Sem area",
-      email: authUser.email,
+    const profile = {
+      id: userId,
+      email,
+      name: name !== "Participante" ? name : existingProfile?.name || name,
+      area: area !== "Nao informado" ? area : existingProfile?.area || area,
+      updated_at: new Date().toISOString(),
     };
+    const { error } = await db.from("app_profiles").upsert(profile);
+    if (error) {
+      setAuthStatus("Banco ainda nao configurado. Abrindo pre-visualizacao local sem salvar na nuvem.");
+      loginLocally({ id: userId, name, area, email });
+      return;
+    }
+
+    state.user = {
+      id: profile.id,
+      name: profile.name,
+      area: profile.area,
+      email: profile.email,
+    };
+    localStorage.setItem(sessionKey, JSON.stringify(state.user));
     await loadCloudSubmissions();
     setAuthStatus("");
     renderHome();
@@ -414,13 +379,12 @@ async function handleLogin(event) {
   }
 
   state.user = {
-    id: name.toLowerCase().replace(/\s+/g, "-"),
+    id: userId,
     name,
     area,
     email,
   };
-  localStorage.setItem(sessionKey, JSON.stringify(state.user));
-  renderHome();
+  loginLocally(state.user);
 }
 
 async function uploadEvidence(file) {
@@ -447,7 +411,7 @@ async function handleSubmission(event) {
     try {
       const uploaded = await uploadEvidence(file);
       const { data, error } = await db
-        .from("submissions")
+        .from("app_submissions")
         .upsert(
           {
             user_id: state.user.id,
@@ -503,7 +467,7 @@ async function handleSubmission(event) {
 
 async function markReadingDone() {
   if (db) {
-    const { error } = await db.from("submissions").upsert(
+    const { error } = await db.from("app_submissions").upsert(
       {
         user_id: state.user.id,
         mission_id: state.selectedMissionId,
@@ -572,13 +536,10 @@ function toggleDevicePreview() {
 
 function bindEvents() {
   $("#loginForm").addEventListener("submit", handleLogin);
-  $("#signInModeBtn").addEventListener("click", () => setAuthMode("signin"));
-  $("#signUpModeBtn").addEventListener("click", () => setAuthMode("signup"));
   $("#deviceToggle").addEventListener("click", toggleDevicePreview);
   $("#readingContent").addEventListener("scroll", handleReadingScroll);
   $("#markReadingBtn").addEventListener("click", markReadingDone);
   $("#logoutBtn").addEventListener("click", () => {
-    if (db) db.auth.signOut();
     localStorage.removeItem(sessionKey);
     state.user = null;
     show("#loginView");
@@ -596,7 +557,7 @@ function bindEvents() {
     const deleteButton = event.target.closest("[data-delete-submission]");
     if (deleteButton) {
       if (db) {
-        db.from("submissions")
+        db.from("app_submissions")
           .delete()
           .eq("id", deleteButton.dataset.deleteSubmission)
           .eq("user_id", state.user.id)
@@ -624,7 +585,6 @@ function bindEvents() {
 async function start() {
   await loadState();
   bindEvents();
-  setAuthMode("signin");
   fillLoginFromSession();
 
   if (state.user) {

@@ -1,16 +1,15 @@
-create table if not exists public.profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
-  name text not null,
-  area text not null,
+create table if not exists public.app_profiles (
+  id text primary key,
   email text not null,
-  role text not null default 'participant',
+  name text not null default 'Participante',
+  area text not null default 'Nao informado',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public.submissions (
+create table if not exists public.app_submissions (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
+  user_id text not null references public.app_profiles(id) on delete cascade,
   mission_id text not null,
   text text,
   file_name text,
@@ -21,64 +20,63 @@ create table if not exists public.submissions (
   unique (user_id, mission_id)
 );
 
-alter table public.profiles enable row level security;
-alter table public.submissions enable row level security;
+alter table public.app_profiles enable row level security;
+alter table public.app_submissions enable row level security;
 
-create policy "Users can read own profile"
-  on public.profiles for select
-  using (auth.uid() = id);
+drop policy if exists "App can read profiles" on public.app_profiles;
+drop policy if exists "App can create profiles" on public.app_profiles;
+drop policy if exists "App can update profiles" on public.app_profiles;
+drop policy if exists "App can read submissions" on public.app_submissions;
+drop policy if exists "App can create submissions" on public.app_submissions;
+drop policy if exists "App can update submissions" on public.app_submissions;
+drop policy if exists "App can delete submissions" on public.app_submissions;
 
-create policy "Users can insert own profile"
-  on public.profiles for insert
-  with check (auth.uid() = id);
+create policy "App can read profiles"
+  on public.app_profiles for select
+  using (true);
 
-create policy "Users can update own profile"
-  on public.profiles for update
-  using (auth.uid() = id)
-  with check (auth.uid() = id);
+create policy "App can create profiles"
+  on public.app_profiles for insert
+  with check (true);
 
-create policy "Users can read own submissions"
-  on public.submissions for select
-  using (auth.uid() = user_id);
+create policy "App can update profiles"
+  on public.app_profiles for update
+  using (true)
+  with check (true);
 
-create policy "Users can insert own submissions"
-  on public.submissions for insert
-  with check (auth.uid() = user_id);
+create policy "App can read submissions"
+  on public.app_submissions for select
+  using (true);
 
-create policy "Users can update own submissions"
-  on public.submissions for update
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+create policy "App can create submissions"
+  on public.app_submissions for insert
+  with check (true);
 
-create policy "Users can delete own submissions"
-  on public.submissions for delete
-  using (auth.uid() = user_id);
+create policy "App can update submissions"
+  on public.app_submissions for update
+  using (true)
+  with check (true);
 
--- Crie tambem um bucket chamado mission-evidence no Supabase Storage.
--- Para MVP pessoal simples, pode deixar o bucket publico para facilitar download/visualizacao das entregas.
--- Se preferir privado, troque o uso de publicUrl por signed URLs no app.
+create policy "App can delete submissions"
+  on public.app_submissions for delete
+  using (true);
 
-create policy "Users can upload own evidence"
+-- Crie tambem um bucket publico chamado mission-evidence no Supabase Storage.
+-- Para esta acao simples, as politicas abaixo permitem upload/leitura com a chave publica do app.
+
+drop policy if exists "App can upload evidence" on storage.objects;
+drop policy if exists "App can read evidence" on storage.objects;
+drop policy if exists "App can update evidence" on storage.objects;
+
+create policy "App can upload evidence"
   on storage.objects for insert
-  with check (
-    bucket_id = 'mission-evidence'
-    and auth.uid()::text = (storage.foldername(name))[1]
-  );
+  with check (bucket_id = 'mission-evidence');
 
-create policy "Users can read own evidence"
+create policy "App can read evidence"
   on storage.objects for select
-  using (
-    bucket_id = 'mission-evidence'
-    and auth.uid()::text = (storage.foldername(name))[1]
-  );
+  using (bucket_id = 'mission-evidence');
 
-create policy "Users can update own evidence"
+create policy "App can update evidence"
   on storage.objects for update
-  using (
-    bucket_id = 'mission-evidence'
-    and auth.uid()::text = (storage.foldername(name))[1]
-  )
-  with check (
-    bucket_id = 'mission-evidence'
-    and auth.uid()::text = (storage.foldername(name))[1]
-  );
+  using (bucket_id = 'mission-evidence')
+  with check (bucket_id = 'mission-evidence');

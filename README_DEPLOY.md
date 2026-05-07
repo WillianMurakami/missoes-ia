@@ -7,7 +7,8 @@ Este prototipo esta preparado para rodar de dois modos:
 
 ## Decisao de login
 
-Para a primeira versao funcional, use e-mail e senha no Supabase. Google/Gmail e mais confortavel para o usuario final, mas exige configurar OAuth no Google Cloud e no Supabase. Depois que o app estiver validado, pode ser adicionado.
+Esta versao usa login leve por e-mail/identificador, sem senha e sem confirmacao de caixa de entrada.
+O objetivo e reduzir friccao na acao: o colaborador digita um e-mail, entra e o progresso fica associado a esse identificador.
 
 ## Passos Supabase
 
@@ -15,10 +16,8 @@ Para a primeira versao funcional, use e-mail e senha no Supabase. Google/Gmail e
 2. Abra SQL Editor e rode `supabase-schema.sql`.
 3. Em Storage, crie um bucket chamado `mission-evidence`.
    Para o piloto mais simples, marque como publico. Se quiser privado, precisaremos ajustar o app para gerar links assinados.
-4. Em Authentication, use e-mail/senha.
-5. Para piloto simples, desative confirmacao obrigatoria de e-mail em Auth settings, se quiser evitar que usuarios precisem confirmar e-mail antes de entrar.
-6. Copie `Project URL` e `anon public key`.
-7. Preencha `supabase-config.js`:
+4. Copie `Project URL` e `anon public key`.
+5. Preencha `supabase-config.js`:
 
 ```js
 window.SUPABASE_CONFIG = {

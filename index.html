@@ -16,38 +16,26 @@
           <span class="brand-kicker">UOL EdTech</span>
           <h1>Missoes IA</h1>
           <p>Desafios praticos, envios simples e progresso visivel para acelerar os primeiros passos com IA.</p>
-          <div class="uol-logo-lockup" aria-label="UOL EdTech">
-            <span class="uol-orbit"></span>
-            <strong>uol</strong>
-            <em>edtech</em>
-          </div>
+          <img class="official-logo" src="./assets/uol-edtech-logo.svg" alt="UOL EdTech" />
         </div>
 
         <form id="loginForm" class="login-card">
           <span class="eyebrow">Entrar na trilha</span>
           <h2 id="authTitle">Acesse seu progresso</h2>
-          <div class="auth-switch" role="tablist" aria-label="Modo de acesso">
-            <button id="signInModeBtn" class="active" type="button">Entrar</button>
-            <button id="signUpModeBtn" type="button">Criar conta</button>
-          </div>
-          <p id="authHelp" class="auth-help">Use seu e-mail e senha cadastrados para continuar sua trilha.</p>
-          <label class="signup-only">
+          <p id="authHelp" class="auth-help">Digite seu e-mail para acessar ou criar seu progresso nesta trilha. Nao precisa confirmar caixa de entrada.</p>
+          <label>
             Nome completo
-            <input id="userName" type="text" placeholder="Ex: Willian Murakami" required />
+            <input id="userName" type="text" placeholder="Ex: Willian Murakami" />
           </label>
           <label>
             E-mail
-            <input id="userEmail" type="email" placeholder="seuemail@gmail.com" required />
+            <input id="userEmail" type="text" inputmode="email" placeholder="seuemail@gmail.com" required />
           </label>
           <label>
-            Senha
-            <input id="userPassword" type="password" placeholder="Minimo 6 caracteres" minlength="6" required />
-          </label>
-          <label class="signup-only">
             Area ou squad
-            <input id="userArea" type="text" placeholder="Ex: Negocios B2B" required />
+            <input id="userArea" type="text" placeholder="Ex: Negocios B2B" />
           </label>
-          <button id="authSubmitBtn" type="submit">Entrar</button>
+          <button id="authSubmitBtn" type="submit">Acessar trilha</button>
           <small id="authStatus" class="auth-status"></small>
         </form>
       </section>
