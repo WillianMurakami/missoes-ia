@@ -117,6 +117,7 @@ const state = {
   user: null,
   selectedMissionId: null,
   submissions: [],
+  authMode: "signin",
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -176,6 +177,22 @@ async function loadCloudSubmissions() {
 function setAuthStatus(message) {
   const status = $("#authStatus");
   if (status) status.textContent = message || "";
+}
+
+function setAuthMode(mode) {
+  state.authMode = mode;
+  const isSignup = mode === "signup";
+  $("#loginForm").classList.toggle("signup-mode", isSignup);
+  $("#signInModeBtn").classList.toggle("active", !isSignup);
+  $("#signUpModeBtn").classList.toggle("active", isSignup);
+  $("#authTitle").textContent = isSignup ? "Crie sua conta" : "Acesse seu progresso";
+  $("#authHelp").textContent = isSignup
+    ? "Preencha seus dados uma vez. Depois, voce entra apenas com e-mail e senha."
+    : "Use seu e-mail e senha cadastrados para continuar sua trilha.";
+  $("#authSubmitBtn").textContent = isSignup ? "Criar conta" : "Entrar";
+  $("#userName").required = isSignup;
+  $("#userArea").required = isSignup;
+  setAuthStatus("");
 }
 
 function show(viewId) {
@@ -338,38 +355,58 @@ async function handleLogin(event) {
   const password = $("#userPassword").value;
 
   if (db) {
-    setAuthStatus("Entrando...");
-    let result = await db.auth.signInWithPassword({ email, password });
+    setAuthStatus(state.authMode === "signup" ? "Criando conta..." : "Entrando...");
 
-    if (result.error) {
-      result = await db.auth.signUp({
+    if (state.authMode === "signup") {
+      const result = await db.auth.signUp({
         email,
         password,
         options: { data: { name, area } },
       });
+
+      if (result.error) {
+        setAuthStatus(result.error.message);
+        return;
+      }
+
+      const session = result.data.session;
+      if (!session) {
+        setAuthStatus("Conta criada. Agora confirme o e-mail recebido e depois volte em Entrar.");
+        setAuthMode("signin");
+        $("#userPassword").value = "";
+        return;
+      }
+      const authUser = session.user;
+
+      await db.from("profiles").upsert({
+        id: authUser.id,
+        name,
+        area,
+        email,
+        updated_at: new Date().toISOString(),
+      });
+
+      state.user = { id: authUser.id, name, area, email };
+      await loadCloudSubmissions();
+      setAuthStatus("");
+      renderHome();
+      return;
     }
 
+    const result = await db.auth.signInWithPassword({ email, password });
     if (result.error) {
-      setAuthStatus(result.error.message);
+      setAuthStatus("Nao foi possivel entrar. Confira e-mail/senha ou confirme seu e-mail antes.");
       return;
     }
 
-    const session = result.data.session;
-    if (!session) {
-      setAuthStatus("Conta criada. Verifique seu e-mail se a confirmacao estiver ativa no Supabase.");
-      return;
-    }
-    const authUser = session.user;
-
-    await db.from("profiles").upsert({
+    const authUser = result.data.session.user;
+    const { data: profile } = await db.from("profiles").select("*").eq("id", authUser.id).single();
+    state.user = {
       id: authUser.id,
-      name,
-      area,
-      email,
-      updated_at: new Date().toISOString(),
-    });
-
-    state.user = { id: authUser.id, name, area, email };
+      name: profile?.name || authUser.email,
+      area: profile?.area || "Sem area",
+      email: authUser.email,
+    };
     await loadCloudSubmissions();
     setAuthStatus("");
     renderHome();
@@ -535,6 +572,8 @@ function toggleDevicePreview() {
 
 function bindEvents() {
   $("#loginForm").addEventListener("submit", handleLogin);
+  $("#signInModeBtn").addEventListener("click", () => setAuthMode("signin"));
+  $("#signUpModeBtn").addEventListener("click", () => setAuthMode("signup"));
   $("#deviceToggle").addEventListener("click", toggleDevicePreview);
   $("#readingContent").addEventListener("scroll", handleReadingScroll);
   $("#markReadingBtn").addEventListener("click", markReadingDone);
@@ -585,6 +624,7 @@ function bindEvents() {
 async function start() {
   await loadState();
   bindEvents();
+  setAuthMode("signin");
   fillLoginFromSession();
 
   if (state.user) {

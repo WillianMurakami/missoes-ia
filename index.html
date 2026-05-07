@@ -25,8 +25,13 @@
 
         <form id="loginForm" class="login-card">
           <span class="eyebrow">Entrar na trilha</span>
-          <h2>Acesse seu progresso</h2>
-          <label>
+          <h2 id="authTitle">Acesse seu progresso</h2>
+          <div class="auth-switch" role="tablist" aria-label="Modo de acesso">
+            <button id="signInModeBtn" class="active" type="button">Entrar</button>
+            <button id="signUpModeBtn" type="button">Criar conta</button>
+          </div>
+          <p id="authHelp" class="auth-help">Use seu e-mail e senha cadastrados para continuar sua trilha.</p>
+          <label class="signup-only">
             Nome completo
             <input id="userName" type="text" placeholder="Ex: Willian Murakami" required />
           </label>
@@ -38,11 +43,11 @@
             Senha
             <input id="userPassword" type="password" placeholder="Minimo 6 caracteres" minlength="6" required />
           </label>
-          <label>
+          <label class="signup-only">
             Area ou squad
             <input id="userArea" type="text" placeholder="Ex: Negocios B2B" required />
           </label>
-          <button type="submit">Entrar ou criar conta</button>
+          <button id="authSubmitBtn" type="submit">Entrar</button>
           <small id="authStatus" class="auth-status"></small>
         </form>
       </section>
