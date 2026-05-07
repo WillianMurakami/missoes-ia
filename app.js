@@ -117,6 +117,10 @@ const state = {
   user: null,
   selectedMissionId: null,
   submissions: [],
+  adminProfiles: [],
+  adminSubmissions: [],
+  adminViewMode: "students",
+  adminSort: { key: "name", direction: "asc" },
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -584,35 +588,188 @@ async function renderAdminReport() {
   $("#adminUsersCount").textContent = profiles?.length || 0;
   $("#adminSubmissionsCount").textContent = submissions?.length || 0;
   $("#adminCompletedFinalCount").textContent = finalMissionUsers.size;
+  state.adminProfiles = profiles || [];
+  state.adminSubmissions = submissions || [];
 
-  if (!submissions?.length) {
-    $("#adminReportList").innerHTML = `<div class="empty-state">Nenhum envio registrado ainda.</div>`;
-    show("#adminView");
+  renderAdminTable();
+  show("#adminView");
+}
+
+function getAdminRows() {
+  const profilesById = new Map(state.adminProfiles.map((profile) => [profile.id, profile]));
+  if (state.adminViewMode === "students") {
+    return state.adminProfiles.map((profile) => {
+      const userSubmissions = state.adminSubmissions.filter((item) => item.user_id === profile.id);
+      const completedIds = new Set(userSubmissions.map((item) => item.mission_id));
+      const lastSubmission = userSubmissions
+        .slice()
+        .sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at))[0];
+      return {
+        type: "student",
+        name: profile.name || profile.id,
+        email: profile.email || profile.id,
+        area: profile.area || "Area nao informada",
+        completed: completedIds.size,
+        requiredCompleted: missions.filter((mission) => mission.group === "main" && completedIds.has(mission.id)).length,
+        finalDone: completedIds.has("solucao-performance-ia") ? "Sim" : "Nao",
+        certificateDone: completedIds.has("certificado-anthropic") ? "Sim" : "Nao",
+        updatedAt: lastSubmission?.updated_at || profile.updated_at || profile.created_at,
+      };
+    });
+  }
+
+  return state.adminSubmissions.map((item) => {
+    const profile = profilesById.get(item.user_id) || {};
+    const mission = missions.find((missionItem) => missionItem.id === item.mission_id);
+    return {
+      type: "submission",
+      name: profile.name || item.user_id,
+      email: profile.email || item.user_id,
+      area: profile.area || "Area nao informada",
+      mission: mission?.title || item.mission_id,
+      missionType: mission?.type || "",
+      comment: item.text || "",
+      fileUrl: item.file_url || "",
+      fileName: item.file_name || "",
+      updatedAt: item.updated_at || item.created_at,
+    };
+  });
+}
+
+function sortAdminRows(rows) {
+  const { key, direction } = state.adminSort;
+  return rows.slice().sort((a, b) => {
+    const valueA = a[key] || "";
+    const valueB = b[key] || "";
+    const normalizedA = key === "updatedAt" ? new Date(valueA).getTime() : String(valueA).toLowerCase();
+    const normalizedB = key === "updatedAt" ? new Date(valueB).getTime() : String(valueB).toLowerCase();
+    if (normalizedA > normalizedB) return direction === "asc" ? 1 : -1;
+    if (normalizedA < normalizedB) return direction === "asc" ? -1 : 1;
+    return 0;
+  });
+}
+
+function sortableHeader(label, key) {
+  const active = state.adminSort.key === key;
+  const arrow = active ? (state.adminSort.direction === "asc" ? "↑" : "↓") : "";
+  return `<button type="button" data-admin-sort="${key}">${label} ${arrow}</button>`;
+}
+
+function renderAdminTable() {
+  const rows = sortAdminRows(getAdminRows());
+  $("#adminStudentsTab").classList.toggle("active", state.adminViewMode === "students");
+  $("#adminSubmissionsTab").classList.toggle("active", state.adminViewMode === "submissions");
+
+  if (!rows.length) {
+    $("#adminReportList").innerHTML = `<div class="empty-state">Nenhum registro encontrado.</div>`;
     return;
   }
 
-  $("#adminReportList").innerHTML = submissions
-    .map((item) => {
-      const profile = profilesById.get(item.user_id) || {};
-      const mission = missions.find((missionItem) => missionItem.id === item.mission_id);
-      return `
-        <article class="admin-report-item">
-          <div>
-            <strong>${profile.name || item.user_id}</strong>
-            <small>${profile.email || item.user_id} · ${profile.area || "Area nao informada"}</small>
-            <small>${mission?.title || item.mission_id} · ${new Date(item.updated_at || item.created_at).toLocaleString("pt-BR")}</small>
-            <p>${item.text || "Sem comentario"}</p>
-          </div>
-          ${
-            item.file_url
-              ? `<a href="${item.file_url}" target="_blank" rel="noreferrer">Abrir arquivo</a>`
-              : `<span>Sem arquivo</span>`
-          }
-        </article>
-      `;
-    })
-    .join("");
-  show("#adminView");
+  if (state.adminViewMode === "students") {
+    $("#adminReportList").innerHTML = `
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>${sortableHeader("Participante", "name")}</th>
+              <th>${sortableHeader("Area", "area")}</th>
+              <th>${sortableHeader("Concluidos", "completed")}</th>
+              <th>${sortableHeader("Obrigatorios", "requiredCompleted")}</th>
+              <th>${sortableHeader("Final", "finalDone")}</th>
+              <th>${sortableHeader("Certificado", "certificateDone")}</th>
+              <th>${sortableHeader("Ultima atividade", "updatedAt")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows
+              .map(
+                (row) => `
+                <tr>
+                  <td><strong>${row.name}</strong><small>${row.email}</small></td>
+                  <td>${row.area}</td>
+                  <td>${row.completed}/${missions.length}</td>
+                  <td>${row.requiredCompleted}/4</td>
+                  <td>${row.finalDone}</td>
+                  <td>${row.certificateDone}</td>
+                  <td>${row.updatedAt ? new Date(row.updatedAt).toLocaleString("pt-BR") : "-"}</td>
+                </tr>
+              `
+              )
+              .join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+    return;
+  }
+
+  $("#adminReportList").innerHTML = `
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>${sortableHeader("Data/hora", "updatedAt")}</th>
+            <th>${sortableHeader("Participante", "name")}</th>
+            <th>${sortableHeader("Area", "area")}</th>
+            <th>${sortableHeader("Desafio", "mission")}</th>
+            <th>Comentario</th>
+            <th>Arquivo</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows
+            .map(
+              (row) => `
+              <tr>
+                <td>${row.updatedAt ? new Date(row.updatedAt).toLocaleString("pt-BR") : "-"}</td>
+                <td><strong>${row.name}</strong><small>${row.email}</small></td>
+                <td>${row.area}</td>
+                <td>${row.mission}</td>
+                <td>${row.comment}</td>
+                <td>${
+                  row.fileUrl
+                    ? `<a href="${row.fileUrl}" target="_blank" rel="noreferrer">${row.fileName || "Abrir"}</a>`
+                    : "-"
+                }</td>
+              </tr>
+            `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function setAdminSort(key) {
+  if (state.adminSort.key === key) {
+    state.adminSort.direction = state.adminSort.direction === "asc" ? "desc" : "asc";
+  } else {
+    state.adminSort = { key, direction: "asc" };
+  }
+  renderAdminTable();
+}
+
+function exportAdminCsv() {
+  const rows = sortAdminRows(getAdminRows());
+  const headers =
+    state.adminViewMode === "students"
+      ? ["participante", "email", "area", "concluidos", "obrigatorios", "final", "certificado", "ultima_atividade"]
+      : ["data_hora", "participante", "email", "area", "desafio", "comentario", "arquivo"];
+  const csvRows = rows.map((row) => {
+    const values =
+      state.adminViewMode === "students"
+        ? [row.name, row.email, row.area, row.completed, row.requiredCompleted, row.finalDone, row.certificateDone, row.updatedAt]
+        : [row.updatedAt, row.name, row.email, row.area, row.mission, row.comment, row.fileUrl];
+    return values.map((value) => `"${String(value || "").replaceAll('"', '""')}"`).join(",");
+  });
+  const blob = new Blob([[headers.join(","), ...csvRows].join("\n")], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `relatorio-missoes-ia-${state.adminViewMode}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 function bindEvents() {
@@ -621,6 +778,17 @@ function bindEvents() {
   $("#adminAccessForm").addEventListener("submit", handleAdminAccess);
   $("#adminBackLoginBtn").addEventListener("click", () => show("#loginView"));
   $("#adminExitBtn").addEventListener("click", () => show("#loginView"));
+  $("#adminStudentsTab").addEventListener("click", () => {
+    state.adminViewMode = "students";
+    state.adminSort = { key: "name", direction: "asc" };
+    renderAdminTable();
+  });
+  $("#adminSubmissionsTab").addEventListener("click", () => {
+    state.adminViewMode = "submissions";
+    state.adminSort = { key: "updatedAt", direction: "desc" };
+    renderAdminTable();
+  });
+  $("#adminExportBtn").addEventListener("click", exportAdminCsv);
   $("#deviceToggle").addEventListener("click", toggleDevicePreview);
   $("#readingContent").addEventListener("scroll", handleReadingScroll);
   $("#markReadingBtn").addEventListener("click", markReadingDone);
@@ -640,6 +808,12 @@ function bindEvents() {
     }
 
     const deleteButton = event.target.closest("[data-delete-submission]");
+    const adminSortButton = event.target.closest("[data-admin-sort]");
+    if (adminSortButton) {
+      setAdminSort(adminSortButton.dataset.adminSort);
+      return;
+    }
+
     if (deleteButton) {
       if (db) {
         db.from("app_submissions")
