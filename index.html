@@ -36,6 +36,7 @@
             <input id="userArea" type="text" placeholder="Ex: Negocios B2B" />
           </label>
           <button id="authSubmitBtn" type="submit">Acessar trilha</button>
+          <button id="adminOpenBtn" class="admin-link-button" type="button">Acessar relatorio admin</button>
           <small id="authStatus" class="auth-status"></small>
         </form>
       </section>
@@ -59,7 +60,7 @@
         <section class="hero-board">
           <div>
             <span class="eyebrow">Trilha corporativa</span>
-            <h2>Complete missoes curtas e avance ate o mini projeto final.</h2>
+            <h2>Complete missoes curtas e amplie suas habilidades de IA</h2>
           </div>
           <div class="hero-visual" aria-hidden="true">
             <span class="visual-card visual-card-one"></span>
@@ -76,13 +77,9 @@
           <div class="progress-track" aria-label="Progresso das missoes">
             <span id="progressBar"></span>
             <i class="milestone-marker milestone-prize" title="Concurso com premios">4</i>
-            <i class="milestone-marker milestone-certificate" title="Certificado de conclusao">6</i>
+            <i class="milestone-marker milestone-certificate" title="Certificado de conclusao">★</i>
           </div>
           <strong id="progressPercent">0%</strong>
-          <div class="milestone-legend">
-            <span><i class="milestone-dot prize"></i> Desafio 4: concurso com premios</span>
-            <span><i class="milestone-dot certificate"></i> Desafio 6: certificado completo</span>
-          </div>
         </section>
 
         <section class="mission-section">
@@ -91,7 +88,6 @@
               <span class="eyebrow">Desafios principais</span>
               <h2>Conclua ate o desafio 4 para concorrer aos premios.</h2>
             </div>
-            <strong>Obrigatorios</strong>
           </div>
           <section id="mainMissionGrid" class="mission-grid" aria-label="Desafios principais"></section>
         </section>
@@ -102,7 +98,6 @@
               <span class="eyebrow">Desafios complementares</span>
               <h2>Para quem quiser ir alem e buscar a conclusao completa da trilha.</h2>
             </div>
-            <strong>Opcionais</strong>
           </div>
           <section id="optionalMissionGrid" class="mission-grid optional-grid" aria-label="Desafios complementares"></section>
         </section>
@@ -127,11 +122,11 @@
             <span class="eyebrow">Entrega da missao</span>
             <label>
               Comentario ou resposta
-              <textarea id="submissionText" rows="5" placeholder="Descreva o que voce fez, aprendizados ou link do material."></textarea>
+              <textarea id="submissionText" rows="5" placeholder="Descreva o que voce fez, aprendizados ou link do material." required></textarea>
             </label>
             <label>
               Evidencia
-              <input id="submissionFile" type="file" accept="image/*,.pdf,.doc,.docx,.ppt,.pptx" />
+              <input id="submissionFile" type="file" accept="image/*,.pdf,.doc,.docx,.ppt,.pptx" required />
             </label>
             <button type="submit">Enviar missao</button>
           </form>
@@ -143,6 +138,43 @@
             <h2>Registros desta missao</h2>
           </div>
           <div id="backlogList" class="backlog-list"></div>
+        </section>
+      </section>
+
+      <section id="adminAccessView" class="admin-access-view hidden">
+        <form id="adminAccessForm" class="admin-access-card">
+          <span class="eyebrow">Relatorio admin</span>
+          <h1>Acesso restrito</h1>
+          <p>Digite o codigo administrativo para visualizar os envios da trilha.</p>
+          <label>
+            Codigo de acesso
+            <input id="adminCodeInput" type="password" placeholder="Codigo admin" required />
+          </label>
+          <button type="submit">Abrir relatorio</button>
+          <button id="adminBackLoginBtn" class="ghost-button" type="button">Voltar</button>
+          <small id="adminStatus" class="auth-status"></small>
+        </form>
+      </section>
+
+      <section id="adminView" class="admin-view hidden">
+        <header class="topbar">
+          <div>
+            <span class="brand-kicker">UOL EdTech</span>
+            <h1>Relatorio admin</h1>
+          </div>
+          <button id="adminExitBtn" class="ghost-button" type="button">Sair do relatorio</button>
+        </header>
+        <section class="admin-summary">
+          <article><span id="adminUsersCount">0</span><small>participantes</small></article>
+          <article><span id="adminSubmissionsCount">0</span><small>envios</small></article>
+          <article><span id="adminCompletedFinalCount">0</span><small>finalistas</small></article>
+        </section>
+        <section class="backlog-section">
+          <div>
+            <span class="eyebrow">Backlog geral</span>
+            <h2>Envios registrados</h2>
+          </div>
+          <div id="adminReportList" class="admin-report-list"></div>
         </section>
       </section>
     </main>

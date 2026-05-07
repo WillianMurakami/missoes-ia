@@ -177,7 +177,9 @@ function loginLocally({ id, name, area, email }) {
 }
 
 function show(viewId) {
-  ["#loginView", "#homeView", "#detailView"].forEach((id) => $(id).classList.add("hidden"));
+  ["#loginView", "#homeView", "#detailView", "#adminAccessView", "#adminView"].forEach((id) =>
+    $(id).classList.add("hidden")
+  );
   $(viewId).classList.remove("hidden");
 }
 
@@ -276,6 +278,8 @@ function renderDetail(missionId) {
     .join("");
   $("#submissionText").value = "";
   $("#submissionFile").value = "";
+  $("#submissionText").required = !mission.readingContent;
+  $("#submissionFile").required = !mission.readingContent;
   renderReadingPanel(mission);
   renderBacklog();
   show("#detailView");
@@ -406,6 +410,11 @@ async function handleSubmission(event) {
   event.preventDefault();
   const file = $("#submissionFile").files[0];
   const text = $("#submissionText").value.trim();
+  const mission = missions.find((item) => item.id === state.selectedMissionId);
+  if (!mission?.readingContent && (!text || !file)) {
+    alert("Para concluir esta missao, envie um comentario e um arquivo de evidencia.");
+    return;
+  }
 
   if (db) {
     try {
@@ -534,8 +543,84 @@ function toggleDevicePreview() {
   $("#deviceToggle").setAttribute("aria-pressed", String(isMobile));
 }
 
+function openAdminAccess() {
+  $("#adminCodeInput").value = "";
+  $("#adminStatus").textContent = "";
+  show("#adminAccessView");
+}
+
+async function handleAdminAccess(event) {
+  event.preventDefault();
+  const typedCode = $("#adminCodeInput").value.trim();
+  if (typedCode !== supabaseConfig.adminCode) {
+    $("#adminStatus").textContent = "Codigo invalido.";
+    return;
+  }
+  await renderAdminReport();
+}
+
+async function renderAdminReport() {
+  if (!db) {
+    $("#adminStatus").textContent = "Supabase nao configurado.";
+    return;
+  }
+
+  const [{ data: profiles, error: profilesError }, { data: submissions, error: submissionsError }] =
+    await Promise.all([
+      db.from("app_profiles").select("*").order("updated_at", { ascending: false }),
+      db.from("app_submissions").select("*").order("updated_at", { ascending: false }),
+    ]);
+
+  if (profilesError || submissionsError) {
+    $("#adminStatus").textContent = "Nao foi possivel carregar o relatorio. Verifique o SQL no Supabase.";
+    return;
+  }
+
+  const profilesById = new Map((profiles || []).map((profile) => [profile.id, profile]));
+  const finalMissionUsers = new Set(
+    (submissions || []).filter((item) => item.mission_id === "solucao-performance-ia").map((item) => item.user_id)
+  );
+
+  $("#adminUsersCount").textContent = profiles?.length || 0;
+  $("#adminSubmissionsCount").textContent = submissions?.length || 0;
+  $("#adminCompletedFinalCount").textContent = finalMissionUsers.size;
+
+  if (!submissions?.length) {
+    $("#adminReportList").innerHTML = `<div class="empty-state">Nenhum envio registrado ainda.</div>`;
+    show("#adminView");
+    return;
+  }
+
+  $("#adminReportList").innerHTML = submissions
+    .map((item) => {
+      const profile = profilesById.get(item.user_id) || {};
+      const mission = missions.find((missionItem) => missionItem.id === item.mission_id);
+      return `
+        <article class="admin-report-item">
+          <div>
+            <strong>${profile.name || item.user_id}</strong>
+            <small>${profile.email || item.user_id} · ${profile.area || "Area nao informada"}</small>
+            <small>${mission?.title || item.mission_id} · ${new Date(item.updated_at || item.created_at).toLocaleString("pt-BR")}</small>
+            <p>${item.text || "Sem comentario"}</p>
+          </div>
+          ${
+            item.file_url
+              ? `<a href="${item.file_url}" target="_blank" rel="noreferrer">Abrir arquivo</a>`
+              : `<span>Sem arquivo</span>`
+          }
+        </article>
+      `;
+    })
+    .join("");
+  show("#adminView");
+}
+
 function bindEvents() {
   $("#loginForm").addEventListener("submit", handleLogin);
+  $("#adminOpenBtn").addEventListener("click", openAdminAccess);
+  $("#adminAccessForm").addEventListener("submit", handleAdminAccess);
+  $("#adminBackLoginBtn").addEventListener("click", () => show("#loginView"));
+  $("#adminExitBtn").addEventListener("click", () => show("#loginView"));
   $("#deviceToggle").addEventListener("click", toggleDevicePreview);
   $("#readingContent").addEventListener("scroll", handleReadingScroll);
   $("#markReadingBtn").addEventListener("click", markReadingDone);
