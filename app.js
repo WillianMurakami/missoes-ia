@@ -315,7 +315,7 @@ function renderDetail(missionId) {
   $("#submissionText").required = !mission.readingContent;
   $("#submissionFile").required = !mission.readingContent;
   $("#submissionForm").classList.toggle("hidden", Boolean(mission.readingContent));
-  document.querySelector(".submission-history").classList.toggle("hidden", Boolean(mission.readingContent));
+  document.querySelector(".submission-history").classList.remove("hidden");
   renderReadingPanel(mission);
   renderBacklog();
   setSubmissionButtonState(isMissionCompleted(missionId) ? "sent" : "idle");
@@ -390,7 +390,7 @@ function renderReadingPanel(mission) {
       <article class="blog-article">
         <header class="blog-hero">
           <span class="eyebrow">Mundo da IA</span>
-          <h2>Como a inteligencia artificial muda a forma de aprender e trabalhar</h2>
+          <h2>05. Mundo da IA</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae justo sed lectus gravida facilisis. Este espaco simula o conteudo final que sera publicado na trilha.</p>
         </header>
         <section class="blog-grid">
@@ -407,8 +407,9 @@ function renderReadingPanel(mission) {
           <p>Aliquam erat volutpat. Vivamus sed arcu eget sapien viverra aliquet. Curabitur in facilisis neque. Maecenas vitae magna eu augue efficitur interdum.</p>
         </section>
         <div class="blog-media">
-          <iframe src="https://www.youtube.com/embed/JQeItPqowOg" title="Conteudo de apoio sobre IA" allowfullscreen></iframe>
+          <video class="blog-video" controls preload="metadata" src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"></video>
         </div>
+        <a class="video-fallback" href="https://www.youtube.com/watch?v=JQeItPqowOg" target="_blank" rel="noreferrer">Abrir video principal em nova aba</a>
         <section class="blog-grid reverse">
           <div>
             <h3>Boas praticas</h3>
@@ -427,6 +428,27 @@ function renderReadingPanel(mission) {
   } else {
     content.innerHTML = mission.readingContent.map((paragraph) => `<p>${paragraph}</p>`).join("");
   }
+  setReadingButtonState(isMissionCompleted(mission.id) ? "complete" : "locked");
+}
+
+function setReadingButtonState(stateName) {
+  const button = $("#markReadingBtn");
+  if (!button) return;
+  button.classList.remove("is-complete");
+
+  if (stateName === "complete") {
+    button.classList.add("is-complete");
+    button.disabled = true;
+    button.textContent = "Concluído";
+    return;
+  }
+
+  if (stateName === "ready") {
+    button.disabled = false;
+    button.textContent = "Marcar como concluído";
+    return;
+  }
+
   button.disabled = true;
   button.textContent = "Role ate o final para liberar";
 }
@@ -641,6 +663,7 @@ async function markReadingDone() {
     renderBacklog();
     renderProgress();
     renderMissions();
+    setReadingButtonState("complete");
     return;
   }
 
@@ -668,14 +691,18 @@ async function markReadingDone() {
   renderBacklog();
   renderProgress();
   renderMissions();
+  setReadingButtonState("complete");
 }
 
 function handleReadingScroll(event) {
   const element = event.currentTarget;
   const reachedEnd = element.scrollTop + element.clientHeight >= element.scrollHeight - 8;
+  if (isMissionCompleted(state.selectedMissionId)) {
+    setReadingButtonState("complete");
+    return;
+  }
   if (reachedEnd) {
-    $("#markReadingBtn").disabled = false;
-    $("#markReadingBtn").textContent = "Marcar leitura como feita";
+    setReadingButtonState("ready");
   }
 }
 
@@ -1061,6 +1088,9 @@ function bindEvents() {
             renderProgress();
             renderMissions();
             setSubmissionButtonState("idle");
+            if (missions.find((mission) => mission.id === state.selectedMissionId)?.readingContent) {
+              setReadingButtonState("locked");
+            }
           });
         return;
       }
@@ -1070,6 +1100,9 @@ function bindEvents() {
       renderProgress();
       renderMissions();
       setSubmissionButtonState("idle");
+      if (missions.find((mission) => mission.id === state.selectedMissionId)?.readingContent) {
+        setReadingButtonState("locked");
+      }
     }
   });
 }
