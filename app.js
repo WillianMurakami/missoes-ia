@@ -294,9 +294,10 @@ function renderHome() {
 
 function renderDetail(missionId) {
   const mission = missions.find((item) => item.id === missionId);
+  const missionNumber = String(missions.findIndex((item) => item.id === missionId) + 1).padStart(2, "0");
   state.selectedMissionId = missionId;
   $("#detailView").classList.toggle("reading-mode", Boolean(mission.readingContent));
-  $("#detailTitle").textContent = mission.title;
+  $("#detailTitle").textContent = `${missionNumber}. ${mission.title}`;
   $("#detailDescription").textContent = mission.description;
   $("#detailSteps").innerHTML = mission.steps.map((step) => `<li>${step}</li>`).join("");
   $("#resourceList").innerHTML = (mission.resources || [])
