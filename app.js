@@ -310,11 +310,11 @@ function renderDetail(missionId) {
   $("#submissionText").value = "";
   $("#submissionFile").value = "";
   $("#selectedFileName").textContent = "PDF, imagem, DOC ou PPT";
-  setSubmissionButtonState("idle");
   $("#submissionText").required = !mission.readingContent;
   $("#submissionFile").required = !mission.readingContent;
   renderReadingPanel(mission);
   renderBacklog();
+  setSubmissionButtonState(isMissionCompleted(missionId) ? "sent" : "idle");
   updateMissionNavigation();
   show("#detailView");
 }
@@ -351,6 +351,10 @@ function updateSelectedFileName() {
   const file = $("#submissionFile").files[0];
   $("#selectedFileName").textContent = file ? file.name : "PDF, imagem, DOC ou PPT";
   setSubmissionButtonState("idle");
+}
+
+function markSubmissionDraft() {
+  if (isMissionCompleted(state.selectedMissionId)) setSubmissionButtonState("idle");
 }
 
 function updateMissionNavigation() {
@@ -505,6 +509,7 @@ async function handleSubmission(event) {
   }
 
   setSubmissionButtonState("loading");
+  await new Promise((resolve) => setTimeout(resolve, 350));
 
   if (db) {
     try {
@@ -976,6 +981,7 @@ function bindEvents() {
   $("#backHomeBtn").addEventListener("click", renderHome);
   $("#submissionForm").addEventListener("submit", handleSubmission);
   $("#submissionFile").addEventListener("change", updateSelectedFileName);
+  $("#submissionText").addEventListener("input", markSubmissionDraft);
 
   document.addEventListener("click", (event) => {
     const missionButton = event.target.closest("[data-open-mission]");

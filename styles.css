@@ -451,6 +451,11 @@ textarea:focus {
   padding: 60px 24px 18px;
 }
 
+.progress-panel > div:first-child {
+  align-self: center;
+  text-align: center;
+}
+
 .progress-panel h2 {
   margin: 4px 0 0;
   font-size: 19px;
@@ -956,6 +961,9 @@ textarea:focus {
 
 .submission-card button {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .button-spinner {
@@ -1224,8 +1232,106 @@ textarea:focus {
 
 .app-shell.demo-mobile .topbar,
 .app-shell.demo-mobile .user-chip {
-  align-items: flex-start;
-  flex-direction: column;
+  align-items: center;
+}
+
+.app-shell.demo-mobile .topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  padding: 16px 18px;
+}
+
+.app-shell.demo-mobile .topbar h1 {
+  font-size: 30px;
+}
+
+.app-shell.demo-mobile .user-chip {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 7px 9px;
+  max-width: 154px;
+}
+
+.app-shell.demo-mobile .user-chip span {
+  width: 34px;
+  height: 34px;
+  font-size: 13px;
+}
+
+.app-shell.demo-mobile .user-chip strong {
+  display: block;
+  max-width: 106px;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-shell.demo-mobile .user-chip small {
+  font-size: 12px;
+}
+
+.app-shell.demo-mobile .user-chip button {
+  grid-column: 2;
+  justify-self: start;
+  min-height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+.app-shell.demo-mobile .progress-panel {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px 12px;
+  padding: 18px 22px 20px;
+}
+
+.app-shell.demo-mobile .progress-panel > div:first-child {
+  align-self: center;
+  text-align: left;
+}
+
+.app-shell.demo-mobile .progress-panel h2 {
+  font-size: 18px;
+}
+
+.app-shell.demo-mobile #progressPercent {
+  align-self: start;
+  min-width: 72px;
+  padding: 8px 12px;
+  font-size: 20px;
+}
+
+.app-shell.demo-mobile .progress-track {
+  grid-column: 1 / -1;
+  min-width: 0;
+  width: 100%;
+  margin-top: 34px;
+}
+
+.app-shell.demo-mobile .marker-label {
+  top: 20px;
+  max-width: 116px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.15;
+}
+
+.app-shell.demo-mobile .marker-icon {
+  top: 39px;
+  width: 24px;
+  height: 24px;
+}
+
+.app-shell.demo-mobile .milestone-prize {
+  height: 18px;
+}
+
+.app-shell.demo-mobile .milestone-certificate .marker-icon {
+  width: 26px;
+  height: 26px;
 }
 
 .app-shell.demo-mobile .hero-board {
@@ -1286,9 +1392,59 @@ textarea:focus {
 @media (max-width: 880px) {
   .login-view,
   .mission-detail,
-  .progress-panel,
   .hero-board {
     grid-template-columns: 1fr;
+  }
+
+  .progress-panel {
+    grid-template-columns: 1fr auto;
+    gap: 16px 12px;
+    padding: 18px 22px 20px;
+  }
+
+  .progress-panel h2 {
+    font-size: 18px;
+  }
+
+  .progress-panel > div:first-child {
+    text-align: left;
+  }
+
+  #progressPercent {
+    align-self: start;
+    min-width: 72px;
+    padding: 8px 12px;
+    font-size: 20px;
+  }
+
+  .progress-track {
+    grid-column: 1 / -1;
+    min-width: 0;
+    width: 100%;
+    margin-top: 34px;
+  }
+
+  .marker-label {
+    top: 20px;
+    max-width: 116px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.15;
+  }
+
+  .marker-icon {
+    top: 39px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .milestone-prize {
+    height: 18px;
+  }
+
+  .milestone-certificate .marker-icon {
+    width: 26px;
+    height: 26px;
   }
 
   .mission-grid {
@@ -1336,8 +1492,53 @@ textarea:focus {
 
   .topbar,
   .user-chip {
-    align-items: flex-start;
-    flex-direction: column;
+    align-items: center;
+  }
+
+  .topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    padding: 16px 18px;
+  }
+
+  .topbar h1 {
+    font-size: 30px;
+  }
+
+  .user-chip {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 7px 9px;
+    max-width: 154px;
+  }
+
+  .user-chip span {
+    width: 34px;
+    height: 34px;
+    font-size: 13px;
+  }
+
+  .user-chip strong {
+    display: block;
+    max-width: 106px;
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .user-chip small {
+    font-size: 12px;
+  }
+
+  .user-chip button {
+    grid-column: 2;
+    justify-self: start;
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 13px;
   }
 
   .hero-visual {
