@@ -47,6 +47,7 @@ button:hover {
 }
 
 .app-shell {
+  position: relative;
   min-height: 100vh;
   transition: max-width 0.25s ease, padding 0.25s ease;
 }
@@ -62,7 +63,8 @@ button:hover {
   display: none !important;
 }
 
-.device-toggle {
+.device-toggle,
+.theme-toggle {
   position: fixed;
   z-index: 10;
   right: 18px;
@@ -77,13 +79,43 @@ button:hover {
   font-weight: 900;
 }
 
+.theme-toggle {
+  right: 154px;
+  min-width: 132px;
+  padding: 0 14px 0 42px;
+  text-align: left;
+}
+
+.theme-toggle::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--uol-yellow);
+  box-shadow: inset 0 0 0 5px rgba(255, 255, 255, 0.3);
+  transform: translateY(-50%);
+  transition: background 0.22s ease, transform 0.22s ease;
+}
+
+.theme-toggle[aria-pressed="true"]::before {
+  background: var(--navy-deep);
+  transform: translate(88px, -50%);
+}
+
 .app-shell.demo-mobile .device-toggle {
   right: calc(50% - 196px);
 }
 
+.app-shell.demo-mobile .theme-toggle {
+  right: calc(50% - 78px);
+}
+
 .login-view {
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) minmax(320px, 420px);
+  grid-template-columns: minmax(520px, 1fr) minmax(420px, 520px);
   min-height: 100vh;
   background: var(--white);
 }
@@ -152,6 +184,59 @@ button:hover {
   max-width: 560px;
   font-size: 21px;
   line-height: 1.45;
+}
+
+.login-motion {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  width: min(560px, 100%);
+  margin: 28px 0 0;
+  perspective: 900px;
+}
+
+.login-motion article {
+  width: min(420px, 86%);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 18px;
+  padding: 14px 16px;
+  background: rgba(8, 8, 11, 0.16);
+  box-shadow: 0 18px 44px rgba(92, 42, 0, 0.16);
+  backdrop-filter: blur(16px);
+  transform: translateX(-18px) rotateY(-12deg);
+  animation: loginCardFlow 9s ease-in-out infinite;
+}
+
+.login-motion article:nth-child(2) {
+  justify-self: end;
+  animation-delay: -2s;
+}
+
+.login-motion article:nth-child(3) {
+  animation-delay: -4s;
+}
+
+.login-motion article:nth-child(4) {
+  justify-self: end;
+  animation-delay: -6s;
+}
+
+.login-motion strong,
+.login-motion span {
+  display: block;
+}
+
+.login-motion strong {
+  color: #08080b;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.login-motion span {
+  margin-top: 3px;
+  color: rgba(8, 8, 11, 0.68);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .brand-kicker,
@@ -2066,5 +2151,924 @@ textarea:focus {
 
   .mission-card h3 {
     font-size: 18px;
+  }
+}
+
+/* Mockit-inspired visual experiment: dark glass UI, floating depth and sharper motion. */
+:root {
+  --mock-bg: #07070a;
+  --mock-panel: rgba(255, 255, 255, 0.075);
+  --mock-panel-strong: rgba(255, 255, 255, 0.12);
+  --mock-border: rgba(255, 255, 255, 0.16);
+  --mock-text: #fff8e8;
+  --mock-muted: #aaa5b8;
+  --mock-shadow: 0 30px 90px rgba(0, 0, 0, 0.42);
+  --mock-glow: 0 0 42px rgba(255, 118, 0, 0.24);
+  font-family: "Bricolage Grotesque", Inter, Azo Sans, Arial, sans-serif;
+}
+
+html.dark,
+html.dark body {
+  background: var(--mock-bg);
+  color: var(--mock-text);
+}
+
+body {
+  position: relative;
+  overflow-x: hidden;
+  background:
+    linear-gradient(120deg, rgba(255, 0, 6, 0.17), transparent 28%),
+    linear-gradient(240deg, rgba(255, 203, 0, 0.16), transparent 25%),
+    radial-gradient(circle at 70% 5%, rgba(146, 119, 248, 0.16), transparent 32%),
+    var(--mock-bg);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 62px 62px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.78), transparent 82%);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto -12vw -26vh -12vw;
+  z-index: -1;
+  height: 46vh;
+  background: radial-gradient(ellipse at center, rgba(255, 118, 0, 0.28), transparent 62%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+button,
+input,
+textarea {
+  font-family: "Bricolage Grotesque", Inter, Azo Sans, Arial, sans-serif;
+}
+
+.device-toggle {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  color: var(--mock-text);
+}
+
+.login-view {
+  background: transparent;
+}
+
+.brand-panel {
+  isolation: isolate;
+  background:
+    linear-gradient(145deg, rgba(255, 203, 0, 0.96), rgba(255, 118, 0, 0.84) 48%, rgba(255, 0, 6, 0.68)),
+    var(--uol-yellow);
+  color: #08080b;
+}
+
+.brand-panel::before,
+.brand-panel::after {
+  border-color: rgba(255, 255, 255, 0.3);
+  animation: slowFloat 8s ease-in-out infinite alternate;
+}
+
+.brand-panel::after {
+  animation-delay: -2s;
+}
+
+.brand-mark {
+  box-shadow: 0 18px 42px rgba(255, 0, 6, 0.35);
+}
+
+.brand-panel h1,
+.hero-board h2 {
+  font-family: "Bebas Neue", "Bricolage Grotesque", Arial, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.brand-panel h1 {
+  font-size: clamp(70px, 11vw, 132px);
+  line-height: 0.86;
+}
+
+.login-card,
+.topbar,
+.progress-panel,
+.mission-detail,
+.backlog-section,
+.hero-board,
+.admin-access-card,
+.admin-summary article,
+.admin-table-wrap,
+.admin-toolbar,
+.submission-card {
+  border: 1px solid var(--mock-border);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.055));
+  box-shadow: var(--mock-shadow);
+  backdrop-filter: blur(24px);
+}
+
+.topbar,
+.progress-panel,
+.mission-detail,
+.backlog-section,
+.hero-board,
+.admin-access-card,
+.admin-summary article,
+.admin-table-wrap,
+.admin-toolbar,
+.submission-card,
+.mission-card {
+  background-color: #15151a;
+}
+
+.login-card {
+  margin: clamp(16px, 4vw, 42px);
+  border-radius: 24px;
+}
+
+.login-view {
+  grid-template-columns: minmax(560px, 1fr) minmax(460px, 540px);
+}
+
+.login-card {
+  min-width: 0;
+}
+
+.brand-panel {
+  justify-content: center;
+  gap: 10px;
+}
+
+.brand-panel .official-logo {
+  margin-top: 22px;
+}
+
+.login-motion {
+  width: min(720px, 100%);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.login-motion article {
+  width: 100%;
+  min-height: 98px;
+  display: grid;
+  align-content: center;
+  cursor: default;
+  transition: transform 0.28s ease, background 0.28s ease, box-shadow 0.28s ease;
+}
+
+.login-motion article:hover {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 26px 58px rgba(92, 42, 0, 0.2);
+  transform: translate3d(12px, -10px, 38px) rotateY(8deg) scale(1.04);
+}
+
+.login-motion article:nth-child(2),
+.login-motion article:nth-child(4) {
+  justify-self: auto;
+}
+
+.login-motion strong {
+  font-size: 20px;
+  line-height: 1.05;
+}
+
+.login-motion span {
+  font-size: 14px;
+}
+
+.login-card h2,
+.admin-access-card h1,
+.mission-detail h1,
+.section-heading h2,
+.backlog-section h2,
+.topbar h1 {
+  color: var(--mock-text);
+}
+
+.auth-help,
+.detail-main p,
+.mission-card p,
+.user-chip small,
+.backlog-item small,
+.admin-summary small,
+.blog-hero p,
+.blog-article p {
+  color: var(--mock-muted);
+}
+
+input,
+textarea {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--mock-text);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 248, 232, 0.42);
+}
+
+input:focus,
+textarea:focus {
+  border-color: rgba(255, 203, 0, 0.78);
+  box-shadow: 0 0 0 4px rgba(255, 203, 0, 0.12);
+}
+
+.login-card button,
+.submission-card button,
+.mission-card button,
+.admin-access-card button,
+.export-button {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(135deg, var(--uol-red), var(--uol-orange) 62%, var(--uol-yellow));
+  color: #ffffff;
+  box-shadow: 0 16px 34px rgba(255, 0, 6, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+.login-card button:hover,
+.submission-card button:hover,
+.mission-card button:hover,
+.admin-access-card button:hover,
+.export-button:hover {
+  box-shadow: 0 20px 46px rgba(255, 118, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.admin-link-button,
+.ghost-button,
+.back-button,
+.step-button {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: var(--mock-text) !important;
+  box-shadow: none !important;
+}
+
+.home-view,
+.detail-view,
+.admin-view {
+  width: min(1220px, calc(100% - 40px));
+}
+
+.topbar {
+  position: sticky;
+  top: 14px;
+  z-index: 5;
+}
+
+.uol-symbol {
+  filter: drop-shadow(0 0 18px rgba(255, 118, 0, 0.28));
+}
+
+.user-chip span {
+  background: linear-gradient(135deg, rgba(255, 0, 6, 0.92), rgba(255, 118, 0, 0.88));
+  color: #ffffff;
+}
+
+.hero-board {
+  min-height: 250px;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04)),
+    radial-gradient(circle at 76% 18%, rgba(255, 203, 0, 0.2), transparent 34%);
+}
+
+.hero-board h2 {
+  max-width: 780px;
+  color: var(--mock-text);
+  font-size: clamp(50px, 7vw, 92px);
+  line-height: 0.88;
+}
+
+.hero-visual {
+  perspective: 900px;
+}
+
+.visual-card {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.34);
+  transform: rotateY(-18deg) rotateX(9deg);
+  animation: deviceFloat 4.8s ease-in-out infinite alternate;
+}
+
+.visual-card-two {
+  animation-delay: -1.2s;
+}
+
+.visual-card-three {
+  animation-delay: -2.4s;
+}
+
+.progress-panel {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05)),
+    linear-gradient(90deg, rgba(255, 0, 6, 0.06), rgba(255, 203, 0, 0.06));
+}
+
+.progress-track {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.28), 0 18px 46px rgba(0, 0, 0, 0.18);
+}
+
+#progressPercent {
+  color: #ffffff;
+  box-shadow: 0 18px 42px rgba(255, 118, 0, 0.34);
+}
+
+.marker-label {
+  color: rgba(255, 248, 232, 0.72);
+}
+
+.mission-card {
+  position: relative;
+  border-color: rgba(255, 255, 255, 0.14);
+  background: #15151a;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
+  transform-style: preserve-3d;
+}
+
+.mission-card::after {
+  content: "";
+  position: absolute;
+  inset: 40% 8% -18px;
+  z-index: -1;
+  border-radius: 50%;
+  background: rgba(255, 118, 0, 0.22);
+  filter: blur(22px);
+  opacity: 0;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.mission-card:hover {
+  transform: translateY(-8px) rotateX(2deg);
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.34), var(--mock-glow);
+}
+
+.mission-card:hover::after {
+  opacity: 1;
+  transform: translateY(10px) scale(0.94);
+}
+
+.mission-art {
+  background: linear-gradient(135deg, var(--uol-red), var(--uol-orange) 56%, var(--uol-yellow));
+}
+
+.accent-dark .mission-art,
+.accent-blue .mission-art,
+.accent-purple .mission-art {
+  background: linear-gradient(135deg, #19191f, #40335f 52%, var(--uol-orange));
+}
+
+.mission-card h3 {
+  color: var(--mock-text);
+}
+
+.status-pill,
+.status-pill.pending {
+  background: rgba(7, 7, 10, 0.42);
+  color: rgba(255, 248, 232, 0.76);
+  backdrop-filter: blur(12px);
+}
+
+.status-pill:not(.pending) {
+  background: rgba(112, 185, 154, 0.92);
+  color: #ffffff;
+}
+
+.detail-nav {
+  position: sticky;
+  top: 14px;
+  z-index: 4;
+  padding: 8px;
+  border: 1px solid var(--mock-border);
+  border-radius: 18px;
+  background: rgba(7, 7, 10, 0.5);
+  backdrop-filter: blur(22px);
+}
+
+.mission-detail {
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05)),
+    radial-gradient(circle at 82% 12%, rgba(255, 118, 0, 0.12), transparent 28%);
+}
+
+.resource-list a,
+.resource-list span,
+.backlog-item,
+.empty-state,
+.upload-zone,
+.admin-table,
+.admin-table th {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--mock-text);
+}
+
+.upload-zone {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.upload-zone strong,
+.upload-zone small {
+  color: var(--mock-text);
+}
+
+.blog-hero {
+  background:
+    linear-gradient(145deg, rgba(255, 203, 0, 0.18), rgba(255, 255, 255, 0.08)),
+    rgba(255, 255, 255, 0.06);
+}
+
+.blog-hero h2,
+.blog-article h3 {
+  color: var(--mock-text);
+}
+
+.blog-card {
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.3);
+}
+
+.admin-tabs,
+.admin-table-wrap {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-tabs button.active {
+  background: linear-gradient(135deg, var(--uol-red), var(--uol-orange));
+}
+
+@keyframes slowFloat {
+  from {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(12px, -16px, 0) rotate(5deg);
+  }
+}
+
+@keyframes deviceFloat {
+  from {
+    transform: rotateY(-20deg) rotateX(9deg) translate3d(0, 8px, 0);
+  }
+  to {
+    transform: rotateY(-12deg) rotateX(4deg) translate3d(0, -12px, 22px);
+  }
+}
+
+@keyframes loginCardFlow {
+  0% {
+    opacity: 0.72;
+    transform: translate3d(-18px, 8px, 0) rotateY(-12deg) scale(0.98);
+  }
+  45% {
+    opacity: 1;
+    transform: translate3d(20px, -8px, 28px) rotateY(8deg) scale(1.02);
+  }
+  100% {
+    opacity: 0.78;
+    transform: translate3d(-8px, 6px, 0) rotateY(-6deg) scale(0.99);
+  }
+}
+
+.motion-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.app-shell > section {
+  position: relative;
+  z-index: 1;
+}
+
+.motion-shape {
+  position: absolute;
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(135deg, rgba(255, 98, 80, 0.18), rgba(109, 84, 207, 0.14)) padding-box,
+    linear-gradient(183deg, rgba(255, 255, 255, 0.45), rgba(109, 84, 207, 0.85)) border-box;
+  box-shadow: 0 8px 42px rgba(109, 84, 207, 0.18);
+  opacity: 0.58;
+  backdrop-filter: blur(8px);
+  animation: geometricDrift 18s linear infinite;
+}
+
+.shape-one {
+  width: 150px;
+  height: 150px;
+  left: 8vw;
+  top: 24vh;
+  border-radius: 28px;
+}
+
+.shape-two {
+  width: 88px;
+  height: 88px;
+  right: 14vw;
+  top: 18vh;
+  border-radius: 50%;
+  animation-duration: 14s;
+  animation-delay: -4s;
+}
+
+.shape-three {
+  width: 220px;
+  height: 64px;
+  left: 42vw;
+  bottom: 12vh;
+  border-radius: 999px;
+  animation-duration: 22s;
+  animation-delay: -9s;
+}
+
+.shape-four {
+  width: 110px;
+  height: 110px;
+  right: 26vw;
+  bottom: 25vh;
+  border-radius: 32px;
+  transform: rotate(30deg);
+  animation-duration: 16s;
+  animation-delay: -12s;
+}
+
+@keyframes geometricDrift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(38px, -46px, 0) rotate(22deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(44deg);
+  }
+}
+
+.admin-access-view {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 118, 0, 0.18), transparent 28%),
+    var(--mock-bg);
+}
+
+.admin-access-card {
+  color: var(--mock-text);
+}
+
+.admin-access-card p,
+.admin-access-card label {
+  color: rgba(255, 248, 232, 0.76);
+}
+
+.admin-table th,
+.admin-table td {
+  color: var(--mock-text);
+}
+
+.admin-table th {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.admin-table td small {
+  color: rgba(255, 248, 232, 0.62);
+}
+
+.reading-mode .reading-content {
+  background: #141418;
+  color: var(--mock-text);
+}
+
+.reading-mode .mission-detail {
+  background: linear-gradient(145deg, rgba(18, 18, 24, 0.96), rgba(34, 26, 19, 0.84));
+}
+
+.blog-hero {
+  background:
+    radial-gradient(circle at 12% 20%, rgba(255, 203, 0, 0.2), transparent 28%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.04));
+}
+
+.reference-article {
+  display: grid;
+  gap: 24px;
+  padding: clamp(24px, 5vw, 52px);
+}
+
+.reference-hero {
+  display: grid;
+  gap: 10px;
+  max-width: 780px;
+}
+
+.reference-hero h2 {
+  margin: 0;
+  color: var(--mock-text);
+  font-size: clamp(34px, 5vw, 62px);
+  line-height: 0.98;
+}
+
+.reference-hero p {
+  margin: 0;
+  color: var(--mock-muted);
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.reference-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.reference-card {
+  display: grid;
+  gap: 10px;
+  min-height: 172px;
+  border: 1px solid var(--mock-border);
+  border-radius: 20px;
+  padding: 18px;
+  background: #15151a;
+  color: var(--mock-text);
+  text-decoration: none;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.24);
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.reference-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 203, 0, 0.48);
+  box-shadow: 0 30px 76px rgba(255, 118, 0, 0.16);
+}
+
+.reference-preview {
+  display: grid;
+  align-content: space-between;
+  min-height: 112px;
+  border-radius: 14px;
+  padding: 12px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.46), transparent 18%),
+    linear-gradient(135deg, var(--uol-red), var(--uol-orange) 58%, var(--uol-yellow));
+}
+
+.reference-preview strong {
+  color: #ffffff;
+  font-size: 28px;
+  line-height: 0.95;
+}
+
+.reference-domain {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 11px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.reference-podcast {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.42), transparent 18%),
+    linear-gradient(135deg, #1db954, #0f7f3d);
+}
+
+.reference-linkedin {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.42), transparent 18%),
+    linear-gradient(135deg, #0a66c2, #073f78);
+}
+
+.reference-youtube {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.42), transparent 18%),
+    linear-gradient(135deg, #ff0000, #b00000);
+}
+
+.reference-report {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.44), transparent 18%),
+    linear-gradient(135deg, var(--uol-yellow), var(--uol-orange));
+}
+
+.reference-tag {
+  width: fit-content;
+  border-radius: 7px;
+  padding: 5px 9px;
+  background: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 248, 232, 0.86);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.reference-card strong {
+  font-size: 20px;
+  line-height: 1.12;
+}
+
+.reference-card small {
+  align-self: end;
+  color: var(--mock-muted);
+  overflow-wrap: anywhere;
+}
+
+html.light,
+html.light body {
+  background: #f7f7f4;
+  color: #202025;
+}
+
+html.light body {
+  background:
+    linear-gradient(120deg, rgba(255, 203, 0, 0.24), transparent 30%),
+    linear-gradient(240deg, rgba(255, 118, 0, 0.16), transparent 28%),
+    #f7f7f4;
+}
+
+html.light .login-card,
+html.light .topbar,
+html.light .progress-panel,
+html.light .mission-detail,
+html.light .backlog-section,
+html.light .hero-board,
+html.light .admin-access-card,
+html.light .admin-summary article,
+html.light .admin-table-wrap,
+html.light .admin-toolbar,
+html.light .submission-card {
+  border-color: rgba(25, 25, 30, 0.12);
+  background: rgba(255, 255, 255, 0.84);
+  color: #202025;
+}
+
+html.light .mission-card,
+html.light .reference-card {
+  background: #ffffff;
+}
+
+html.light .login-card button,
+html.light .submission-card button,
+html.light .mission-card button,
+html.light .admin-access-card button,
+html.light .export-button {
+  background: linear-gradient(135deg, #2d2d2d, #444444);
+  color: #ffffff;
+  box-shadow: 0 12px 28px rgba(45, 45, 45, 0.18);
+}
+
+html.light .login-card button:hover,
+html.light .submission-card button:hover,
+html.light .mission-card button:hover,
+html.light .admin-access-card button:hover,
+html.light .export-button:hover {
+  background: linear-gradient(135deg, #111111, #3a3a3a);
+  color: #ffffff;
+}
+
+html.light .ghost-button,
+html.light .back-button,
+html.light .step-button,
+html.light .admin-link-button {
+  background: rgba(32, 32, 37, 0.09) !important;
+  color: #202025 !important;
+}
+
+html.light .login-card h2,
+html.light .admin-access-card h1,
+html.light .mission-detail h1,
+html.light .section-heading h2,
+html.light .backlog-section h2,
+html.light .topbar h1,
+html.light .mission-card h3,
+html.light .hero-board h2,
+html.light .blog-hero h2,
+html.light .blog-article h3,
+html.light .reference-hero h2,
+html.light .reference-card strong {
+  color: #202025;
+}
+
+html.light .auth-help,
+html.light .detail-main p,
+html.light .mission-card p,
+html.light .user-chip small,
+html.light .blog-hero p,
+html.light .blog-article p,
+html.light .reference-hero p,
+html.light .reference-card small {
+  color: #596273;
+}
+
+html.light input,
+html.light textarea,
+html.light .upload-zone,
+html.light .resource-list a,
+html.light .resource-list span,
+html.light .backlog-item,
+html.light .admin-table,
+html.light .admin-table th,
+html.light .reading-mode .reading-content {
+  border-color: rgba(25, 25, 30, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  color: #202025;
+}
+
+html.light .admin-access-view {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 203, 0, 0.22), transparent 28%),
+    #f7f7f4;
+}
+
+html.light .admin-access-card p,
+html.light .admin-access-card label,
+html.light .admin-table th,
+html.light .admin-table td {
+  color: #202025;
+}
+
+html.light .reading-mode .mission-detail {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+html.light .reference-card {
+  border-color: rgba(25, 25, 30, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+html.light .reference-tag {
+  background: rgba(32, 32, 37, 0.08);
+  color: #596273;
+}
+
+html.light .theme-toggle,
+html.light .device-toggle {
+  background: rgba(32, 32, 37, 0.86);
+  color: #ffffff;
+}
+
+@media (max-width: 880px) {
+  .home-view,
+  .detail-view,
+  .admin-view {
+    width: min(100% - 20px, 430px);
+  }
+
+  .login-card {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .login-view {
+    grid-template-columns: 1fr;
+  }
+
+  .login-motion {
+    gap: 9px;
+    margin-top: 22px;
+  }
+
+  .login-motion article {
+    width: min(340px, 92%);
+    padding: 12px 14px;
+  }
+
+  .reference-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reference-article {
+    padding: 18px;
+  }
+
+  .reference-hero h2 {
+    font-size: 34px;
+  }
+
+  .hero-board {
+    min-height: 190px;
+  }
+
+  .hero-board h2 {
+    font-size: 42px;
+  }
+
+  .topbar,
+  .detail-nav {
+    position: relative;
+    top: auto;
+  }
+
+  .mission-card:hover {
+    transform: translateY(-4px);
   }
 }

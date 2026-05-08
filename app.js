@@ -135,6 +135,7 @@ const missions = [
 
 const storageKey = "uol-edtech-ai-missions";
 const sessionKey = "uol-edtech-ai-current-user";
+const themeKey = "uol-edtech-ai-theme";
 const supabaseConfig = window.SUPABASE_CONFIG || {};
 const hasSupabaseConfig = Boolean(supabaseConfig.url && supabaseConfig.anonKey && window.supabase);
 const db = hasSupabaseConfig ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey) : null;
@@ -228,6 +229,10 @@ function fillLoginFromSession() {
 
 function isMissionCompleted(missionId) {
   return getUserSubmissions().some((item) => item.missionId === missionId);
+}
+
+function isContentOnlyMission(mission) {
+  return Boolean(mission?.readingContent) || mission?.id === "referencias-avancadas-ia";
 }
 
 function updateUserHeader() {
@@ -336,12 +341,14 @@ function renderHome(options = {}) {
 function renderDetail(missionId) {
   const mission = missions.find((item) => item.id === missionId);
   const missionNumber = String(missions.findIndex((item) => item.id === missionId) + 1).padStart(2, "0");
+  const contentOnly = isContentOnlyMission(mission);
   state.selectedMissionId = missionId;
-  $("#detailView").classList.toggle("reading-mode", Boolean(mission.readingContent));
+  $("#detailView").classList.toggle("reading-mode", contentOnly);
+  $("#detailView").classList.toggle("references-mode", mission.id === "referencias-avancadas-ia");
   $("#detailTitle").textContent = `${missionNumber}. ${mission.title}`;
   $("#detailDescription").textContent = mission.description;
   $("#detailSteps").innerHTML = mission.steps.map((step) => `<li>${step}</li>`).join("");
-  $("#resourceList").innerHTML = (mission.resources || [])
+  $("#resourceList").innerHTML = mission.id === "referencias-avancadas-ia" ? "" : (mission.resources || [])
     .map((resource) => {
       const url = resource.match(/https?:\/\/\S+/)?.[0] || "";
       const isUrl = Boolean(url);
@@ -354,10 +361,10 @@ function renderDetail(missionId) {
   $("#submissionFile").value = "";
   $("#selectedFileName").textContent = "PDF, imagem, DOC ou PPT";
   document.querySelector(".upload-zone").classList.remove("is-loading");
-  $("#submissionText").required = !mission.readingContent;
-  $("#submissionFile").required = !mission.readingContent;
-  $("#submissionForm").classList.toggle("hidden", Boolean(mission.readingContent));
-  document.querySelector(".submission-history").classList.toggle("hidden", Boolean(mission.readingContent));
+  $("#submissionText").required = !contentOnly;
+  $("#submissionFile").required = !contentOnly;
+  $("#submissionForm").classList.toggle("hidden", contentOnly);
+  document.querySelector(".submission-history").classList.toggle("hidden", contentOnly);
   renderReadingPanel(mission);
   renderBacklog();
   setSubmissionButtonState(isMissionCompleted(missionId) ? "sent" : "idle");
@@ -428,13 +435,30 @@ function renderReadingPanel(mission) {
   const panel = $("#readingPanel");
   const content = $("#readingContent");
   const button = $("#markReadingBtn");
-  if (!mission.readingContent) {
+  if (!isContentOnlyMission(mission)) {
     panel.classList.add("hidden");
     return;
   }
 
   panel.classList.remove("hidden");
   content.scrollTop = 0;
+  if (mission.id === "referencias-avancadas-ia") {
+    content.innerHTML = `
+      <article class="reference-article">
+        <header class="reference-hero">
+          <span class="eyebrow">Curadoria avançada</span>
+          <h2>07. Estudos avançados</h2>
+          <p>Explore conteúdos complementares para continuar evoluindo em IA. Escolha materiais por formato e registre a conclusão quando finalizar sua navegação.</p>
+        </header>
+        <section class="reference-grid">
+          ${buildReferenceCards(mission.resources || [])}
+        </section>
+      </article>
+    `;
+    setReadingButtonState(isMissionCompleted(mission.id) ? "complete" : "ready");
+    return;
+  }
+
   if (mission.id === "leitura-conteudo-ia") {
     content.innerHTML = `
       <article class="blog-article">
@@ -469,6 +493,45 @@ function renderReadingPanel(mission) {
     content.innerHTML = mission.readingContent.map((paragraph) => `<p>${paragraph}</p>`).join("");
   }
   setReadingButtonState(isMissionCompleted(mission.id) ? "complete" : "locked");
+}
+
+function getReferenceType(resource) {
+  const label = resource.split(":")[0].toLowerCase();
+  if (label.includes("podcast")) return "Podcast";
+  if (label.includes("linkedin")) return "LinkedIn";
+  if (label.includes("canal yt")) return "YouTube";
+  if (label.includes("report")) return "Report";
+  return "Referencia";
+}
+
+function getReferenceDomain(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "referencia externa";
+  }
+}
+
+function buildReferenceCards(resources) {
+  return resources
+    .map((resource) => {
+      const url = resource.match(/https?:\/\/\S+/)?.[0] || "#";
+      const title = resource.replace(/:\s*https?:\/\/\S+/, "");
+      const type = getReferenceType(resource);
+      const domain = getReferenceDomain(url);
+      return `
+        <a class="reference-card" href="${url}" target="_blank" rel="noreferrer">
+          <div class="reference-preview reference-${type.toLowerCase()}">
+            <span class="reference-domain">${domain}</span>
+            <strong>${type}</strong>
+          </div>
+          <span class="reference-tag">${type}</span>
+          <strong>${title}</strong>
+          <small>${url}</small>
+        </a>
+      `;
+    })
+    .join("");
 }
 
 function setReadingButtonState(stateName) {
@@ -736,6 +799,7 @@ async function markReadingDone() {
 
 function handleReadingScroll(event) {
   const element = event.currentTarget;
+  if (missions.find((mission) => mission.id === state.selectedMissionId)?.id === "referencias-avancadas-ia") return;
   const reachedEnd = element.scrollTop + element.clientHeight >= element.scrollHeight - 8;
   if (isMissionCompleted(state.selectedMissionId)) {
     setReadingButtonState("complete");
@@ -751,6 +815,20 @@ function toggleDevicePreview() {
   const isMobile = shell.classList.toggle("demo-mobile");
   $("#deviceToggle").textContent = isMobile ? "Modo desktop" : "Modo mobile";
   $("#deviceToggle").setAttribute("aria-pressed", String(isMobile));
+}
+
+function applyTheme(theme) {
+  const isLight = theme === "light";
+  document.documentElement.classList.toggle("light", isLight);
+  document.documentElement.classList.toggle("dark", !isLight);
+  $("#themeToggle").textContent = isLight ? "Tema escuro" : "Tema claro";
+  $("#themeToggle").setAttribute("aria-pressed", String(isLight));
+  localStorage.setItem(themeKey, theme);
+}
+
+function toggleTheme() {
+  const current = localStorage.getItem(themeKey) || "dark";
+  applyTheme(current === "dark" ? "light" : "dark");
 }
 
 function openAdminAccess() {
@@ -1083,6 +1161,7 @@ function bindEvents() {
   });
   $("#adminExportBtn").addEventListener("click", exportAdminXlsx);
   $("#deviceToggle").addEventListener("click", toggleDevicePreview);
+  $("#themeToggle").addEventListener("click", toggleTheme);
   $("#readingContent").addEventListener("scroll", handleReadingScroll);
   $("#markReadingBtn").addEventListener("click", markReadingDone);
   $("#logoutBtn").addEventListener("click", () => {
@@ -1148,6 +1227,7 @@ function bindEvents() {
 }
 
 async function start() {
+  applyTheme(localStorage.getItem(themeKey) || "dark");
   await loadState();
   bindEvents();
   fillLoginFromSession();
