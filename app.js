@@ -244,7 +244,7 @@ function renderProgress() {
   const completed = missions.filter((mission) => isMissionCompleted(mission.id)).length;
   const percent = Math.round((completed / missions.length) * 100);
   const completedPrize = isMissionCompleted("solucao-performance-ia");
-  const completedCertificate = isMissionCompleted("certificado-anthropic");
+  const completedCertificate = completed === missions.length;
   $("#completedCount").textContent = completed;
   $("#totalCount").textContent = missions.length;
   $("#progressPercent").textContent = `${percent}%`;
