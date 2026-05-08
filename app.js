@@ -309,12 +309,48 @@ function renderDetail(missionId) {
     .join("");
   $("#submissionText").value = "";
   $("#submissionFile").value = "";
+  $("#selectedFileName").textContent = "PDF, imagem, DOC ou PPT";
+  setSubmissionButtonState("idle");
   $("#submissionText").required = !mission.readingContent;
   $("#submissionFile").required = !mission.readingContent;
   renderReadingPanel(mission);
   renderBacklog();
   updateMissionNavigation();
   show("#detailView");
+}
+
+function setSubmissionButtonState(stateName, message = "") {
+  const button = $("#submitMissionBtn");
+  const text = $("#submitMissionText");
+  const status = $("#submissionStatus");
+  if (!button || !text || !status) return;
+
+  button.classList.remove("is-loading", "is-sent");
+  button.disabled = false;
+  status.textContent = message;
+
+  if (stateName === "loading") {
+    button.classList.add("is-loading");
+    button.disabled = true;
+    text.textContent = "Enviando...";
+    status.textContent = "Processando envio. Aguarde alguns instantes.";
+    return;
+  }
+
+  if (stateName === "sent") {
+    button.classList.add("is-sent");
+    text.textContent = "Enviado";
+    status.textContent = message || "Envio realizado com sucesso.";
+    return;
+  }
+
+  text.textContent = "Enviar missao";
+}
+
+function updateSelectedFileName() {
+  const file = $("#submissionFile").files[0];
+  $("#selectedFileName").textContent = file ? file.name : "PDF, imagem, DOC ou PPT";
+  setSubmissionButtonState("idle");
 }
 
 function updateMissionNavigation() {
@@ -364,7 +400,13 @@ function renderBacklog() {
         <div>
           <strong>${item.userName} - ${item.userArea}</strong>
           <small>${new Date(item.createdAt).toLocaleString("pt-BR")}</small>
-          <small>${item.fileName ? `Arquivo: ${item.fileName}` : "Sem arquivo anexado"}</small>
+          <small>${
+            item.fileUrl
+              ? `Arquivo: <a href="${item.fileUrl}" target="_blank" rel="noreferrer">${item.fileName || "Abrir arquivo"}</a>`
+              : item.fileName
+              ? `Arquivo: ${item.fileName}`
+              : "Sem arquivo anexado"
+          }</small>
           <small>${item.text || "Sem comentario"}</small>
         </div>
         ${
@@ -462,6 +504,8 @@ async function handleSubmission(event) {
     return;
   }
 
+  setSubmissionButtonState("loading");
+
   if (db) {
     try {
       const uploaded = await uploadEvidence(file);
@@ -487,8 +531,10 @@ async function handleSubmission(event) {
       renderBacklog();
       renderProgress();
       renderMissions();
+      setSubmissionButtonState("sent");
       return data;
     } catch (error) {
+      setSubmissionButtonState("idle", `Nao foi possivel enviar: ${error.message}`);
       alert(`Nao foi possivel enviar: ${error.message}`);
       return;
     }
@@ -518,6 +564,7 @@ async function handleSubmission(event) {
   renderBacklog();
   renderProgress();
   renderMissions();
+  setSubmissionButtonState("sent");
 }
 
 async function markReadingDone() {
@@ -928,6 +975,7 @@ function bindEvents() {
   });
   $("#backHomeBtn").addEventListener("click", renderHome);
   $("#submissionForm").addEventListener("submit", handleSubmission);
+  $("#submissionFile").addEventListener("change", updateSelectedFileName);
 
   document.addEventListener("click", (event) => {
     const missionButton = event.target.closest("[data-open-mission]");
@@ -944,6 +992,9 @@ function bindEvents() {
     }
 
     if (deleteButton) {
+      const confirmed = window.confirm("Tem certeza de que deseja excluir o envio?");
+      if (!confirmed) return;
+
       if (db) {
         db.from("app_submissions")
           .delete()
@@ -958,6 +1009,7 @@ function bindEvents() {
             renderBacklog();
             renderProgress();
             renderMissions();
+            setSubmissionButtonState("idle");
           });
         return;
       }
@@ -966,6 +1018,7 @@ function bindEvents() {
       renderBacklog();
       renderProgress();
       renderMissions();
+      setSubmissionButtonState("idle");
     }
   });
 }

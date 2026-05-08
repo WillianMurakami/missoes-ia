@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Missoes IA | UOL EdTech</title>
-    <link rel="stylesheet" href="./styles.css?v=20260508-4" />
+    <link rel="stylesheet" href="./styles.css?v=20260508-5" />
   </head>
   <body>
     <main id="appShell" class="app-shell">
@@ -76,8 +76,18 @@
           </div>
           <div class="progress-track" id="progressTrack" aria-label="Progresso das missoes">
             <span id="progressFill" class="progress-fill"></span>
-            <i class="milestone-marker milestone-prize" title="Concurso com premios"><span>4</span></i>
-            <i class="milestone-marker milestone-certificate" title="Certificado de conclusao"></i>
+            <i class="milestone-marker milestone-prize" title="Desafios principais">
+              <span class="marker-label">Desafios Principais</span>
+              <span class="marker-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19Zm4.3 7.7-5.1 5.1a1 1 0 0 1-1.4 0l-2.3-2.3a1 1 0 1 1 1.4-1.4l1.6 1.6 4.4-4.4a1 1 0 1 1 1.4 1.4Z"/></svg>
+              </span>
+            </i>
+            <i class="milestone-marker milestone-certificate" title="Conteudos adicionais">
+              <span class="marker-label">Conteudos Adicionais</span>
+              <span class="marker-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="m12 2.8 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 2.8Z"/></svg>
+              </span>
+            </i>
           </div>
           <strong id="progressPercent">0%</strong>
         </section>
@@ -138,14 +148,26 @@
               Comentario ou resposta
               <textarea id="submissionText" rows="5" placeholder="Descreva o que voce fez, aprendizados ou link do material." required></textarea>
             </label>
-            <label>
-              Evidencia
+            <label class="upload-box">
+              <span class="upload-title">Upload do arquivo</span>
+              <span class="upload-zone">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v1H4V6Zm0 4h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8Zm8 7a1 1 0 0 0 1-1v-2.6l.8.8a1 1 0 0 0 1.4-1.4l-2.5-2.5a1 1 0 0 0-1.4 0l-2.5 2.5a1 1 0 1 0 1.4 1.4l.8-.8V16a1 1 0 0 0 1 1Z"/></svg>
+                <strong>Arraste ou selecione o arquivo</strong>
+                <small id="selectedFileName">PDF, imagem, DOC ou PPT</small>
+              </span>
               <input id="submissionFile" type="file" accept="image/*,.pdf,.doc,.docx,.ppt,.pptx" required />
             </label>
-            <button type="submit">Enviar missao</button>
+            <button id="submitMissionBtn" type="submit"><span class="button-spinner" aria-hidden="true"></span><span id="submitMissionText">Enviar missao</span></button>
+            <small id="submissionStatus" class="submission-status"></small>
           </form>
         </article>
-        <div id="backlogList" class="hidden"></div>
+        <section class="backlog-section submission-history">
+          <div>
+            <span class="eyebrow">Historico da missao</span>
+            <h2>Envio registrado</h2>
+          </div>
+          <div id="backlogList" class="backlog-list"></div>
+        </section>
       </section>
 
       <section id="adminAccessView" class="admin-access-view hidden">
@@ -194,9 +216,9 @@
       </section>
     </main>
 
-    <script src="./supabase-config.js?v=20260508-4"></script>
+    <script src="./supabase-config.js?v=20260508-5"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="./app.js?v=20260508-4"></script>
+    <script src="./app.js?v=20260508-5"></script>
   </body>
 </html>
