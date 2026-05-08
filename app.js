@@ -295,6 +295,7 @@ function renderHome() {
 function renderDetail(missionId) {
   const mission = missions.find((item) => item.id === missionId);
   state.selectedMissionId = missionId;
+  $("#detailView").classList.toggle("reading-mode", Boolean(mission.readingContent));
   $("#detailTitle").textContent = mission.title;
   $("#detailDescription").textContent = mission.description;
   $("#detailSteps").innerHTML = mission.steps.map((step) => `<li>${step}</li>`).join("");
@@ -312,6 +313,8 @@ function renderDetail(missionId) {
   $("#selectedFileName").textContent = "PDF, imagem, DOC ou PPT";
   $("#submissionText").required = !mission.readingContent;
   $("#submissionFile").required = !mission.readingContent;
+  $("#submissionForm").classList.toggle("hidden", Boolean(mission.readingContent));
+  document.querySelector(".submission-history").classList.toggle("hidden", Boolean(mission.readingContent));
   renderReadingPanel(mission);
   renderBacklog();
   setSubmissionButtonState(isMissionCompleted(missionId) ? "sent" : "idle");
@@ -381,7 +384,48 @@ function renderReadingPanel(mission) {
 
   panel.classList.remove("hidden");
   content.scrollTop = 0;
-  content.innerHTML = mission.readingContent.map((paragraph) => `<p>${paragraph}</p>`).join("");
+  if (mission.id === "leitura-conteudo-ia") {
+    content.innerHTML = `
+      <article class="blog-article">
+        <header class="blog-hero">
+          <span class="eyebrow">Mundo da IA</span>
+          <h2>Como a inteligencia artificial muda a forma de aprender e trabalhar</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae justo sed lectus gravida facilisis. Este espaco simula o conteudo final que sera publicado na trilha.</p>
+        </header>
+        <section class="blog-grid">
+          <div class="blog-card illustration-yellow"></div>
+          <div>
+            <h3>Primeiros conceitos</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non dui vitae lorem porta elementum. Donec at justo sit amet sapien suscipit fermentum. A IA pode apoiar analise, criacao, automacao e tomada de decisao, desde que exista clareza de contexto e objetivo.</p>
+            <p>Nullam non nunc eros. Etiam vestibulum, justo a eleifend blandit, magna nibh gravida magna, sed feugiat neque lorem non odio.</p>
+          </div>
+        </section>
+        <section>
+          <h3>Aplicacoes no trabalho</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent id commodo velit. Cras aliquet, lectus sed finibus posuere, erat justo pulvinar arcu, at gravida sem lectus sit amet purus.</p>
+          <p>Aliquam erat volutpat. Vivamus sed arcu eget sapien viverra aliquet. Curabitur in facilisis neque. Maecenas vitae magna eu augue efficitur interdum.</p>
+        </section>
+        <div class="blog-media">
+          <iframe src="https://www.youtube.com/embed/JQeItPqowOg" title="Conteudo de apoio sobre IA" allowfullscreen></iframe>
+        </div>
+        <section class="blog-grid reverse">
+          <div>
+            <h3>Boas praticas</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Use prompts claros, revise respostas, preserve dados sensiveis e sempre valide o resultado antes de aplicar em rotinas criticas.</p>
+            <p>Suspendisse potenti. Integer vehicula, massa eu luctus sodales, nunc justo congue nisi, vitae dictum massa ipsum sit amet nibh.</p>
+          </div>
+          <div class="blog-card illustration-red"></div>
+        </section>
+        <section>
+          <h3>Reflexao final</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi aliquam dui vel dui mattis, eget viverra augue posuere. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
+          <p>Fim do conteudo. Ao chegar aqui, o botao de conclusao fica liberado.</p>
+        </section>
+      </article>
+    `;
+  } else {
+    content.innerHTML = mission.readingContent.map((paragraph) => `<p>${paragraph}</p>`).join("");
+  }
   button.disabled = true;
   button.textContent = "Role ate o final para liberar";
 }
