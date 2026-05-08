@@ -146,6 +146,8 @@ const state = {
   adminSubmissions: [],
   adminViewMode: "users",
   adminSort: { key: "name", direction: "asc" },
+  animateNextHomeProgress: true,
+  uploadPreviewTimer: null,
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -202,7 +204,7 @@ function loginLocally({ id, name, area, email }) {
   state.user = { id, name, area, email };
   localStorage.setItem(sessionKey, JSON.stringify(state.user));
   state.submissions = JSON.parse(localStorage.getItem(storageKey) || "[]");
-  renderHome();
+  renderHome({ animateProgress: true });
 }
 
 function show(viewId) {
@@ -240,7 +242,7 @@ function updateUserHeader() {
     .toUpperCase();
 }
 
-function renderProgress() {
+function renderProgress({ animate = false } = {}) {
   const mainMissions = missions.filter((mission) => mission.group === "main");
   const optionalMissions = missions.filter((mission) => mission.group === "optional");
   const mainCompleted = mainMissions.filter((mission) => isMissionCompleted(mission.id)).length;
@@ -252,9 +254,46 @@ function renderProgress() {
   $("#completedCount").textContent = completed;
   $("#totalCount").textContent = missions.length;
   $("#progressPercent").textContent = `${percent}%`;
-  $("#progressFill").style.width = `${percent}%`;
+  animateProgressFill(percent, animate);
   document.querySelector(".milestone-prize").classList.toggle("reached", completedPrize);
   document.querySelector(".milestone-certificate").classList.toggle("reached", completedCertificate);
+  document.querySelector(".milestone-certificate").classList.toggle("celebrate", completedCertificate && animate);
+  if (completedCertificate && animate) launchCertificateConfetti();
+}
+
+function animateProgressFill(percent, shouldAnimate) {
+  const fill = $("#progressFill");
+  if (!fill) return;
+
+  fill.classList.toggle("is-animating", shouldAnimate);
+  if (!shouldAnimate) {
+    fill.style.width = `${percent}%`;
+    return;
+  }
+
+  fill.style.width = "0%";
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      fill.style.width = `${percent}%`;
+    });
+  });
+}
+
+function launchCertificateConfetti() {
+  const marker = document.querySelector(".milestone-certificate");
+  if (!marker || marker.querySelector(".confetti-burst")) return;
+
+  const burst = document.createElement("span");
+  burst.className = "confetti-burst";
+  for (let index = 0; index < 10; index += 1) {
+    const piece = document.createElement("span");
+    piece.style.setProperty("--angle", `${index * 36 - 90}deg`);
+    piece.style.setProperty("--distance", `${22 + (index % 3) * 7}px`);
+    piece.style.setProperty("--delay", `${index * 22}ms`);
+    burst.appendChild(piece);
+  }
+  marker.appendChild(burst);
+  window.setTimeout(() => burst.remove(), 1200);
 }
 
 function buildMissionCards(items) {
@@ -285,11 +324,13 @@ function renderMissions() {
   $("#optionalMissionGrid").innerHTML = buildMissionCards(missions.filter((mission) => mission.group === "optional"));
 }
 
-function renderHome() {
+function renderHome(options = {}) {
+  const shouldAnimate = options.animateProgress ?? state.animateNextHomeProgress;
   updateUserHeader();
-  renderProgress();
+  renderProgress({ animate: shouldAnimate });
   renderMissions();
   show("#homeView");
+  state.animateNextHomeProgress = false;
 }
 
 function renderDetail(missionId) {
@@ -312,6 +353,7 @@ function renderDetail(missionId) {
   $("#submissionText").value = "";
   $("#submissionFile").value = "";
   $("#selectedFileName").textContent = "PDF, imagem, DOC ou PPT";
+  document.querySelector(".upload-zone").classList.remove("is-loading");
   $("#submissionText").required = !mission.readingContent;
   $("#submissionFile").required = !mission.readingContent;
   $("#submissionForm").classList.toggle("hidden", Boolean(mission.readingContent));
@@ -353,7 +395,15 @@ function setSubmissionButtonState(stateName, message = "") {
 
 function updateSelectedFileName() {
   const file = $("#submissionFile").files[0];
-  $("#selectedFileName").textContent = file ? file.name : "PDF, imagem, DOC ou PPT";
+  const fileName = $("#selectedFileName");
+  const uploadZone = document.querySelector(".upload-zone");
+  window.clearTimeout(state.uploadPreviewTimer);
+  uploadZone.classList.toggle("is-loading", Boolean(file));
+  fileName.textContent = file ? "Carregando arquivo..." : "PDF, imagem, DOC ou PPT";
+  state.uploadPreviewTimer = window.setTimeout(() => {
+    uploadZone.classList.remove("is-loading");
+    fileName.textContent = file ? file.name : "PDF, imagem, DOC ou PPT";
+  }, file ? 650 : 0);
   setSubmissionButtonState("idle");
 }
 
@@ -537,7 +587,7 @@ async function handleLogin(event) {
     localStorage.setItem(sessionKey, JSON.stringify(state.user));
     await loadCloudSubmissions();
     setAuthStatus("");
-    renderHome();
+    renderHome({ animateProgress: true });
     return;
   }
 
@@ -1050,7 +1100,7 @@ function bindEvents() {
     state.user = null;
     show("#loginView");
   });
-  $("#backHomeBtn").addEventListener("click", renderHome);
+  $("#backHomeBtn").addEventListener("click", () => renderHome({ animateProgress: false }));
   $("#submissionForm").addEventListener("submit", handleSubmission);
   $("#submissionFile").addEventListener("change", updateSelectedFileName);
   $("#submissionText").addEventListener("input", markSubmissionDraft);
@@ -1113,7 +1163,7 @@ async function start() {
   fillLoginFromSession();
 
   if (state.user) {
-    renderHome();
+    renderHome({ animateProgress: true });
   } else {
     show("#loginView");
   }
