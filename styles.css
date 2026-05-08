@@ -459,35 +459,25 @@ textarea:focus {
 
 .progress-track {
   position: relative;
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-  height: 28px;
-  overflow: visible;
-  border-radius: 9px;
-  background: #edf0f4;
-  box-shadow: inset 0 0 0 1px rgba(23, 23, 23, 0.04);
-}
-
-.progress-segment {
   display: block;
-  height: 100%;
-  border-radius: 0;
-  background: #c6ccd4;
-  transition: width 0.2s ease;
+  height: 28px;
+  min-width: 360px;
+  overflow: visible;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #d8dde4, #c4cad3);
+  box-shadow: inset 0 1px 2px rgba(23, 23, 23, 0.08), 0 8px 18px rgba(30, 45, 69, 0.06);
 }
 
-.progress-segment:first-of-type {
-  border-radius: 9px 0 0 9px;
-}
-
-.progress-segment:last-of-type {
-  border-radius: 0 9px 9px 0;
-}
-
-.progress-segment.complete {
+.progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: block;
+  width: 0;
+  max-width: 100%;
+  border-radius: 999px;
   background: linear-gradient(135deg, var(--uol-red) 0%, var(--uol-orange) 48%, var(--uol-yellow) 100%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  transition: width 0.28s ease;
 }
 
 .milestone-marker {
@@ -509,13 +499,35 @@ textarea:focus {
 
 .milestone-prize {
   left: calc((4 / 7) * 100%);
-  background: linear-gradient(135deg, #3f444c, #aeb5bf);
+  width: 3px;
+  height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f7f8fa, #747b86, #f7f8fa);
+  color: #3f444c;
+  box-shadow: 0 8px 16px rgba(23, 23, 23, 0.16);
+}
+
+.milestone-prize span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--white);
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3f444c, #9aa2ad);
+  color: var(--white);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 8px 18px rgba(23, 23, 23, 0.18);
 }
 
 .milestone-certificate {
   left: calc((7 / 7) * 100%);
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border: 3px solid var(--white);
   background: radial-gradient(circle at 32% 24%, #fff6bd 0%, #f5d44f 28%, #d09b08 68%, #8d6200 100%);
 }
@@ -529,11 +541,11 @@ textarea:focus {
   text-shadow: 0 1px 4px rgba(93, 63, 0, 0.32);
 }
 
-.milestone-marker.reached::after {
+.milestone-certificate.reached::after {
   content: "";
   position: absolute;
   inset: -7px;
-  border: 2px solid currentColor;
+  border: 2px solid rgba(216, 158, 0, 0.58);
   border-radius: 50%;
 }
 

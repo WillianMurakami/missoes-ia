@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Missoes IA | UOL EdTech</title>
-    <link rel="stylesheet" href="./styles.css?v=20260508-3" />
+    <link rel="stylesheet" href="./styles.css?v=20260508-4" />
   </head>
   <body>
     <main id="appShell" class="app-shell">
@@ -75,7 +75,8 @@
             <h2><span id="completedCount">0</span>/<span id="totalCount">0</span> missoes concluidas</h2>
           </div>
           <div class="progress-track" id="progressTrack" aria-label="Progresso das missoes">
-            <i class="milestone-marker milestone-prize" title="Concurso com premios">4</i>
+            <span id="progressFill" class="progress-fill"></span>
+            <i class="milestone-marker milestone-prize" title="Concurso com premios"><span>4</span></i>
             <i class="milestone-marker milestone-certificate" title="Certificado de conclusao"></i>
           </div>
           <strong id="progressPercent">0%</strong>
@@ -193,9 +194,9 @@
       </section>
     </main>
 
-    <script src="./supabase-config.js?v=20260508-3"></script>
+    <script src="./supabase-config.js?v=20260508-4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="./app.js?v=20260508-3"></script>
+    <script src="./app.js?v=20260508-4"></script>
   </body>
 </html>

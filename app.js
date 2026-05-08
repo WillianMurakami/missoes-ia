@@ -241,19 +241,18 @@ function updateUserHeader() {
 }
 
 function renderProgress() {
-  const completed = missions.filter((mission) => isMissionCompleted(mission.id)).length;
+  const mainMissions = missions.filter((mission) => mission.group === "main");
+  const optionalMissions = missions.filter((mission) => mission.group === "optional");
+  const mainCompleted = mainMissions.filter((mission) => isMissionCompleted(mission.id)).length;
+  const optionalCompleted = optionalMissions.filter((mission) => isMissionCompleted(mission.id)).length;
+  const completed = mainCompleted === mainMissions.length ? mainCompleted + optionalCompleted : mainCompleted;
   const percent = Math.round((completed / missions.length) * 100);
   const completedPrize = isMissionCompleted("solucao-performance-ia");
   const completedCertificate = completed === missions.length;
   $("#completedCount").textContent = completed;
   $("#totalCount").textContent = missions.length;
   $("#progressPercent").textContent = `${percent}%`;
-  $("#progressTrack").querySelectorAll(".progress-segment").forEach((segment) => segment.remove());
-  missions.forEach((mission) => {
-    const segment = document.createElement("span");
-    segment.className = `progress-segment ${isMissionCompleted(mission.id) ? "complete" : ""}`;
-    $("#progressTrack").appendChild(segment);
-  });
+  $("#progressFill").style.width = `${percent}%`;
   document.querySelector(".milestone-prize").classList.toggle("reached", completedPrize);
   document.querySelector(".milestone-certificate").classList.toggle("reached", completedCertificate);
 }
