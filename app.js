@@ -106,6 +106,31 @@ const missions = [
     ],
     resources: ["Conteudo externo: cursos gratuitos de IA da Anthropic."],
   },
+  {
+    id: "referencias-avancadas-ia",
+    type: "Opcional 3",
+    group: "optional",
+    icon: "07",
+    accent: "silver",
+    title: "Estudos avancados",
+    short: "Explore referencias para aprofundar sua jornada em IA.",
+    description:
+      "Acesse uma curadoria de podcasts, relatórios, perfis e canais para continuar estudando IA depois da trilha.",
+    steps: [
+      "Escolha pelo menos duas referencias da curadoria.",
+      "Registre quais materiais voce acessou.",
+      "Comente o que pretende aplicar ou investigar a partir dessas referencias.",
+    ],
+    resources: [
+      "Podcast - IA Todo dia: https://open.spotify.com/show/2FHimuESqvjBL4x8AKur2b",
+      "Podcast - Gestao do amanha: https://open.spotify.com/show/4apVjIcnTppVfmyicivpkJ",
+      "Report - Future of Jobs (WEF): https://reports.weforum.org/docs/WEF_Future_of_Jobs_Report_2025.pdf",
+      "LinkedIn - Miguel Fernandes: https://www.linkedin.com/in/inventormiguel/",
+      "LinkedIn - Matheus Castelo: https://www.linkedin.com/in/matheuscastelobranco/",
+      "LinkedIn - Andreas Horn: https://www.linkedin.com/in/andreashorn1/",
+      "Canal YT - Gustavo Guanabara: https://www.youtube.com/watch?v=70z3vC9mgzo&list=PLHz_AreHm4dk0Hg99bUQMiH1dEn-qu0Hg",
+    ],
+  },
 ];
 
 const storageKey = "uol-edtech-ai-missions";
@@ -119,7 +144,7 @@ const state = {
   submissions: [],
   adminProfiles: [],
   adminSubmissions: [],
-  adminViewMode: "students",
+  adminViewMode: "users",
   adminSort: { key: "name", direction: "asc" },
 };
 
@@ -223,7 +248,12 @@ function renderProgress() {
   $("#completedCount").textContent = completed;
   $("#totalCount").textContent = missions.length;
   $("#progressPercent").textContent = `${percent}%`;
-  $("#progressBar").style.width = `${percent}%`;
+  $("#progressTrack").querySelectorAll(".progress-segment").forEach((segment) => segment.remove());
+  missions.forEach((mission) => {
+    const segment = document.createElement("span");
+    segment.className = `progress-segment ${isMissionCompleted(mission.id) ? "complete" : ""}`;
+    $("#progressTrack").appendChild(segment);
+  });
   document.querySelector(".milestone-prize").classList.toggle("reached", completedPrize);
   document.querySelector(".milestone-certificate").classList.toggle("reached", completedCertificate);
 }
@@ -233,17 +263,16 @@ function buildMissionCards(items) {
     .map((mission) => {
       const completed = isMissionCompleted(mission.id);
       return `
-        <article class="mission-card accent-${mission.accent}">
+        <article class="mission-card accent-${mission.accent}" data-open-mission="${mission.id}">
           <div class="mission-art" aria-hidden="true">
+            <span class="status-pill ${completed ? "" : "pending"}">${completed ? "Concluida" : "Pendente"}</span>
             <span>${mission.icon}</span>
           </div>
           <div class="mission-copy">
-            <span class="status-pill ${completed ? "" : "pending"}">${completed ? "Concluida" : "Pendente"}</span>
             <h3>${mission.title}</h3>
             <p>${mission.short}</p>
           </div>
           <footer>
-            <small>${mission.type}</small>
             <button type="button" data-open-mission="${mission.id}">Abrir</button>
           </footer>
         </article>
@@ -267,16 +296,15 @@ function renderHome() {
 function renderDetail(missionId) {
   const mission = missions.find((item) => item.id === missionId);
   state.selectedMissionId = missionId;
-  $("#detailType").textContent = mission.type;
   $("#detailTitle").textContent = mission.title;
   $("#detailDescription").textContent = mission.description;
   $("#detailSteps").innerHTML = mission.steps.map((step) => `<li>${step}</li>`).join("");
   $("#resourceList").innerHTML = (mission.resources || [])
     .map((resource) => {
-      const isUrl = resource.includes("http");
-      const text = isUrl ? resource.replace(/^Treinamento: /, "") : resource;
+      const url = resource.match(/https?:\/\/\S+/)?.[0] || "";
+      const isUrl = Boolean(url);
       return isUrl
-        ? `<a href="${text}" target="_blank" rel="noreferrer">${resource}</a>`
+        ? `<a href="${url}" target="_blank" rel="noreferrer">${resource}</a>`
         : `<span>${resource}</span>`;
     })
     .join("");
@@ -286,7 +314,21 @@ function renderDetail(missionId) {
   $("#submissionFile").required = !mission.readingContent;
   renderReadingPanel(mission);
   renderBacklog();
+  updateMissionNavigation();
   show("#detailView");
+}
+
+function updateMissionNavigation() {
+  const currentIndex = missions.findIndex((mission) => mission.id === state.selectedMissionId);
+  $("#prevMissionBtn").disabled = currentIndex <= 0;
+  $("#nextMissionBtn").disabled = currentIndex >= missions.length - 1;
+}
+
+function moveMission(direction) {
+  const currentIndex = missions.findIndex((mission) => mission.id === state.selectedMissionId);
+  const nextIndex = currentIndex + direction;
+  if (nextIndex < 0 || nextIndex >= missions.length) return;
+  renderDetail(missions[nextIndex].id);
 }
 
 function renderReadingPanel(mission) {
@@ -306,6 +348,7 @@ function renderReadingPanel(mission) {
 }
 
 function renderBacklog() {
+  if (!$("#backlogList")) return;
   const missionRecords = state.submissions
     .filter((item) => item.missionId === state.selectedMissionId)
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -597,6 +640,21 @@ async function renderAdminReport() {
 
 function getAdminRows() {
   const profilesById = new Map(state.adminProfiles.map((profile) => [profile.id, profile]));
+  if (state.adminViewMode === "users") {
+    return state.adminProfiles.map((profile) => {
+      const userSubmissions = state.adminSubmissions.filter((item) => item.user_id === profile.id);
+      return {
+        type: "user",
+        name: profile.name || profile.id,
+        email: profile.email || profile.id,
+        area: profile.area || "Area nao informada",
+        submissions: userSubmissions.length,
+        createdAt: profile.created_at,
+        updatedAt: profile.updated_at || profile.created_at,
+      };
+    });
+  }
+
   if (state.adminViewMode === "students") {
     return state.adminProfiles.map((profile) => {
       const userSubmissions = state.adminSubmissions.filter((item) => item.user_id === profile.id);
@@ -657,11 +715,48 @@ function sortableHeader(label, key) {
 
 function renderAdminTable() {
   const rows = sortAdminRows(getAdminRows());
+  $("#adminUsersTab").classList.toggle("active", state.adminViewMode === "users");
   $("#adminStudentsTab").classList.toggle("active", state.adminViewMode === "students");
   $("#adminSubmissionsTab").classList.toggle("active", state.adminViewMode === "submissions");
 
   if (!rows.length) {
     $("#adminReportList").innerHTML = `<div class="empty-state">Nenhum registro encontrado.</div>`;
+    return;
+  }
+
+  if (state.adminViewMode === "users") {
+    $("#adminReportList").innerHTML = `
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>${sortableHeader("Participante", "name")}</th>
+              <th>${sortableHeader("E-mail", "email")}</th>
+              <th>${sortableHeader("Area", "area")}</th>
+              <th>${sortableHeader("Envios", "submissions")}</th>
+              <th>${sortableHeader("Cadastro", "createdAt")}</th>
+              <th>${sortableHeader("Ultima atividade", "updatedAt")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows
+              .map(
+                (row) => `
+                <tr>
+                  <td><strong>${row.name}</strong></td>
+                  <td>${row.email}</td>
+                  <td>${row.area}</td>
+                  <td>${row.submissions}</td>
+                  <td>${row.createdAt ? new Date(row.createdAt).toLocaleString("pt-BR") : "-"}</td>
+                  <td>${row.updatedAt ? new Date(row.updatedAt).toLocaleString("pt-BR") : "-"}</td>
+                </tr>
+              `
+              )
+              .join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
     return;
   }
 
@@ -750,26 +845,54 @@ function setAdminSort(key) {
   renderAdminTable();
 }
 
-function exportAdminCsv() {
+function exportAdminXlsx() {
   const rows = sortAdminRows(getAdminRows());
-  const headers =
-    state.adminViewMode === "students"
-      ? ["participante", "email", "area", "concluidos", "obrigatorios", "final", "certificado", "ultima_atividade"]
-      : ["data_hora", "participante", "email", "area", "desafio", "comentario", "arquivo"];
-  const csvRows = rows.map((row) => {
-    const values =
-      state.adminViewMode === "students"
-        ? [row.name, row.email, row.area, row.completed, row.requiredCompleted, row.finalDone, row.certificateDone, row.updatedAt]
-        : [row.updatedAt, row.name, row.email, row.area, row.mission, row.comment, row.fileUrl];
-    return values.map((value) => `"${String(value || "").replaceAll('"', '""')}"`).join(",");
+  const data = rows.map((row) => {
+    if (state.adminViewMode === "users") {
+      return {
+        Participante: row.name,
+        Email: row.email,
+        Area: row.area,
+        Envios: row.submissions,
+        Cadastro: row.createdAt,
+        "Ultima atividade": row.updatedAt,
+      };
+    }
+    if (state.adminViewMode === "students") {
+      return {
+        Participante: row.name,
+        Email: row.email,
+        Area: row.area,
+        "Desafios concluidos": row.completed,
+        "Obrigatorios concluidos": row.requiredCompleted,
+        Final: row.finalDone,
+        Certificado: row.certificateDone,
+        "Ultima atividade": row.updatedAt,
+      };
+    }
+    return {
+      "Data/hora": row.updatedAt,
+      Participante: row.name,
+      Email: row.email,
+      Area: row.area,
+      Desafio: row.mission,
+      Comentario: row.comment,
+      Arquivo: row.fileUrl,
+    };
   });
-  const blob = new Blob([[headers.join(","), ...csvRows].join("\n")], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `relatorio-missoes-ia-${state.adminViewMode}.csv`;
-  link.click();
-  URL.revokeObjectURL(url);
+
+  if (!window.XLSX) {
+    alert("Biblioteca de exportacao XLSX nao carregou. Verifique a conexao e tente novamente.");
+    return;
+  }
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const range = XLSX.utils.decode_range(worksheet["!ref"]);
+  worksheet["!autofilter"] = { ref: XLSX.utils.encode_range(range) };
+  worksheet["!cols"] = Object.keys(data[0] || {}).map((key) => ({ wch: Math.max(14, key.length + 6) }));
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Relatorio");
+  XLSX.writeFile(workbook, `relatorio-missoes-ia-${state.adminViewMode}.xlsx`);
 }
 
 function bindEvents() {
@@ -778,6 +901,13 @@ function bindEvents() {
   $("#adminAccessForm").addEventListener("submit", handleAdminAccess);
   $("#adminBackLoginBtn").addEventListener("click", () => show("#loginView"));
   $("#adminExitBtn").addEventListener("click", () => show("#loginView"));
+  $("#prevMissionBtn").addEventListener("click", () => moveMission(-1));
+  $("#nextMissionBtn").addEventListener("click", () => moveMission(1));
+  $("#adminUsersTab").addEventListener("click", () => {
+    state.adminViewMode = "users";
+    state.adminSort = { key: "name", direction: "asc" };
+    renderAdminTable();
+  });
   $("#adminStudentsTab").addEventListener("click", () => {
     state.adminViewMode = "students";
     state.adminSort = { key: "name", direction: "asc" };
@@ -788,7 +918,7 @@ function bindEvents() {
     state.adminSort = { key: "updatedAt", direction: "desc" };
     renderAdminTable();
   });
-  $("#adminExportBtn").addEventListener("click", exportAdminCsv);
+  $("#adminExportBtn").addEventListener("click", exportAdminXlsx);
   $("#deviceToggle").addEventListener("click", toggleDevicePreview);
   $("#readingContent").addEventListener("scroll", handleReadingScroll);
   $("#markReadingBtn").addEventListener("click", markReadingDone);
