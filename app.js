@@ -512,22 +512,28 @@ function getReferenceDomain(url) {
   }
 }
 
+function getReferenceSummary(type, title) {
+  if (type === "Podcast") return "Conteúdo em áudio para acompanhar tendências e aplicações práticas de IA.";
+  if (type === "LinkedIn") return "Perfil de referência para acompanhar provocações, cases e discussões sobre IA.";
+  if (type === "YouTube") return "Trilha em vídeo para aprofundar fundamentos técnicos e ampliar repertório.";
+  if (type === "Report") return "Relatório estratégico para entender impactos de tecnologia, trabalho e futuro.";
+  return `Referência complementar para aprofundar: ${title}.`;
+}
+
 function buildReferenceCards(resources) {
   return resources
     .map((resource) => {
       const url = resource.match(/https?:\/\/\S+/)?.[0] || "#";
       const title = resource.replace(/:\s*https?:\/\/\S+/, "");
       const type = getReferenceType(resource);
-      const domain = getReferenceDomain(url);
+      const summary = getReferenceSummary(type, title);
       return `
         <a class="reference-card" href="${url}" target="_blank" rel="noreferrer">
           <div class="reference-preview reference-${type.toLowerCase()}">
-            <span class="reference-domain">${domain}</span>
             <strong>${type}</strong>
           </div>
-          <span class="reference-tag">${type}</span>
           <strong>${title}</strong>
-          <small>${url}</small>
+          <small>${summary}</small>
         </a>
       `;
     })
@@ -1160,7 +1166,8 @@ function bindEvents() {
     renderAdminTable();
   });
   $("#adminExportBtn").addEventListener("click", exportAdminXlsx);
-  $("#deviceToggle").addEventListener("click", toggleDevicePreview);
+  const deviceToggle = $("#deviceToggle");
+  if (deviceToggle) deviceToggle.addEventListener("click", toggleDevicePreview);
   $("#themeToggle").addEventListener("click", toggleTheme);
   $("#readingContent").addEventListener("scroll", handleReadingScroll);
   $("#markReadingBtn").addEventListener("click", markReadingDone);
