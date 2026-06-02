@@ -1,0 +1,12 @@
+.reference-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) !important;
+  gap: 14px !important;
+  align-items: stretch !important;
+}
+
+@media (max-width: 880px) {
+  .reference-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
