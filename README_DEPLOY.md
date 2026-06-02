@@ -13,23 +13,24 @@ O objetivo e reduzir friccao na acao: o colaborador digita um e-mail, entra e o 
 ## Passos Supabase
 
 1. Crie um projeto em https://supabase.com.
-2. Abra SQL Editor e rode `supabase-schema.sql`.
-3. Em Storage, crie um bucket chamado `mission-evidence`.
-   Para o piloto mais simples, marque como publico. Se quiser privado, precisaremos ajustar o app para gerar links assinados.
-4. Copie `Project URL` e `anon public key`.
+2. Abra SQL Editor e rode o arquivo `supabase-schema.sql` completo.
+   Esse passo cria tabelas, policies, permissoes `GRANT` para a API publica e o bucket `mission-evidence`.
+3. Se o login mostrar erro de banco, rode novamente o `supabase-schema.sql` completo.
+4. Copie `Project URL` e a `publishable key` ou a legacy `anon public key`.
 5. Preencha `supabase-config.js`:
 
 ```js
 window.SUPABASE_CONFIG = {
   url: "https://SEU-PROJETO.supabase.co",
-  anonKey: "SUA_ANON_KEY",
+  anonKey: "SUA_PUBLISHABLE_OU_ANON_KEY",
   evidenceBucket: "mission-evidence",
+  adminCode: "seu-codigo-admin",
 };
 ```
 
 ## Passos Vercel
 
-1. Crie um repositório GitHub com estes arquivos ou use upload manual.
+1. Crie um repositorio GitHub com estes arquivos ou use upload manual.
 2. Publique como projeto estatico na Vercel.
 3. Framework preset: Other.
 4. Build command: vazio.
