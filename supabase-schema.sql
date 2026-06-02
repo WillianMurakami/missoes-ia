@@ -23,6 +23,10 @@ create table if not exists public.app_submissions (
 alter table public.app_profiles enable row level security;
 alter table public.app_submissions enable row level security;
 
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on table public.app_profiles to anon, authenticated;
+grant select, insert, update, delete on table public.app_submissions to anon, authenticated;
+
 drop policy if exists "App can read profiles" on public.app_profiles;
 drop policy if exists "App can create profiles" on public.app_profiles;
 drop policy if exists "App can update profiles" on public.app_profiles;
@@ -61,12 +65,16 @@ create policy "App can delete submissions"
   on public.app_submissions for delete
   using (true);
 
--- Crie tambem um bucket publico chamado mission-evidence no Supabase Storage.
--- Para esta acao simples, as politicas abaixo permitem upload/leitura com a chave publica do app.
+insert into storage.buckets (id, name, public)
+values ('mission-evidence', 'mission-evidence', true)
+on conflict (id) do update set public = true;
+
+-- As politicas abaixo permitem upload/leitura com a chave publica do app.
 
 drop policy if exists "App can upload evidence" on storage.objects;
 drop policy if exists "App can read evidence" on storage.objects;
 drop policy if exists "App can update evidence" on storage.objects;
+drop policy if exists "App can delete evidence" on storage.objects;
 
 create policy "App can upload evidence"
   on storage.objects for insert
@@ -80,3 +88,7 @@ create policy "App can update evidence"
   on storage.objects for update
   using (bucket_id = 'mission-evidence')
   with check (bucket_id = 'mission-evidence');
+
+create policy "App can delete evidence"
+  on storage.objects for delete
+  using (bucket_id = 'mission-evidence');
