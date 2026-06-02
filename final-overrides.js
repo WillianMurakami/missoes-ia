@@ -31,11 +31,11 @@
   ];
 
   const cases = [
-    { title: "Triagem de e-mails e atendimento", company: "Capita + Microsoft", area: "Atendimento", impact: "reduziu tempo de resposta em e-mails e liberou equipes para casos mais complexos", link: "https://www.microsoft.com/en/customers/story/25164-capita-microsoft-copilot-studio" },
-    { title: "Feedback de clientes virando acao", company: "Mattel + Google Cloud", area: "Cliente e dados", impact: "usa Gemini e BigQuery para transformar feedback de consumidores em insights acionaveis", link: "https://cloud.google.com/customers?hl=en" },
-    { title: "Ambiente seguro para explorar IA", company: "Stanford University + Google Cloud", area: "Educacao", impact: "criou um AI Playground para milhares de usuarios testarem IA generativa com seguranca", link: "https://cloud.google.com/customers?hl=en" },
-    { title: "Agente para rotinas de RH", company: "Coca-Cola Andina + Microsoft", area: "RH e operacoes", impact: "moderniza operacoes de RH com agente criado no Microsoft Copilot Studio", link: "https://adoption.microsoft.com/en-us/ai-agents/transformation-stories/" },
-    { title: "Produtividade com assistentes de trabalho", company: "Google Workspace + clientes enterprise", area: "Produtividade", impact: "estudo citado pelo Google aponta economia media de 105 minutos por usuario por semana", link: "https://blog.google/innovation-and-ai/infrastructure-and-cloud/google-cloud/gemini-at-work-ai-agents/" },
+    { title: "Triagem de e-mails e atendimento", company: "Capita + Microsoft", area: "Atendimento", impact: "reduziu tempo de resposta em e-mails e liberou equipes para casos mais complexos", context: "A Capita aplicou IA generativa em fluxos de atendimento para organizar demandas, apoiar respostas e acelerar rotinas repetitivas sem retirar a supervisao humana.", whyItMatters: "Bom exemplo para times que recebem alto volume de solicitacoes internas ou externas e precisam padronizar o primeiro atendimento.", link: "https://www.microsoft.com/en/customers/story/25164-capita-microsoft-copilot-studio" },
+    { title: "Feedback de clientes virando acao", company: "Mattel + Google Cloud", area: "Cliente e dados", impact: "usa Gemini e BigQuery para transformar feedback de consumidores em insights acionaveis", context: "O caso mostra IA apoiando leitura de dados e comentarios de consumidores para identificar padroes, temas recorrentes e oportunidades de melhoria.", whyItMatters: "Ajuda a imaginar usos em pesquisas, NPS, atendimento, comentarios de alunos e analises de qualidade.", link: "https://cloud.google.com/customers?hl=en" },
+    { title: "Ambiente seguro para explorar IA", company: "Stanford University + Google Cloud", area: "Educacao", impact: "criou um AI Playground para milhares de usuarios testarem IA generativa com seguranca", context: "A universidade estruturou um ambiente controlado para estudantes, docentes e equipes explorarem IA com governanca e menos risco.", whyItMatters: "E uma referencia direta para programas de aculturamento, laboratorios internos e trilhas de aprendizagem em IA.", link: "https://cloud.google.com/customers?hl=en" },
+    { title: "Agente para rotinas de RH", company: "Coca-Cola Andina + Microsoft", area: "RH e operacoes", impact: "moderniza operacoes de RH com agente criado no Microsoft Copilot Studio", context: "O exemplo aponta para agentes que respondem duvidas, organizam etapas e reduzem friccao em processos internos de pessoas.", whyItMatters: "Inspira melhorias em onboarding, comunicados, FAQ interno, suporte a liderancas e fluxos administrativos.", link: "https://adoption.microsoft.com/en-us/ai-agents/transformation-stories/" },
+    { title: "Produtividade com assistentes de trabalho", company: "Google Workspace + clientes enterprise", area: "Produtividade", impact: "estudo citado pelo Google aponta economia media de 105 minutos por usuario por semana", context: "O conteudo reune exemplos de IA integrada ao trabalho diario: escrever, resumir, organizar informacoes e apoiar tomada de decisao.", whyItMatters: "E util para mostrar que ganhos pequenos, quando repetidos por muitas pessoas, podem virar impacto relevante.", link: "https://blog.google/innovation-and-ai/infrastructure-and-cloud/google-cloud/gemini-at-work-ai-agents/" },
   ];
 
   const certificateIndex = missions.findIndex((mission) => mission.id === "certificado-anthropic");
@@ -145,7 +145,7 @@
       return;
     }
     setReadingButtonState("locked");
-    document.querySelector("#markReadingBtn").textContent = "Acesse todos os conteudos avancados";
+    document.querySelector("#markReadingBtn").textContent = "Continue navegando pelos conteudos";
   }
 
   function referenceSections(items) {
@@ -180,13 +180,36 @@
 
   function caseCard(item, index) {
     return `
-      <a class="case-card" href="${html(item.link)}" target="_blank" rel="noreferrer">
-        <span class="case-number">${String(index + 1).padStart(2, "0")}</span>
-        <span class="case-area">${html(item.area)}</span>
-        <strong>${html(item.title)}</strong>
-        <small>${html(item.company)}</small>
-        <p>${html(item.impact)}.</p>
-      </a>`;
+      <article class="case-story">
+        <div class="case-story-cover">
+          <span class="case-number">${String(index + 1).padStart(2, "0")}</span>
+          <span class="case-area">${html(item.area)}</span>
+        </div>
+        <div class="case-story-body">
+          <span class="eyebrow">${html(item.company)}</span>
+          <h3>${html(item.title)}</h3>
+          <p class="case-lead">${html(item.context)}</p>
+          <div class="case-insight">
+            <strong>Por que vale observar</strong>
+            <p>${html(item.whyItMatters)}</p>
+          </div>
+          <div class="case-impact">
+            <strong>Resumo do impacto</strong>
+            <p>${html(item.impact)}.</p>
+          </div>
+          <a class="case-link" href="${html(item.link)}" target="_blank" rel="noreferrer">Acessar materia original</a>
+        </div>
+      </article>`;
+  }
+
+  function recordReferenceAccess(referenceId, mission) {
+    const clicks = getReferenceClicks();
+    const before = clicks.size;
+    clicks.add(referenceId);
+    saveReferenceClicks(clicks);
+    if (clicks.size !== before) {
+      window.setTimeout(() => renderReferenceMission(mission), 180);
+    }
   }
 
   function renderReferenceMission(mission) {
@@ -204,11 +227,14 @@
         ${referenceSections(mission.references || [])}
       </article>`;
     content.querySelectorAll("[data-reference-id]").forEach((link) => {
+      link.addEventListener("mousedown", (event) => {
+        if (event.button === 0 || event.button === 1) recordReferenceAccess(link.dataset.referenceId, mission);
+      });
+      link.addEventListener("auxclick", (event) => {
+        if (event.button === 1) recordReferenceAccess(link.dataset.referenceId, mission);
+      });
       link.addEventListener("click", () => {
-        const clicks = getReferenceClicks();
-        clicks.add(link.dataset.referenceId);
-        saveReferenceClicks(clicks);
-        window.setTimeout(() => renderReferenceMission(mission), 250);
+        recordReferenceAccess(link.dataset.referenceId, mission);
       });
     });
     updateReferenceButton();
