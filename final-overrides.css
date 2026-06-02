@@ -1,0 +1,45 @@
+.milestone-prize { left: calc((4 / 6) * 100%) !important; }
+.milestone-certificate { left: calc((6 / 6) * 100%) !important; }
+#optionalMissionGrid .mission-art { background: linear-gradient(135deg, #555a64, #777d88 56%, #a4aab4) !important; }
+.theme-toggle { width: 246px !important; padding-left: 64px !important; }
+.theme-toggle[aria-pressed="true"] { padding-right: 64px !important; }
+.theme-toggle[aria-pressed="true"]::before { transform: translate(192px, -50%) !important; }
+.hero-board h2 { max-width: 720px !important; font-size: clamp(40px, 5.6vw, 78px) !important; line-height: .9 !important; }
+html.light .hero-board h2 { color: #202025 !important; }
+html.light .login-card button,
+html.light .submission-card button,
+html.light .mission-card button,
+html.light .admin-access-card button,
+html.light .export-button { background: linear-gradient(135deg, #2d2d2d, #444444) !important; color: #fff !important; }
+html:not(.light) .upload-box:hover .upload-zone,
+html:not(.light) .upload-zone.is-loading { border-color: rgba(255,118,0,.74) !important; background: rgba(255,118,0,.16) !important; }
+html:not(.light) .upload-box:hover .upload-zone strong,
+html:not(.light) .upload-box:hover .upload-zone small,
+html:not(.light) .upload-zone.is-loading strong,
+html:not(.light) .upload-zone.is-loading small { color: #fff7e6 !important; }
+html:not(.light) .upload-box:hover .upload-zone svg path,
+html:not(.light) .upload-zone.is-loading svg path { fill: #ffb000 !important; }
+.reference-section { display: grid; gap: 14px; }
+.reference-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--mock-border); padding-bottom: 10px; }
+.reference-section-heading span { color: var(--uol-orange); font-size: 13px; font-weight: 900; text-transform: uppercase; }
+.reference-section-heading strong { color: var(--mock-muted); font-size: 12px; }
+.reference-preview span { margin-top: 6px; color: rgba(255,255,255,.86); font-size: 12px; font-weight: 800; }
+.reference-instagram { background: radial-gradient(circle at 18% 18%, rgba(255,255,255,.42), transparent 18%), linear-gradient(135deg,#833ab4,#fd1d1d 52%,#fcb045) !important; }
+.reference-course,
+.reference-platform,
+.reference-reference { background: radial-gradient(circle at 18% 18%, rgba(255,255,255,.44), transparent 18%), linear-gradient(135deg,#555a64,#777d88 56%,#a4aab4) !important; }
+.reference-card p { margin: 0; color: var(--mock-muted); font-size: 13px; line-height: 1.42; }
+.reference-card small { align-self: auto !important; }
+.reference-card { border-radius: 14px !important; }
+.reference-preview { border-radius: 7px !important; min-height: 76px !important; }
+@media (max-width: 880px) {
+  .hero-board h2 { font-size: 34px !important; }
+  .reference-grid { grid-template-columns: 1fr !important; }
+  .reference-article { padding: 18px !important; }
+  .reference-hero h2 { font-size: 34px !important; }
+  .reference-card { min-height: auto !important; }
+}
+@media (max-width: 520px) {
+  .theme-toggle { right: 10px !important; bottom: 10px !important; width: 224px !important; }
+  .theme-toggle[aria-pressed="true"]::before { transform: translate(170px, -50%) !important; }
+}
