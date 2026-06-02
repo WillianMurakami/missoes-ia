@@ -24,6 +24,34 @@
     const googleSecretsPost = references.find((item) => item.title === "5 IAs secretas do Google");
     if (googleSecretsPost) googleSecretsPost.url = "https://www.instagram.com/p/DX5nm3doO1-/";
 
+    const vibeCodingItems = [
+      {
+        level: "Avancado",
+        order: 10,
+        title: "O que e Vibe Coding?",
+        producer: "NoCode Startup",
+        tag: "Video",
+        url: "https://www.youtube.com/watch?v=3T3SS7r2Zpo",
+      },
+      {
+        level: "Avancado",
+        order: 11,
+        title: "Criando um CRM sozinho (com vibe Code)",
+        producer: "Gustavo Campos - IA",
+        tag: "Video",
+        url: "https://www.youtube.com/watch?v=q4VaJ2ae9o0",
+      },
+    ];
+
+    vibeCodingItems.forEach((newItem) => {
+      const existingItem = references.find((item) => item.title === newItem.title);
+      if (existingItem) {
+        Object.assign(existingItem, newItem);
+        return;
+      }
+      references.push(newItem);
+    });
+
     if (typeof state !== "undefined" && state?.selectedMissionId === "referencias-avancadas-ia") {
       renderDetail("referencias-avancadas-ia");
     }
