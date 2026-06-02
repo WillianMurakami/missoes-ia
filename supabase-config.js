@@ -5,6 +5,20 @@ window.SUPABASE_CONFIG = {
   adminCode: "uol-ia-2026",
 };
 
+(function loadFinalOverrides() {
+  const version = "20260602-final";
+  const stylesheet = document.createElement("link");
+  stylesheet.rel = "stylesheet";
+  stylesheet.href = `./final-overrides.css?v=${version}`;
+  document.head.appendChild(stylesheet);
+
+  window.addEventListener("load", () => {
+    const script = document.createElement("script");
+    script.src = `./final-overrides.js?v=${version}`;
+    document.body.appendChild(script);
+  });
+})();
+
 window.addEventListener("load", () => {
   const form = document.querySelector("#loginForm");
   if (!form || !window.supabase) return;
