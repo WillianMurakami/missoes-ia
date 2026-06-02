@@ -6,7 +6,7 @@ window.SUPABASE_CONFIG = {
 };
 
 (function loadFinalOverrides() {
-  const version = "20260602-final4";
+  const version = "20260602-final5";
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
   stylesheet.href = `./final-overrides.css?v=${version}`;
