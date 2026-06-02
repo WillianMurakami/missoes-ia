@@ -6,15 +6,25 @@ window.SUPABASE_CONFIG = {
 };
 
 (function loadFinalOverrides() {
-  const version = "20260602-final3";
+  const version = "20260602-final4";
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
   stylesheet.href = `./final-overrides.css?v=${version}`;
   document.head.appendChild(stylesheet);
 
+  const contentStylesheet = document.createElement("link");
+  contentStylesheet.rel = "stylesheet";
+  contentStylesheet.href = `./content-fixes.css?v=${version}`;
+  document.head.appendChild(contentStylesheet);
+
   window.addEventListener("load", () => {
     const script = document.createElement("script");
     script.src = `./final-overrides.js?v=${version}`;
+    script.onload = () => {
+      const contentScript = document.createElement("script");
+      contentScript.src = `./content-fixes.js?v=${version}`;
+      document.body.appendChild(contentScript);
+    };
     document.body.appendChild(script);
   });
 })();
