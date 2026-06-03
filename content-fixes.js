@@ -93,11 +93,7 @@
       return;
     }
 
-    if (
-      !mission?.references ||
-      !button ||
-      !panel
-    ) return;
+    if (!mission?.references || !button || !panel) return;
 
     let badge = existingBadge;
     if (!badge) {
@@ -136,8 +132,8 @@
         const actions = document.createElement("div");
         actions.className = "reference-scroll-actions";
         actions.innerHTML = `
-          <button type="button" aria-label="Ver conteudos anteriores" data-reference-scroll="prev">&lsaquo;</button>
-          <button type="button" aria-label="Ver proximos conteudos" data-reference-scroll="next">&rsaquo;</button>
+          <button type="button" aria-label="Ver conteúdos anteriores" data-reference-scroll="prev">&lsaquo;</button>
+          <button type="button" aria-label="Ver próximos conteúdos" data-reference-scroll="next">&rsaquo;</button>
         `;
         section.appendChild(actions);
       }
@@ -145,6 +141,47 @@
       if (!grid.dataset.scrollEnhanced) {
         grid.dataset.scrollEnhanced = "true";
         grid.addEventListener("scroll", () => updateReferenceScrollState(section), { passive: true });
+        let dragStartX = 0;
+        let dragStartLeft = 0;
+        let dragging = false;
+        let dragMoved = false;
+
+        grid.addEventListener("pointerdown", (event) => {
+          if (event.target.closest("[data-reference-scroll]")) return;
+          dragging = true;
+          dragMoved = false;
+          dragStartX = event.clientX;
+          dragStartLeft = grid.scrollLeft;
+          grid.classList.add("is-dragging");
+          grid.setPointerCapture?.(event.pointerId);
+        });
+
+        grid.addEventListener("pointermove", (event) => {
+          if (!dragging) return;
+          if (Math.abs(event.clientX - dragStartX) > 8) dragMoved = true;
+          grid.scrollLeft = dragStartLeft - (event.clientX - dragStartX);
+        });
+
+        grid.addEventListener(
+          "click",
+          (event) => {
+            if (!dragMoved) return;
+            event.preventDefault();
+            event.stopPropagation();
+            dragMoved = false;
+          },
+          true
+        );
+
+        ["pointerup", "pointercancel", "pointerleave"].forEach((eventName) => {
+          grid.addEventListener(eventName, (event) => {
+            if (!dragging) return;
+            dragging = false;
+            grid.classList.remove("is-dragging");
+            grid.releasePointerCapture?.(event.pointerId);
+            updateReferenceScrollState(section);
+          });
+        });
       }
 
       section.querySelectorAll("[data-reference-scroll]").forEach((button) => {
@@ -178,5 +215,9 @@
 
   window.addEventListener("resize", scheduleReferenceEnhancement);
   window.addEventListener("storage", updateReferenceTotalProgress);
+  const referenceContent = document.querySelector("#readingContent");
+  if (referenceContent) {
+    new MutationObserver(scheduleReferenceEnhancement).observe(referenceContent, { childList: true, subtree: true });
+  }
   window.setTimeout(scheduleReferenceEnhancement, 0);
 })();
