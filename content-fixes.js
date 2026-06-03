@@ -116,6 +116,44 @@
     });
   }
 
+  function markReferenceCardKinds(section) {
+    section.querySelectorAll(".reference-card").forEach((card) => {
+      const preview = card.querySelector(".reference-preview");
+      const tag = preview?.textContent?.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || "";
+      if (tag.includes("video") || tag.includes("youtube") || tag.includes("tedx")) {
+        preview.classList.add("reference-youtube");
+      }
+    });
+  }
+
+  function bindReferenceLinks(section) {
+    section.querySelectorAll("a.reference-card[data-reference-id]").forEach((link) => {
+      if (link.dataset.linkOpenEnhanced) return;
+      link.dataset.linkOpenEnhanced = "true";
+      link.addEventListener(
+        "click",
+        (event) => {
+          if (link.closest(".reference-grid")?.classList.contains("is-dragging")) return;
+          event.preventDefault();
+          event.stopImmediatePropagation();
+
+          const referenceId = link.dataset.referenceId;
+          const clicks = getReferenceClickSet();
+          clicks.add(referenceId);
+          const key = `uol-edtech-ai-reference-clicks:${typeof state !== "undefined" ? state?.user?.id || "anon" : "anon"}`;
+          localStorage.setItem(key, JSON.stringify([...clicks]));
+          window.open(link.href, "_blank", "noopener,noreferrer");
+
+          const mission = typeof missions !== "undefined"
+            ? missions.find((item) => item.id === "referencias-avancadas-ia")
+            : null;
+          if (mission) window.setTimeout(() => renderDetail("referencias-avancadas-ia"), 160);
+        },
+        true
+      );
+    });
+  }
+
   function enhanceReferenceScroll() {
     if (typeof state === "undefined" || state?.selectedMissionId !== "referencias-avancadas-ia") return;
 
@@ -123,6 +161,9 @@
       const grid = section.querySelector(".reference-grid");
       const heading = section.querySelector(".reference-section-heading");
       if (!grid || !heading) return;
+
+      markReferenceCardKinds(section);
+      bindReferenceLinks(section);
 
       const levelLabel = heading.querySelector("span");
       if (levelLabel?.textContent === "Intermediario") levelLabel.textContent = "Intermediário";
