@@ -19,11 +19,19 @@
     }
   }
 
+  function normalizeReferenceLinks(root = document) {
+    root.querySelectorAll?.("a.reference-card[data-reference-id]").forEach((link) => {
+      link.target = "_self";
+      link.removeAttribute("rel");
+    });
+  }
+
   function openReferenceLink(event) {
     const link = event.target?.closest?.("a.reference-card[data-reference-id]");
     if (!link) return;
 
-    if (event.type === "auxclick" && event.button !== 1) return;
+    if (event.button && event.button !== 0) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     if (link.closest(".reference-grid")?.classList.contains("is-dragging")) {
       event.preventDefault();
       return;
@@ -33,13 +41,17 @@
     event.stopImmediatePropagation();
 
     saveReferenceAccess(link.dataset.referenceId);
-    window.open(link.href, "_blank", "noopener,noreferrer");
-
-    if (typeof renderDetail === "function") {
-      window.setTimeout(() => renderDetail("referencias-avancadas-ia"), 650);
-    }
+    window.location.assign(link.href);
   }
 
+  normalizeReferenceLinks();
+  new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) normalizeReferenceLinks(node);
+      });
+    });
+  }).observe(document.body, { childList: true, subtree: true });
+
   document.addEventListener("click", openReferenceLink, true);
-  document.addEventListener("auxclick", openReferenceLink, true);
 })();
