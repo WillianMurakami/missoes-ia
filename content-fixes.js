@@ -130,24 +130,45 @@
     section.querySelectorAll("a.reference-card[data-reference-id]").forEach((link) => {
       if (link.dataset.linkOpenEnhanced) return;
       link.dataset.linkOpenEnhanced = "true";
+
+      const saveAccess = () => {
+        const referenceId = link.dataset.referenceId;
+        const clicks = getReferenceClickSet();
+        clicks.add(referenceId);
+        const key = `uol-edtech-ai-reference-clicks:${typeof state !== "undefined" ? state?.user?.id || "anon" : "anon"}`;
+        localStorage.setItem(key, JSON.stringify([...clicks]));
+      };
+
+      link.addEventListener(
+        "mousedown",
+        (event) => {
+          event.stopImmediatePropagation();
+        },
+        true
+      );
+
+      link.addEventListener(
+        "auxclick",
+        (event) => {
+          event.stopImmediatePropagation();
+          if (event.button === 1) saveAccess();
+        },
+        true
+      );
+
       link.addEventListener(
         "click",
         (event) => {
-          if (link.closest(".reference-grid")?.classList.contains("is-dragging")) return;
-          event.preventDefault();
+          if (link.closest(".reference-grid")?.classList.contains("is-dragging")) {
+            event.preventDefault();
+            return;
+          }
           event.stopImmediatePropagation();
+          saveAccess();
 
-          const referenceId = link.dataset.referenceId;
-          const clicks = getReferenceClickSet();
-          clicks.add(referenceId);
-          const key = `uol-edtech-ai-reference-clicks:${typeof state !== "undefined" ? state?.user?.id || "anon" : "anon"}`;
-          localStorage.setItem(key, JSON.stringify([...clicks]));
-          window.open(link.href, "_blank", "noopener,noreferrer");
-
-          const mission = typeof missions !== "undefined"
-            ? missions.find((item) => item.id === "referencias-avancadas-ia")
-            : null;
-          if (mission) window.setTimeout(() => renderDetail("referencias-avancadas-ia"), 160);
+          if (typeof renderDetail === "function") {
+            window.setTimeout(() => renderDetail("referencias-avancadas-ia"), 650);
+          }
         },
         true
       );
