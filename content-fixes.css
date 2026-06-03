@@ -152,6 +152,62 @@ html.light .reference-section::after {
   background: linear-gradient(270deg, #fff 8%, rgba(255,255,255,0));
 }
 
+.theme-toggle,
+.theme-toggle[aria-pressed="true"] {
+  width: auto !important;
+  min-width: 122px !important;
+  min-height: 38px !important;
+  right: 18px !important;
+  bottom: 18px !important;
+  padding: 0 14px 0 42px !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  border-radius: 999px !important;
+  background: rgba(35,35,38,.82) !important;
+  color: rgba(255,255,255,.88) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.22) !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  text-align: left !important;
+  backdrop-filter: blur(16px);
+}
+
+.theme-toggle::before,
+.theme-toggle[aria-pressed="true"]::before {
+  left: 12px !important;
+  width: 20px !important;
+  height: 20px !important;
+  transform: translate(0, -50%) !important;
+  background: #f7f7f4 !important;
+  box-shadow: 0 0 0 4px rgba(255,255,255,.08) !important;
+}
+
+.theme-toggle:hover,
+.theme-toggle[aria-pressed="true"]:hover {
+  background: rgba(255,118,0,.88) !important;
+  color: #fff !important;
+}
+
+html.light .theme-toggle,
+html.light .theme-toggle[aria-pressed="true"] {
+  border-color: rgba(32,32,37,.12) !important;
+  background: rgba(255,255,255,.86) !important;
+  color: #2d2d2d !important;
+  box-shadow: 0 12px 28px rgba(45,45,45,.12) !important;
+}
+
+html.light .theme-toggle::before,
+html.light .theme-toggle[aria-pressed="true"]::before {
+  background: #2d2d2d !important;
+  box-shadow: 0 0 0 4px rgba(45,45,45,.08) !important;
+}
+
+html.light .theme-toggle:hover,
+html.light .theme-toggle[aria-pressed="true"]:hover {
+  background: #2d2d2d !important;
+  color: #fff !important;
+}
+
 @media (max-width: 880px) {
   .reference-grid {
     grid-auto-columns: minmax(238px, 84%) !important;
@@ -177,5 +233,12 @@ html.light .reference-section::after {
   #readingPanel:has(.reference-total-progress) #markReadingBtn {
     order: 3;
     flex: 1 1 220px;
+  }
+
+  .theme-toggle,
+  .theme-toggle[aria-pressed="true"] {
+    right: 10px !important;
+    bottom: 10px !important;
+    min-width: 116px !important;
   }
 }
