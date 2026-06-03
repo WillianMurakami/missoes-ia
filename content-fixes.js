@@ -8,51 +8,39 @@
     if (!referenceMission || !Array.isArray(referenceMission.references)) return;
 
     const references = referenceMission.references;
-    const deepLearningIndex = references.findIndex(
-      (item) => item.level === "Iniciante" && item.title === "DeepLearning.AI" && item.producer === "Andrew Ng"
-    );
-    if (deepLearningIndex >= 0) references.splice(deepLearningIndex, 1);
-
-    references
-      .filter((item) => item.level === "Iniciante")
-      .sort((a, b) => a.order - b.order)
-      .forEach((item, index) => {
-        item.order = index + 1;
-      });
-
-    const evolutionPost = references.find((item) => item.title === "Evolucao do uso das IAs");
-    if (evolutionPost) evolutionPost.url = "https://www.instagram.com/p/DYDlxo0tnHW/";
-
-    const googleSecretsPost = references.find((item) => item.title === "5 IAs secretas do Google");
-    if (googleSecretsPost) googleSecretsPost.url = "https://www.instagram.com/p/DX5nm3doO1-/";
-
-    const vibeCodingItems = [
-      {
-        level: "Avancado",
-        order: 10,
-        title: "O que e Vibe Coding?",
-        producer: "NoCode Startup",
-        tag: "Video",
-        url: "https://www.youtube.com/watch?v=3T3SS7r2Zpo",
-      },
-      {
-        level: "Avancado",
-        order: 11,
-        title: "Criando um CRM sozinho (com vibe Code)",
-        producer: "Gustavo Campos - IA",
-        tag: "Video",
-        url: "https://www.youtube.com/watch?v=q4VaJ2ae9o0",
-      },
+    const normalizedReferences = [
+      { level: "Iniciante", order: 1, title: "IA Todo Dia", producer: "Sommers e Helena", tag: "Podcast", url: "https://open.spotify.com/show/2FHimuESqvjBL4x8AKur2b" },
+      { level: "Iniciante", order: 2, title: "Não existe automação sem padronização", producer: "Letícia Mirelli", tag: "Post Instagram", url: "https://www.instagram.com/p/DYFMJMLlGtG/" },
+      { level: "Iniciante", order: 3, title: "Google AI Essentials", producer: "Google", tag: "Curso", url: "https://grow.google/ai-essentials/" },
+      { level: "Iniciante", order: 4, title: "Prompt Engineering Guide", producer: "OpenAI", tag: "Artigo", url: "https://platform.openai.com/docs/guides/prompt-engineering" },
+      { level: "Iniciante", order: 5, title: "Elements of AI", producer: "University of Helsinki / MinnaLearn", tag: "Curso", url: "https://course.elementsofai.com/pt/" },
+      { level: "Iniciante", order: 6, title: "Do Prompt ao Agente", producer: "Gustavo Guanabara", tag: "Vídeo", url: "https://www.youtube.com/watch?v=pv4pTteJOwA" },
+      { level: "Iniciante", order: 7, title: "Como a IA vai mudar tudo (inclusive você)", producer: "Miguel Fernandes", tag: "TEDx", url: "https://www.youtube.com/watch?v=C38xlWnkezQ" },
+      { level: "Intermediario", order: 1, title: "ChatGPT Prompt Engineering for Developers", producer: "DeepLearning.AI / OpenAI", tag: "Curso", url: "https://www.deeplearning.ai/courses/chatgpt-prompt-eng" },
+      { level: "Intermediario", order: 2, title: "Evolução do uso das IAs", producer: "Breno Masi", tag: "Post Instagram", url: "https://www.instagram.com/p/DYDlxo0tnHW/" },
+      { level: "Intermediario", order: 3, title: "Excel para Análise de Dados", producer: "Preditiva.ai", tag: "Curso", url: "https://www.preditiva.ai/curso-excel-gratuito?campaign=excel-link-home" },
+      { level: "Intermediario", order: 4, title: "Análise de Dados com IA para Iniciantes", producer: "Karine Lago", tag: "Vídeo", url: "https://www.youtube.com/watch?v=rxgM2bbAfjY" },
+      { level: "Intermediario", order: 5, title: "Fluência em IA com Copilot", producer: "Microsoft Learn", tag: "Plataforma de aprendizado", url: "https://learn.microsoft.com/pt-br/training/paths/ai-fluency/" },
+      { level: "Intermediario", order: 6, title: "Da febre da IA à vantagem competitiva real", producer: "Gestão do Amanhã", tag: "Podcast", url: "https://open.spotify.com/episode/3oWxE3iLpT2S3CZQpagr5K" },
+      { level: "Intermediario", order: 7, title: "Guia de melhores práticas com prompting", producer: "Anthropic", tag: "Artigo", url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices" },
+      { level: "Intermediario", order: 8, title: "Capacidades e limitações da IA", producer: "Anthropic", tag: "Curso", url: "https://anthropic.skilljar.com/ai-capabilities-and-limitations" },
+      { level: "Intermediario", order: 9, title: "5 IAs secretas do Google", producer: "Jeferson de Oliveira", tag: "Post Instagram", url: "https://www.instagram.com/p/DX5nm3doO1-/" },
+      { level: "Intermediario", order: 10, title: "Google Pomelli: a IA que cria todo o marketing da sua empresa", producer: "Investi News BR", tag: "Vídeo", url: "https://www.youtube.com/watch?v=swBVLYEECBw" },
+      { level: "Avancado", order: 1, title: "Por dentro das LLMs como ChatGPT", producer: "Asimov Academy", tag: "Curso", url: "https://www.youtube.com/watch?v=CVXsLyRC1bY" },
+      { level: "Avancado", order: 2, title: "Future of Jobs Report 2025", producer: "World Economic Forum", tag: "Relatório", url: "https://reports.weforum.org/docs/WEF_Future_of_Jobs_Report_2025.pdf" },
+      { level: "Avancado", order: 3, title: "20 termos mais conhecidos de IA agêntica", producer: "Andreas Horn", tag: "Post LinkedIn", url: "https://www.linkedin.com/posts/andreashorn1_%F0%9D%97%A0%F0%9D%97%BC%F0%9D%98%80%F0%9D%98%81-%F0%9D%97%B2%F0%9D%97%BB%F0%9D%98%81%F0%9D%97%B2%F0%9D%97%BF%F0%9D%97%BD%F0%9D%97%BF%F0%9D%97%B6%F0%9D%98%80%F0%9D%97%B2%F0%9D%98%80-%F0%9D%97%AE%F0%9D%97%BF%F0%9D%97%B2-%F0%9D%97%AF-share-7462042620521836544-Ur2V/" },
+      { level: "Avancado", order: 4, title: "Cartilha da IA Generativa", producer: "Governo do Brasil (MGI)", tag: "Infográfico", url: "https://www.gov.br/governodigital/pt-br/infraestrutura-nacional-de-dados/inteligencia-artificial-1/publicacoes/cartilha-ia-generativa" },
+      { level: "Avancado", order: 5, title: "Tópico IA", producer: "MIT Technology Review", tag: "Notícias", url: "https://www.technologyreview.com/topic/artificial-intelligence/" },
+      { level: "Avancado", order: 6, title: "Codex e a IA estão democratizando a programação", producer: "Investi News BR", tag: "Vídeo", url: "https://www.youtube.com/watch?v=P1zCSwkD5eM" },
+      { level: "Avancado", order: 7, title: "Ranking de comparação das IAs", producer: "Hugging Face", tag: "Plataforma", url: "https://huggingface.co/spaces/lmarena-ai/arena-leaderboard" },
+      { level: "Avancado", order: 8, title: "LangChain Academy", producer: "LangChain", tag: "Curso", url: "https://academy.langchain.com/" },
+      { level: "Avancado", order: 9, title: "Do zero ao seu primeiro agente de IA em 20 minutos (sem codar, com n8n)", producer: "Asimov Academy", tag: "Vídeo", url: "https://www.youtube.com/watch?v=DgxHP1LG5dM" },
+      { level: "Avancado", order: 10, title: "O que é Vibe Coding?", producer: "NoCode Startup", tag: "Vídeo", url: "https://www.youtube.com/watch?v=3T3SS7r2Zpo" },
+      { level: "Avancado", order: 11, title: "Arquitetura de software no Vibe Coding", producer: "Polímatas AI", tag: "Vídeo", url: "https://www.youtube.com/watch?v=kU4-2a__1YY" },
+      { level: "Avancado", order: 12, title: "Criando um CRM sozinho (com Vibe Code)", producer: "Gustavo Campos - IA", tag: "Vídeo", url: "https://www.youtube.com/watch?v=q4VaJ2ae9o0" },
     ];
 
-    vibeCodingItems.forEach((newItem) => {
-      const existingItem = references.find((item) => item.title === newItem.title);
-      if (existingItem) {
-        Object.assign(existingItem, newItem);
-        return;
-      }
-      references.push(newItem);
-    });
+    references.splice(0, references.length, ...normalizedReferences);
 
     if (typeof state !== "undefined" && state?.selectedMissionId === "referencias-avancadas-ia") {
       renderDetail("referencias-avancadas-ia");
@@ -139,6 +127,10 @@
       const grid = section.querySelector(".reference-grid");
       const heading = section.querySelector(".reference-section-heading");
       if (!grid || !heading) return;
+
+      const levelLabel = heading.querySelector("span");
+      if (levelLabel?.textContent === "Intermediario") levelLabel.textContent = "Intermediário";
+      if (levelLabel?.textContent === "Avancado") levelLabel.textContent = "Avançado";
 
       if (!section.querySelector(".reference-scroll-actions")) {
         const actions = document.createElement("div");
