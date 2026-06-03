@@ -99,15 +99,19 @@
       : null;
     const button = document.querySelector("#markReadingBtn");
     const panel = document.querySelector("#readingPanel");
+    const existingBadge = panel?.querySelector(".reference-total-progress");
+    if (typeof state === "undefined" || state?.selectedMissionId !== "referencias-avancadas-ia") {
+      existingBadge?.remove();
+      return;
+    }
+
     if (
       !mission?.references ||
       !button ||
-      !panel ||
-      typeof state === "undefined" ||
-      state?.selectedMissionId !== "referencias-avancadas-ia"
+      !panel
     ) return;
 
-    let badge = panel.querySelector(".reference-total-progress");
+    let badge = existingBadge;
     if (!badge) {
       badge = document.createElement("span");
       badge.className = "reference-total-progress";
@@ -174,6 +178,8 @@
     if (missionId === "referencias-avancadas-ia") {
       window.setTimeout(scheduleReferenceEnhancement, 0);
       window.setTimeout(scheduleReferenceEnhancement, 120);
+    } else {
+      document.querySelector(".reference-total-progress")?.remove();
     }
     return result;
   };
