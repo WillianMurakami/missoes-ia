@@ -1,12 +1,107 @@
+.reference-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.reference-section-heading {
+  align-items: center !important;
+}
+
+.reference-section-heading > strong {
+  margin-left: auto;
+}
+
+.reference-scroll-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reference-scroll-actions button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--mock-border);
+  border-radius: 999px;
+  background: rgba(255, 118, 0, .16);
+  color: var(--mock-text);
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform .18s ease, background .18s ease, opacity .18s ease;
+}
+
+.reference-scroll-actions button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: rgba(255, 118, 0, .28);
+}
+
+.reference-scroll-actions button:disabled {
+  opacity: .36;
+  cursor: not-allowed;
+}
+
 .reference-grid {
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) !important;
+  grid-auto-flow: column !important;
+  grid-auto-columns: minmax(250px, 31%) !important;
+  grid-template-columns: none !important;
   gap: 14px !important;
-  align-items: stretch !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-behavior: smooth !important;
+  scroll-snap-type: x proximity !important;
+  padding: 2px 2px 14px !important;
+  scrollbar-width: thin;
+}
+
+.reference-card {
+  scroll-snap-align: start;
+}
+
+.reference-section::before,
+.reference-section::after {
+  content: "";
+  position: absolute;
+  top: 54px;
+  bottom: 12px;
+  z-index: 2;
+  width: 56px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .18s ease;
+}
+
+.reference-section::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--mock-panel), transparent);
+}
+
+.reference-section::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--mock-panel), transparent);
+}
+
+.reference-section.has-reference-scroll:not(.is-scroll-start)::before,
+.reference-section.has-reference-scroll:not(.is-scroll-end)::after {
+  opacity: 1;
+}
+
+html.light .reference-scroll-actions button {
+  background: rgba(255, 118, 0, .18);
+  color: #202025;
 }
 
 @media (max-width: 880px) {
+  .reference-section-heading {
+    flex-wrap: wrap;
+  }
+
+  .reference-scroll-actions {
+    margin-left: auto;
+  }
+
   .reference-grid {
-    grid-template-columns: 1fr !important;
+    grid-auto-columns: minmax(238px, 84%) !important;
   }
 }
