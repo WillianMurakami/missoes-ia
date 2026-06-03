@@ -19,7 +19,7 @@
       });
 
     const evolutionPost = references.find((item) => item.title === "Evolucao do uso das IAs");
-    if (evolutionPost) evolutionPost.url = "https://www.instagram.com/reel/DYDlxo0tnHW/";
+    if (evolutionPost) evolutionPost.url = "https://www.instagram.com/p/DYDlxo0tnHW/";
 
     const googleSecretsPost = references.find((item) => item.title === "5 IAs secretas do Google");
     if (googleSecretsPost) googleSecretsPost.url = "https://www.instagram.com/p/DX5nm3doO1-/";
