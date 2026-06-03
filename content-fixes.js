@@ -58,4 +58,62 @@
   }
 
   patchReferences();
+
+  function updateReferenceScrollState(section) {
+    const grid = section.querySelector(".reference-grid");
+    if (!grid) return;
+
+    const canScroll = grid.scrollWidth > grid.clientWidth + 4;
+    const atStart = grid.scrollLeft <= 4;
+    const atEnd = grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 4;
+    section.classList.toggle("has-reference-scroll", canScroll);
+    section.classList.toggle("is-scroll-start", !canScroll || atStart);
+    section.classList.toggle("is-scroll-end", !canScroll || atEnd);
+
+    const previous = section.querySelector("[data-reference-scroll='prev']");
+    const next = section.querySelector("[data-reference-scroll='next']");
+    if (previous) previous.disabled = !canScroll || atStart;
+    if (next) next.disabled = !canScroll || atEnd;
+  }
+
+  function enhanceReferenceScroll() {
+    document.querySelectorAll(".reference-section").forEach((section) => {
+      const grid = section.querySelector(".reference-grid");
+      const heading = section.querySelector(".reference-section-heading");
+      if (!grid || !heading) return;
+
+      if (!section.querySelector(".reference-scroll-actions")) {
+        const actions = document.createElement("div");
+        actions.className = "reference-scroll-actions";
+        actions.innerHTML = `
+          <button type="button" aria-label="Ver conteudos anteriores" data-reference-scroll="prev">&lsaquo;</button>
+          <button type="button" aria-label="Ver proximos conteudos" data-reference-scroll="next">&rsaquo;</button>
+        `;
+        heading.appendChild(actions);
+      }
+
+      if (!grid.dataset.scrollEnhanced) {
+        grid.dataset.scrollEnhanced = "true";
+        grid.addEventListener("scroll", () => updateReferenceScrollState(section), { passive: true });
+      }
+
+      section.querySelectorAll("[data-reference-scroll]").forEach((button) => {
+        if (button.dataset.bound) return;
+        button.dataset.bound = "true";
+        button.addEventListener("click", () => {
+          const direction = button.dataset.referenceScroll === "next" ? 1 : -1;
+          const amount = Math.max(260, Math.round(grid.clientWidth * 0.82));
+          grid.scrollBy({ left: direction * amount, behavior: "smooth" });
+          window.setTimeout(() => updateReferenceScrollState(section), 260);
+        });
+      });
+
+      updateReferenceScrollState(section);
+    });
+  }
+
+  const observer = new MutationObserver(() => enhanceReferenceScroll());
+  observer.observe(document.body, { childList: true, subtree: true });
+  window.addEventListener("resize", enhanceReferenceScroll);
+  window.setTimeout(enhanceReferenceScroll, 0);
 })();
