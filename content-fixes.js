@@ -76,6 +76,40 @@
     if (next) next.disabled = !canScroll || atEnd;
   }
 
+  function getReferenceId(item) {
+    return `${item.level}-${item.order}`.toLowerCase().replace(/[^a-z0-9-]/g, "-");
+  }
+
+  function getReferenceClickSet() {
+    try {
+      const key = `uol-edtech-ai-reference-clicks:${state?.user?.id || "anon"}`;
+      return new Set(JSON.parse(localStorage.getItem(key) || "[]"));
+    } catch {
+      return new Set();
+    }
+  }
+
+  function updateReferenceTotalProgress() {
+    const mission = typeof missions !== "undefined"
+      ? missions.find((item) => item.id === "referencias-avancadas-ia")
+      : null;
+    const button = document.querySelector("#markReadingBtn");
+    const panel = document.querySelector("#readingPanel");
+    if (!mission?.references || !button || !panel || state?.selectedMissionId !== "referencias-avancadas-ia") return;
+
+    let badge = panel.querySelector(".reference-total-progress");
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.className = "reference-total-progress";
+      button.insertAdjacentElement("beforebegin", badge);
+    }
+
+    const clicks = getReferenceClickSet();
+    const total = mission.references.length;
+    const viewed = mission.references.filter((item) => clicks.has(getReferenceId(item))).length;
+    badge.textContent = `${viewed}/${total} vistos`;
+  }
+
   function enhanceReferenceScroll() {
     document.querySelectorAll(".reference-section").forEach((section) => {
       const grid = section.querySelector(".reference-grid");
@@ -89,7 +123,7 @@
           <button type="button" aria-label="Ver conteudos anteriores" data-reference-scroll="prev">&lsaquo;</button>
           <button type="button" aria-label="Ver proximos conteudos" data-reference-scroll="next">&rsaquo;</button>
         `;
-        heading.appendChild(actions);
+        section.appendChild(actions);
       }
 
       if (!grid.dataset.scrollEnhanced) {
@@ -110,10 +144,16 @@
 
       updateReferenceScrollState(section);
     });
+
+    updateReferenceTotalProgress();
   }
 
-  const observer = new MutationObserver(() => enhanceReferenceScroll());
+  const observer = new MutationObserver(() => {
+    enhanceReferenceScroll();
+    updateReferenceTotalProgress();
+  });
   observer.observe(document.body, { childList: true, subtree: true });
   window.addEventListener("resize", enhanceReferenceScroll);
+  window.addEventListener("storage", updateReferenceTotalProgress);
   window.setTimeout(enhanceReferenceScroll, 0);
 })();
