@@ -1,6 +1,8 @@
 (function applyContentFixes() {
+  if (typeof missions === "undefined" || typeof renderDetail === "undefined") return;
+
   function patchReferences() {
-    if (typeof missions === "undefined" || !Array.isArray(missions)) return;
+    if (!Array.isArray(missions)) return;
 
     const referenceMission = missions.find((mission) => mission.id === "referencias-avancadas-ia");
     if (!referenceMission || !Array.isArray(referenceMission.references)) return;
@@ -59,6 +61,8 @@
 
   patchReferences();
 
+  let enhanceFrame = 0;
+
   function updateReferenceScrollState(section) {
     const grid = section.querySelector(".reference-grid");
     if (!grid) return;
@@ -82,7 +86,7 @@
 
   function getReferenceClickSet() {
     try {
-      const key = `uol-edtech-ai-reference-clicks:${state?.user?.id || "anon"}`;
+      const key = `uol-edtech-ai-reference-clicks:${typeof state !== "undefined" ? state?.user?.id || "anon" : "anon"}`;
       return new Set(JSON.parse(localStorage.getItem(key) || "[]"));
     } catch {
       return new Set();
@@ -95,7 +99,13 @@
       : null;
     const button = document.querySelector("#markReadingBtn");
     const panel = document.querySelector("#readingPanel");
-    if (!mission?.references || !button || !panel || state?.selectedMissionId !== "referencias-avancadas-ia") return;
+    if (
+      !mission?.references ||
+      !button ||
+      !panel ||
+      typeof state === "undefined" ||
+      state?.selectedMissionId !== "referencias-avancadas-ia"
+    ) return;
 
     let badge = panel.querySelector(".reference-total-progress");
     if (!badge) {
@@ -110,7 +120,17 @@
     badge.textContent = `${viewed}/${total} vistos`;
   }
 
+  function scheduleReferenceEnhancement() {
+    if (enhanceFrame) return;
+    enhanceFrame = window.requestAnimationFrame(() => {
+      enhanceFrame = 0;
+      enhanceReferenceScroll();
+    });
+  }
+
   function enhanceReferenceScroll() {
+    if (typeof state === "undefined" || state?.selectedMissionId !== "referencias-avancadas-ia") return;
+
     document.querySelectorAll(".reference-section").forEach((section) => {
       const grid = section.querySelector(".reference-grid");
       const heading = section.querySelector(".reference-section-heading");
@@ -148,12 +168,17 @@
     updateReferenceTotalProgress();
   }
 
-  const observer = new MutationObserver(() => {
-    enhanceReferenceScroll();
-    updateReferenceTotalProgress();
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-  window.addEventListener("resize", enhanceReferenceScroll);
+  const originalRenderDetail = renderDetail;
+  renderDetail = function renderDetailWithReferenceEnhancement(missionId) {
+    const result = originalRenderDetail(missionId);
+    if (missionId === "referencias-avancadas-ia") {
+      window.setTimeout(scheduleReferenceEnhancement, 0);
+      window.setTimeout(scheduleReferenceEnhancement, 120);
+    }
+    return result;
+  };
+
+  window.addEventListener("resize", scheduleReferenceEnhancement);
   window.addEventListener("storage", updateReferenceTotalProgress);
-  window.setTimeout(enhanceReferenceScroll, 0);
+  window.setTimeout(scheduleReferenceEnhancement, 0);
 })();
