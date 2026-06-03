@@ -21,27 +21,24 @@
 
   function normalizeReferenceLinks(root = document) {
     root.querySelectorAll?.("a.reference-card[data-reference-id]").forEach((link) => {
-      link.target = "_self";
-      link.removeAttribute("rel");
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
     });
   }
 
-  function openReferenceLink(event) {
+  function saveReferenceLinkAccess(event) {
     const link = event.target?.closest?.("a.reference-card[data-reference-id]");
     if (!link) return;
 
-    if (event.button && event.button !== 0) return;
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     if (link.closest(".reference-grid")?.classList.contains("is-dragging")) {
       event.preventDefault();
+      event.stopImmediatePropagation();
       return;
     }
 
-    event.preventDefault();
-    event.stopImmediatePropagation();
-
     saveReferenceAccess(link.dataset.referenceId);
-    window.location.assign(link.href);
+    // Keep the native anchor navigation, but block older target-level handlers that cancel it.
+    event.stopImmediatePropagation();
   }
 
   normalizeReferenceLinks();
@@ -53,5 +50,6 @@
     });
   }).observe(document.body, { childList: true, subtree: true });
 
-  document.addEventListener("click", openReferenceLink, true);
+  document.addEventListener("click", saveReferenceLinkAccess, true);
+  document.addEventListener("auxclick", saveReferenceLinkAccess, true);
 })();
