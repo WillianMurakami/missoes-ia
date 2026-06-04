@@ -1,5 +1,5 @@
 (function applyReferenceLinkHotfix() {
-  const version = "20260603-final22";
+  const version = "20260603-final23";
   if (window.__referenceLinkHotfixVersion === version) return;
   window.__referenceLinkHotfixVersion = version;
 
@@ -46,20 +46,6 @@
     link.classList.add("is-visited");
     const stateLabel = link.querySelector(".reference-state");
     if (stateLabel) stateLabel.textContent = "Acessado";
-  }
-
-  function openReference(link) {
-    const opened = window.open(link.href, "_blank");
-    if (opened) {
-      try {
-        opened.opener = null;
-      } catch {
-        // Cross-origin popup handles can reject opener changes.
-      }
-      return;
-    }
-
-    window.location.assign(link.href);
   }
 
   function scheduleReferenceRefresh() {
@@ -115,9 +101,9 @@
     }
 
     markReferenceCard(link);
-    event.preventDefault();
+    // Do not preventDefault here: the browser's native <a target="_blank">
+    // navigation is more reliable than window.open and is not treated as a popup.
     event.stopImmediatePropagation();
-    openReference(link);
     scheduleReferenceRefresh();
     clearReferencePointer();
   }
