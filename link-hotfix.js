@@ -1,5 +1,5 @@
 (function applyReferenceLinkHotfix() {
-  const version = "20260603-final24";
+  const version = "20260603-final25";
   if (window.__referenceLinkHotfixVersion === version) return;
   window.__referenceLinkHotfixVersion = version;
 
@@ -24,8 +24,15 @@
 
   function normalizeReferenceLinks(root = document) {
     root.querySelectorAll?.("a.reference-card[data-reference-id]").forEach((link) => {
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
+      if (!link.href) return;
+      if (link.dataset.nativeLinkCleaned === version) return;
+
+      const cleanLink = link.cloneNode(true);
+      cleanLink.target = "_blank";
+      cleanLink.rel = "noopener noreferrer";
+      cleanLink.dataset.nativeLinkCleaned = version;
+      cleanLink.dataset.linkOpenEnhanced = "true";
+      link.replaceWith(cleanLink);
     });
   }
 
@@ -100,6 +107,8 @@
       return;
     }
 
+    markReferenceCard(link);
+    scheduleReferenceRefresh();
     clearReferencePointer();
   }
 
@@ -110,7 +119,9 @@
     scheduleReferenceRefresh();
   }
 
-  normalizeReferenceLinks();
+  window.setTimeout(normalizeReferenceLinks, 0);
+  window.setTimeout(normalizeReferenceLinks, 120);
+  window.setTimeout(normalizeReferenceLinks, 450);
   new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
