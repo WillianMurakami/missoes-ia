@@ -1,6 +1,7 @@
 (function applyReferenceLinkHotfix() {
-  if (window.__referenceLinkHotfix) return;
-  window.__referenceLinkHotfix = true;
+  const version = "20260603-final19";
+  if (window.__referenceLinkHotfixVersion === version) return;
+  window.__referenceLinkHotfixVersion = version;
 
   function getUserKey() {
     const userId = typeof state !== "undefined" ? state?.user?.id || "anon" : "anon";
@@ -53,6 +54,8 @@
     });
   }).observe(document.body, { childList: true, subtree: true });
 
+  window.addEventListener("click", saveReferenceLinkAccess, true);
+  window.addEventListener("auxclick", saveReferenceLinkAccess, true);
   document.addEventListener("click", saveReferenceLinkAccess, true);
   document.addEventListener("auxclick", saveReferenceLinkAccess, true);
 })();
