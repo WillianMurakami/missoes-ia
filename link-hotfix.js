@@ -1,5 +1,5 @@
 (function applyReferenceLinkHotfix() {
-  const version = "20260603-final19";
+  const version = "20260603-final21";
   if (window.__referenceLinkHotfixVersion === version) return;
   window.__referenceLinkHotfixVersion = version;
 
@@ -27,8 +27,34 @@
     });
   }
 
+  function getReferenceLink(event) {
+    const path = event.composedPath?.() || [];
+    for (const node of path) {
+      if (node?.matches?.("a.reference-card[data-reference-id]")) return node;
+      const link = node?.closest?.("a.reference-card[data-reference-id]");
+      if (link) return link;
+    }
+
+    const target = event.target?.nodeType === Node.ELEMENT_NODE ? event.target : event.target?.parentElement;
+    return target?.closest?.("a.reference-card[data-reference-id]") || null;
+  }
+
+  function openReference(link) {
+    const opened = window.open(link.href, "_blank");
+    if (opened) {
+      try {
+        opened.opener = null;
+      } catch {
+        // Some browsers block opener assignment for cross-origin tabs.
+      }
+      return;
+    }
+
+    window.location.assign(link.href);
+  }
+
   function saveReferenceLinkAccess(event) {
-    const link = event.target?.closest?.("a.reference-card[data-reference-id]");
+    const link = getReferenceLink(event);
     if (!link) return;
 
     if (link.closest(".reference-grid")?.classList.contains("is-dragging")) {
@@ -38,11 +64,13 @@
     }
 
     saveReferenceAccess(link.dataset.referenceId);
+    link.classList.add("is-visited");
+    const stateLabel = link.querySelector(".reference-state");
+    if (stateLabel) stateLabel.textContent = "Acessado";
+
     event.preventDefault();
     event.stopImmediatePropagation();
-
-    const opened = window.open(link.href, "_blank", "noopener,noreferrer");
-    if (!opened) window.location.href = link.href;
+    openReference(link);
   }
 
   normalizeReferenceLinks();
