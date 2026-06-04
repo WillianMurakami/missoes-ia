@@ -1,5 +1,5 @@
 (function applyReferenceLinkHotfix() {
-  const version = "20260603-final23";
+  const version = "20260603-final24";
   if (window.__referenceLinkHotfixVersion === version) return;
   window.__referenceLinkHotfixVersion = version;
 
@@ -89,7 +89,7 @@
     }, 0);
   }
 
-  function handleReferenceClick(event) {
+  function handleReferenceDragClick(event) {
     const link = getReferenceLink(event);
     if (!link) return;
 
@@ -100,11 +100,6 @@
       return;
     }
 
-    markReferenceCard(link);
-    // Do not preventDefault here: the browser's native <a target="_blank">
-    // navigation is more reliable than window.open and is not treated as a popup.
-    event.stopImmediatePropagation();
-    scheduleReferenceRefresh();
     clearReferencePointer();
   }
 
@@ -130,6 +125,5 @@
   window.addEventListener("pointerup", clearReferencePointer, true);
   window.addEventListener("pointercancel", clearReferencePointer, true);
   window.addEventListener("contextmenu", handleReferenceContextMenu, true);
-  window.addEventListener("click", handleReferenceClick, true);
-  window.addEventListener("auxclick", handleReferenceClick, true);
+  window.addEventListener("click", handleReferenceDragClick, true);
 })();
