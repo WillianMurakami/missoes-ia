@@ -1,74 +1,45 @@
 (function applyContentFixes() {
   if (typeof missions === "undefined" || typeof renderDetail === "undefined") return;
 
-  function patchReferences() {
-    if (!Array.isArray(missions)) return;
+  const normalizedReferences = [
+    { level: "Iniciante", order: 1, title: "IA Todo Dia", producer: "Sommers e Helena", tag: "Podcast", url: "https://open.spotify.com/show/2FHimuESqvjBL4x8AKur2b" },
+    { level: "Iniciante", order: 2, title: "Não existe automação sem padronização", producer: "Letícia Mirelli", tag: "Post Instagram", url: "https://www.instagram.com/p/DYFMJMLlGtG/" },
+    { level: "Iniciante", order: 3, title: "Google AI Essentials", producer: "Google", tag: "Curso", url: "https://grow.google/ai-essentials/" },
+    { level: "Iniciante", order: 4, title: "Prompt Engineering Guide", producer: "OpenAI", tag: "Artigo", url: "https://platform.openai.com/docs/guides/prompt-engineering" },
+    { level: "Iniciante", order: 5, title: "Elements of AI", producer: "University of Helsinki / MinnaLearn", tag: "Curso", url: "https://course.elementsofai.com/pt/" },
+    { level: "Iniciante", order: 6, title: "Do Prompt ao Agente", producer: "Gustavo Guanabara", tag: "Vídeo", url: "https://www.youtube.com/watch?v=pv4pTteJOwA" },
+    { level: "Iniciante", order: 7, title: "Como a IA vai mudar tudo (inclusive você)", producer: "Miguel Fernandes", tag: "TEDx", url: "https://www.youtube.com/watch?v=C38xlWnkezQ" },
+    { level: "Intermediario", order: 1, title: "ChatGPT Prompt Engineering for Developers", producer: "DeepLearning.AI / OpenAI", tag: "Curso", url: "https://www.deeplearning.ai/courses/chatgpt-prompt-eng" },
+    { level: "Intermediario", order: 2, title: "Evolução do uso das IAs", producer: "Breno Masi", tag: "Post Instagram", url: "https://www.instagram.com/p/DYDlxo0tnHW/" },
+    { level: "Intermediario", order: 3, title: "Excel para Análise de Dados", producer: "Preditiva.ai", tag: "Curso", url: "https://www.preditiva.ai/curso-excel-gratuito?campaign=excel-link-home" },
+    { level: "Intermediario", order: 4, title: "Análise de Dados com IA para Iniciantes", producer: "Karine Lago", tag: "Vídeo", url: "https://www.youtube.com/watch?v=rxgM2bbAfjY" },
+    { level: "Intermediario", order: 5, title: "Fluência em IA com Copilot", producer: "Microsoft Learn", tag: "Plataforma de aprendizado", url: "https://learn.microsoft.com/pt-br/training/paths/ai-fluency/" },
+    { level: "Intermediario", order: 6, title: "Da febre da IA à vantagem competitiva real", producer: "Gestão do Amanhã", tag: "Podcast", url: "https://open.spotify.com/episode/3oWxE3iLpT2S3CZQpagr5K" },
+    { level: "Intermediario", order: 7, title: "Guia de melhores práticas com prompting", producer: "Anthropic", tag: "Artigo", url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices" },
+    { level: "Intermediario", order: 8, title: "Capacidades e limitações da IA", producer: "Anthropic", tag: "Curso", url: "https://anthropic.skilljar.com/ai-capabilities-and-limitations" },
+    { level: "Intermediario", order: 9, title: "5 IAs secretas do Google", producer: "Jeferson de Oliveira", tag: "Post Instagram", url: "https://www.instagram.com/p/DX5nm3doO1-/" },
+    { level: "Intermediario", order: 10, title: "Google Pomelli: a IA que cria todo o marketing da sua empresa", producer: "Investi News BR", tag: "Vídeo", url: "https://www.youtube.com/watch?v=swBVLYEECBw" },
+    { level: "Avancado", order: 1, title: "Por dentro das LLMs como ChatGPT", producer: "Asimov Academy", tag: "Curso", url: "https://www.youtube.com/watch?v=CVXsLyRC1bY" },
+    { level: "Avancado", order: 2, title: "Future of Jobs Report 2025", producer: "World Economic Forum", tag: "Relatório", url: "https://reports.weforum.org/docs/WEF_Future_of_Jobs_Report_2025.pdf" },
+    { level: "Avancado", order: 3, title: "20 termos mais conhecidos de IA agêntica", producer: "Andreas Horn", tag: "Post LinkedIn", url: "https://www.linkedin.com/posts/andreashorn1_%F0%9D%97%A0%F0%9D%97%BC%F0%9D%98%80%F0%9D%98%81-%F0%9D%97%B2%F0%9D%97%BB%F0%9D%98%81%F0%9D%97%B2%F0%9D%97%BF%F0%9D%97%BD%F0%9D%97%BF%F0%9D%97%B6%F0%9D%98%80%F0%9D%97%B2%F0%9D%98%80-%F0%9D%97%AE%F0%9D%97%BF%F0%9D%97%B2-%F0%9D%97%AF-share-7462042620521836544-Ur2V/" },
+    { level: "Avancado", order: 4, title: "Cartilha da IA Generativa", producer: "Governo do Brasil (MGI)", tag: "Infográfico", url: "https://www.gov.br/governodigital/pt-br/infraestrutura-nacional-de-dados/inteligencia-artificial-1/publicacoes/cartilha-ia-generativa" },
+    { level: "Avancado", order: 5, title: "Tópico IA", producer: "MIT Technology Review", tag: "Notícias", url: "https://www.technologyreview.com/topic/artificial-intelligence/" },
+    { level: "Avancado", order: 6, title: "Codex e a IA estão democratizando a programação", producer: "Investi News BR", tag: "Vídeo", url: "https://www.youtube.com/watch?v=P1zCSwkD5eM" },
+    { level: "Avancado", order: 7, title: "Ranking de comparação das IAs", producer: "Hugging Face", tag: "Plataforma", url: "https://huggingface.co/spaces/lmarena-ai/arena-leaderboard" },
+    { level: "Avancado", order: 8, title: "LangChain Academy", producer: "LangChain", tag: "Curso", url: "https://academy.langchain.com/" },
+    { level: "Avancado", order: 9, title: "Do zero ao seu primeiro agente de IA em 20 minutos (sem codar, com n8n)", producer: "Asimov Academy", tag: "Vídeo", url: "https://www.youtube.com/watch?v=DgxHP1LG5dM" },
+    { level: "Avancado", order: 10, title: "O que é Vibe Coding?", producer: "NoCode Startup", tag: "Vídeo", url: "https://www.youtube.com/watch?v=3T3SS7r2Zpo" },
+    { level: "Avancado", order: 11, title: "Arquitetura de software no Vibe Coding", producer: "Polímatas AI", tag: "Vídeo", url: "https://www.youtube.com/watch?v=kU4-2a__1YY" },
+    { level: "Avancado", order: 12, title: "Criando um CRM sozinho (com Vibe Code)", producer: "Gustavo Campos - IA", tag: "Vídeo", url: "https://www.youtube.com/watch?v=q4VaJ2ae9o0" },
+  ];
 
+  function patchReferences() {
     const referenceMission = missions.find((mission) => mission.id === "referencias-avancadas-ia");
     if (!referenceMission || !Array.isArray(referenceMission.references)) return;
-
-    const references = referenceMission.references;
-    const normalizedReferences = [
-      { level: "Iniciante", order: 1, title: "IA Todo Dia", producer: "Sommers e Helena", tag: "Podcast", url: "https://open.spotify.com/show/2FHimuESqvjBL4x8AKur2b" },
-      { level: "Iniciante", order: 2, title: "Não existe automação sem padronização", producer: "Letícia Mirelli", tag: "Post Instagram", url: "https://www.instagram.com/p/DYFMJMLlGtG/" },
-      { level: "Iniciante", order: 3, title: "Google AI Essentials", producer: "Google", tag: "Curso", url: "https://grow.google/ai-essentials/" },
-      { level: "Iniciante", order: 4, title: "Prompt Engineering Guide", producer: "OpenAI", tag: "Artigo", url: "https://platform.openai.com/docs/guides/prompt-engineering" },
-      { level: "Iniciante", order: 5, title: "Elements of AI", producer: "University of Helsinki / MinnaLearn", tag: "Curso", url: "https://course.elementsofai.com/pt/" },
-      { level: "Iniciante", order: 6, title: "Do Prompt ao Agente", producer: "Gustavo Guanabara", tag: "Vídeo", url: "https://www.youtube.com/watch?v=pv4pTteJOwA" },
-      { level: "Iniciante", order: 7, title: "Como a IA vai mudar tudo (inclusive você)", producer: "Miguel Fernandes", tag: "TEDx", url: "https://www.youtube.com/watch?v=C38xlWnkezQ" },
-      { level: "Intermediario", order: 1, title: "ChatGPT Prompt Engineering for Developers", producer: "DeepLearning.AI / OpenAI", tag: "Curso", url: "https://www.deeplearning.ai/courses/chatgpt-prompt-eng" },
-      { level: "Intermediario", order: 2, title: "Evolução do uso das IAs", producer: "Breno Masi", tag: "Post Instagram", url: "https://www.instagram.com/p/DYDlxo0tnHW/" },
-      { level: "Intermediario", order: 3, title: "Excel para Análise de Dados", producer: "Preditiva.ai", tag: "Curso", url: "https://www.preditiva.ai/curso-excel-gratuito?campaign=excel-link-home" },
-      { level: "Intermediario", order: 4, title: "Análise de Dados com IA para Iniciantes", producer: "Karine Lago", tag: "Vídeo", url: "https://www.youtube.com/watch?v=rxgM2bbAfjY" },
-      { level: "Intermediario", order: 5, title: "Fluência em IA com Copilot", producer: "Microsoft Learn", tag: "Plataforma de aprendizado", url: "https://learn.microsoft.com/pt-br/training/paths/ai-fluency/" },
-      { level: "Intermediario", order: 6, title: "Da febre da IA à vantagem competitiva real", producer: "Gestão do Amanhã", tag: "Podcast", url: "https://open.spotify.com/episode/3oWxE3iLpT2S3CZQpagr5K" },
-      { level: "Intermediario", order: 7, title: "Guia de melhores práticas com prompting", producer: "Anthropic", tag: "Artigo", url: "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices" },
-      { level: "Intermediario", order: 8, title: "Capacidades e limitações da IA", producer: "Anthropic", tag: "Curso", url: "https://anthropic.skilljar.com/ai-capabilities-and-limitations" },
-      { level: "Intermediario", order: 9, title: "5 IAs secretas do Google", producer: "Jeferson de Oliveira", tag: "Post Instagram", url: "https://www.instagram.com/p/DX5nm3doO1-/" },
-      { level: "Intermediario", order: 10, title: "Google Pomelli: a IA que cria todo o marketing da sua empresa", producer: "Investi News BR", tag: "Vídeo", url: "https://www.youtube.com/watch?v=swBVLYEECBw" },
-      { level: "Avancado", order: 1, title: "Por dentro das LLMs como ChatGPT", producer: "Asimov Academy", tag: "Curso", url: "https://www.youtube.com/watch?v=CVXsLyRC1bY" },
-      { level: "Avancado", order: 2, title: "Future of Jobs Report 2025", producer: "World Economic Forum", tag: "Relatório", url: "https://reports.weforum.org/docs/WEF_Future_of_Jobs_Report_2025.pdf" },
-      { level: "Avancado", order: 3, title: "20 termos mais conhecidos de IA agêntica", producer: "Andreas Horn", tag: "Post LinkedIn", url: "https://www.linkedin.com/posts/andreashorn1_%F0%9D%97%A0%F0%9D%97%BC%F0%9D%98%80%F0%9D%98%81-%F0%9D%97%B2%F0%9D%97%BB%F0%9D%98%81%F0%9D%97%B2%F0%9D%97%BF%F0%9D%97%BD%F0%9D%97%BF%F0%9D%97%B6%F0%9D%98%80%F0%9D%97%B2%F0%9D%98%80-%F0%9D%97%AE%F0%9D%97%BF%F0%9D%97%B2-%F0%9D%97%AF-share-7462042620521836544-Ur2V/" },
-      { level: "Avancado", order: 4, title: "Cartilha da IA Generativa", producer: "Governo do Brasil (MGI)", tag: "Infográfico", url: "https://www.gov.br/governodigital/pt-br/infraestrutura-nacional-de-dados/inteligencia-artificial-1/publicacoes/cartilha-ia-generativa" },
-      { level: "Avancado", order: 5, title: "Tópico IA", producer: "MIT Technology Review", tag: "Notícias", url: "https://www.technologyreview.com/topic/artificial-intelligence/" },
-      { level: "Avancado", order: 6, title: "Codex e a IA estão democratizando a programação", producer: "Investi News BR", tag: "Vídeo", url: "https://www.youtube.com/watch?v=P1zCSwkD5eM" },
-      { level: "Avancado", order: 7, title: "Ranking de comparação das IAs", producer: "Hugging Face", tag: "Plataforma", url: "https://huggingface.co/spaces/lmarena-ai/arena-leaderboard" },
-      { level: "Avancado", order: 8, title: "LangChain Academy", producer: "LangChain", tag: "Curso", url: "https://academy.langchain.com/" },
-      { level: "Avancado", order: 9, title: "Do zero ao seu primeiro agente de IA em 20 minutos (sem codar, com n8n)", producer: "Asimov Academy", tag: "Vídeo", url: "https://www.youtube.com/watch?v=DgxHP1LG5dM" },
-      { level: "Avancado", order: 10, title: "O que é Vibe Coding?", producer: "NoCode Startup", tag: "Vídeo", url: "https://www.youtube.com/watch?v=3T3SS7r2Zpo" },
-      { level: "Avancado", order: 11, title: "Arquitetura de software no Vibe Coding", producer: "Polímatas AI", tag: "Vídeo", url: "https://www.youtube.com/watch?v=kU4-2a__1YY" },
-      { level: "Avancado", order: 12, title: "Criando um CRM sozinho (com Vibe Code)", producer: "Gustavo Campos - IA", tag: "Vídeo", url: "https://www.youtube.com/watch?v=q4VaJ2ae9o0" },
-    ];
-
-    references.splice(0, references.length, ...normalizedReferences);
-
-    if (typeof state !== "undefined" && state?.selectedMissionId === "referencias-avancadas-ia") {
-      renderDetail("referencias-avancadas-ia");
-    }
+    referenceMission.references.splice(0, referenceMission.references.length, ...normalizedReferences);
   }
 
-  patchReferences();
-
-  let enhanceFrame = 0;
-
-  function updateReferenceScrollState(section) {
-    const grid = section.querySelector(".reference-grid");
-    if (!grid) return;
-
-    const canScroll = grid.scrollWidth > grid.clientWidth + 4;
-    const atStart = grid.scrollLeft <= 4;
-    const atEnd = grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 4;
-    section.classList.toggle("has-reference-scroll", canScroll);
-    section.classList.toggle("is-scroll-start", !canScroll || atStart);
-    section.classList.toggle("is-scroll-end", !canScroll || atEnd);
-
-    const previous = section.querySelector("[data-reference-scroll='prev']");
-    const next = section.querySelector("[data-reference-scroll='next']");
-    if (previous) previous.disabled = !canScroll || atStart;
-    if (next) next.disabled = !canScroll || atEnd;
-  }
-
-  function getReferenceId(item) {
+  function referenceId(item) {
     return `${item.level}-${item.order}`.toLowerCase().replace(/[^a-z0-9-]/g, "-");
   }
 
@@ -82,111 +53,73 @@
   }
 
   function updateReferenceTotalProgress() {
-    const mission = typeof missions !== "undefined"
-      ? missions.find((item) => item.id === "referencias-avancadas-ia")
-      : null;
-    const button = document.querySelector("#markReadingBtn");
     const panel = document.querySelector("#readingPanel");
+    const button = document.querySelector("#markReadingBtn");
+    const mission = missions.find((item) => item.id === "referencias-avancadas-ia");
     const existingBadge = panel?.querySelector(".reference-total-progress");
+
     if (typeof state === "undefined" || state?.selectedMissionId !== "referencias-avancadas-ia") {
       existingBadge?.remove();
       return;
     }
 
     if (!mission?.references || !button || !panel) return;
-
+    const clicks = getReferenceClickSet();
+    const viewed = mission.references.filter((item) => clicks.has(referenceId(item))).length;
+    const total = mission.references.length;
     let badge = existingBadge;
     if (!badge) {
       badge = document.createElement("span");
       badge.className = "reference-total-progress";
       button.insertAdjacentElement("beforebegin", badge);
     }
-
-    const clicks = getReferenceClickSet();
-    const total = mission.references.length;
-    const viewed = mission.references.filter((item) => clicks.has(getReferenceId(item))).length;
     badge.textContent = `${viewed}/${total} vistos`;
   }
 
-  function scheduleReferenceEnhancement() {
-    if (enhanceFrame) return;
-    enhanceFrame = window.requestAnimationFrame(() => {
-      enhanceFrame = 0;
-      enhanceReferenceScroll();
-    });
+  function updateReferenceScrollState(section) {
+    const grid = section.querySelector(".reference-grid");
+    if (!grid) return;
+    const canScroll = grid.scrollWidth > grid.clientWidth + 4;
+    const atStart = grid.scrollLeft <= 4;
+    const atEnd = grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 4;
+    section.classList.toggle("has-reference-scroll", canScroll);
+    section.classList.toggle("is-scroll-start", !canScroll || atStart);
+    section.classList.toggle("is-scroll-end", !canScroll || atEnd);
+    const previous = section.querySelector("[data-reference-scroll='prev']");
+    const next = section.querySelector("[data-reference-scroll='next']");
+    if (previous) previous.disabled = !canScroll || atStart;
+    if (next) next.disabled = !canScroll || atEnd;
   }
 
   function markReferenceCardKinds(section) {
     section.querySelectorAll(".reference-card").forEach((card) => {
       const preview = card.querySelector(".reference-preview");
       const tag = preview?.textContent?.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || "";
-      if (tag.includes("video") || tag.includes("youtube") || tag.includes("tedx")) {
-        preview.classList.add("reference-youtube");
-      }
+      preview?.classList.toggle("reference-youtube", tag.includes("video") || tag.includes("youtube") || tag.includes("tedx"));
     });
   }
 
   function bindReferenceLinks(section) {
     section.querySelectorAll("a.reference-card[data-reference-id]").forEach((link) => {
-      if (link.dataset.linkOpenEnhanced) return;
-      link.dataset.linkOpenEnhanced = "true";
-
-      const saveAccess = () => {
-        const referenceId = link.dataset.referenceId;
-        const clicks = getReferenceClickSet();
-        clicks.add(referenceId);
-        const key = `uol-edtech-ai-reference-clicks:${typeof state !== "undefined" ? state?.user?.id || "anon" : "anon"}`;
-        localStorage.setItem(key, JSON.stringify([...clicks]));
-      };
-
-      link.addEventListener(
-        "mousedown",
-        (event) => {
-          event.stopImmediatePropagation();
-        },
-        true
-      );
-
-      link.addEventListener(
-        "auxclick",
-        (event) => {
-          event.stopImmediatePropagation();
-          if (event.button === 1) saveAccess();
-        },
-        true
-      );
-
-      link.addEventListener(
-        "click",
-        (event) => {
-          if (link.closest(".reference-grid")?.classList.contains("is-dragging")) {
-            event.preventDefault();
-            return;
-          }
-          event.stopImmediatePropagation();
-          saveAccess();
-
-          if (typeof renderDetail === "function") {
-            window.setTimeout(() => renderDetail("referencias-avancadas-ia"), 650);
-          }
-        },
-        true
-      );
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
     });
   }
 
   function enhanceReferenceScroll() {
-    if (typeof state === "undefined" || state?.selectedMissionId !== "referencias-avancadas-ia") return;
+    patchReferences();
+    if (typeof state === "undefined" || state?.selectedMissionId !== "referencias-avancadas-ia") {
+      updateReferenceTotalProgress();
+      return;
+    }
 
     document.querySelectorAll(".reference-section").forEach((section) => {
       const grid = section.querySelector(".reference-grid");
-      const heading = section.querySelector(".reference-section-heading");
-      if (!grid || !heading) return;
-
+      if (!grid) return;
       markReferenceCardKinds(section);
       bindReferenceLinks(section);
 
-      const levelLabel = heading.querySelector("span");
+      const levelLabel = section.querySelector(".reference-section-heading span");
       if (levelLabel?.textContent === "Intermediario") levelLabel.textContent = "Intermediário";
       if (levelLabel?.textContent === "Avancado") levelLabel.textContent = "Avançado";
 
@@ -203,47 +136,6 @@
       if (!grid.dataset.scrollEnhanced) {
         grid.dataset.scrollEnhanced = "true";
         grid.addEventListener("scroll", () => updateReferenceScrollState(section), { passive: true });
-        let dragStartX = 0;
-        let dragStartLeft = 0;
-        let dragging = false;
-        let dragMoved = false;
-
-        grid.addEventListener("pointerdown", (event) => {
-          if (event.target.closest("[data-reference-scroll]")) return;
-          dragging = true;
-          dragMoved = false;
-          dragStartX = event.clientX;
-          dragStartLeft = grid.scrollLeft;
-          grid.classList.add("is-dragging");
-          grid.setPointerCapture?.(event.pointerId);
-        });
-
-        grid.addEventListener("pointermove", (event) => {
-          if (!dragging) return;
-          if (Math.abs(event.clientX - dragStartX) > 8) dragMoved = true;
-          grid.scrollLeft = dragStartLeft - (event.clientX - dragStartX);
-        });
-
-        grid.addEventListener(
-          "click",
-          (event) => {
-            if (!dragMoved) return;
-            event.preventDefault();
-            event.stopPropagation();
-            dragMoved = false;
-          },
-          true
-        );
-
-        ["pointerup", "pointercancel", "pointerleave"].forEach((eventName) => {
-          grid.addEventListener(eventName, (event) => {
-            if (!dragging) return;
-            dragging = false;
-            grid.classList.remove("is-dragging");
-            grid.releasePointerCapture?.(event.pointerId);
-            updateReferenceScrollState(section);
-          });
-        });
       }
 
       section.querySelectorAll("[data-reference-scroll]").forEach((button) => {
@@ -265,21 +157,19 @@
 
   const originalRenderDetail = renderDetail;
   renderDetail = function renderDetailWithReferenceEnhancement(missionId) {
+    patchReferences();
     const result = originalRenderDetail(missionId);
-    if (missionId === "referencias-avancadas-ia") {
-      window.setTimeout(scheduleReferenceEnhancement, 0);
-      window.setTimeout(scheduleReferenceEnhancement, 120);
-    } else {
-      document.querySelector(".reference-total-progress")?.remove();
-    }
+    window.setTimeout(enhanceReferenceScroll, 0);
+    window.setTimeout(enhanceReferenceScroll, 140);
     return result;
   };
 
-  window.addEventListener("resize", scheduleReferenceEnhancement);
+  patchReferences();
+  window.addEventListener("resize", enhanceReferenceScroll);
   window.addEventListener("storage", updateReferenceTotalProgress);
   const referenceContent = document.querySelector("#readingContent");
   if (referenceContent) {
-    new MutationObserver(scheduleReferenceEnhancement).observe(referenceContent, { childList: true, subtree: true });
+    new MutationObserver(enhanceReferenceScroll).observe(referenceContent, { childList: true, subtree: true });
   }
-  window.setTimeout(scheduleReferenceEnhancement, 0);
+  window.setTimeout(enhanceReferenceScroll, 0);
 })();
