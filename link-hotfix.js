@@ -37,8 +37,11 @@
     }
 
     saveReferenceAccess(link.dataset.referenceId);
-    // Keep the native anchor navigation, but block older target-level handlers that cancel it.
+    event.preventDefault();
     event.stopImmediatePropagation();
+
+    const opened = window.open(link.href, "_blank", "noopener,noreferrer");
+    if (!opened) window.location.href = link.href;
   }
 
   normalizeReferenceLinks();
