@@ -1,8 +1,27 @@
 @media (max-width: 880px) {
   .detail-view.references-mode {
-    width: min(100%, calc(100% - 12px)) !important;
+    width: min(100% - 24px, 430px) !important;
     max-width: none !important;
     overflow: visible !important;
+  }
+
+  .detail-view.references-mode .detail-nav {
+    position: relative !important;
+    top: auto !important;
+    z-index: 2 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    margin: 0 0 18px !important;
+    padding: 8px !important;
+    border-radius: 18px !important;
+  }
+
+  .detail-view.references-mode .detail-nav button {
+    min-width: 0 !important;
+    padding: 12px 8px !important;
+    font-size: 15px !important;
+    white-space: nowrap !important;
   }
 
   .detail-view.references-mode .mission-detail,
@@ -19,8 +38,9 @@
   }
 
   .detail-view.references-mode .reference-article {
-    padding: 20px 14px 132px !important;
-    gap: 24px !important;
+    padding: 26px 18px 134px !important;
+    gap: 28px !important;
+    border-radius: 18px !important;
   }
 
   .detail-view.references-mode .reference-hero {
@@ -28,14 +48,27 @@
   }
 
   .detail-view.references-mode .reference-hero h2 {
-    font-size: clamp(40px, 12vw, 54px) !important;
+    font-size: clamp(38px, 11.2vw, 50px) !important;
     line-height: .96 !important;
     overflow-wrap: anywhere;
   }
 
   .detail-view.references-mode .reference-hero p {
-    font-size: 18px !important;
+    font-size: 17px !important;
     line-height: 1.55 !important;
+  }
+
+  .detail-view.references-mode .reference-section-heading {
+    gap: 10px !important;
+  }
+
+  .detail-view.references-mode .reference-section-heading span {
+    font-size: 13px !important;
+  }
+
+  .detail-view.references-mode .reference-section-heading strong {
+    flex: 0 0 auto !important;
+    font-size: 11px !important;
   }
 
   .detail-view.references-mode .reference-section {
@@ -48,7 +81,7 @@
     display: grid !important;
     grid-auto-flow: column !important;
     grid-template-columns: none !important;
-    grid-auto-columns: minmax(246px, 86vw) !important;
+    grid-auto-columns: minmax(230px, calc(100% - 28px)) !important;
     gap: 14px !important;
     max-width: 100% !important;
     overflow-x: auto !important;
@@ -63,9 +96,22 @@
     width: 100% !important;
     min-width: 0 !important;
     max-width: 100% !important;
-    min-height: 228px !important;
+    min-height: 248px !important;
     padding: 16px !important;
     overflow-wrap: anywhere;
+  }
+
+  .detail-view.references-mode .reference-card > strong {
+    font-size: 19px !important;
+    line-height: 1.12 !important;
+  }
+
+  .detail-view.references-mode .reference-card p {
+    font-size: 14px !important;
+  }
+
+  .detail-view.references-mode .reference-preview {
+    min-height: 68px !important;
   }
 
   .detail-view.references-mode .reference-scroll-actions {
@@ -82,7 +128,7 @@
   #readingPanel:has(.reference-total-progress) {
     position: relative !important;
     padding: 0 6px calc(16px + env(safe-area-inset-bottom)) !important;
-    margin-top: -110px !important;
+    margin-top: -112px !important;
     background: linear-gradient(180deg, rgba(20, 20, 24, 0), rgba(20, 20, 24, .94) 28%);
   }
 
@@ -92,5 +138,29 @@
 
   html.light #readingPanel:has(.reference-total-progress) {
     background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.94) 28%);
+  }
+}
+
+@media (max-width: 390px) {
+  .detail-view.references-mode {
+    width: min(100% - 18px, 430px) !important;
+  }
+
+  .detail-view.references-mode .detail-nav {
+    gap: 6px !important;
+    padding: 7px !important;
+  }
+
+  .detail-view.references-mode .detail-nav button {
+    padding: 11px 6px !important;
+    font-size: 14px !important;
+  }
+
+  .detail-view.references-mode .reference-article {
+    padding-inline: 16px !important;
+  }
+
+  .detail-view.references-mode .reference-grid {
+    grid-auto-columns: minmax(220px, calc(100% - 22px)) !important;
   }
 }
