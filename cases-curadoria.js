@@ -430,11 +430,12 @@ window.CASES_IA_CURADORIA = [
 
   function renderCasesCuradoriaMission(mission) {
     const panel = document.querySelector("#readingPanel");
-    content = document.querySelector("#readingContent");
+    const content = document.querySelector("#readingContent");
     if (!panel || !content) return;
 
     const list = filteredCases();
     panel.classList.remove("hidden");
+    document.body.classList.add("case-curadoria-mode");
     content.scrollTop = 0;
     content.className = "reading-content case-curadoria-content";
     content.innerHTML = `
@@ -443,6 +444,7 @@ window.CASES_IA_CURADORIA = [
           <span>Cases reais</span>
           <h2>06. ${escapeHtml(mission.title)}</h2>
           <p>${escapeHtml(mission.description)}</p>
+          <p class="case-curadoria-instruction">Use os filtros para navegar pelos exemplos. A contagem abaixo indica quantos cases estão disponíveis no recorte selecionado.</p>
         </header>
         <section class="case-curadoria-filters" aria-label="Filtros de cases">
           <label>
@@ -484,7 +486,14 @@ window.CASES_IA_CURADORIA = [
   const previousRenderReadingPanel = renderReadingPanel;
   renderReadingPanel = function renderReadingPanelWithCasesCuradoria(mission) {
     if (mission?.id === "cases-ia-reais") return renderCasesCuradoriaMission(mission);
+    document.body.classList.remove("case-curadoria-mode");
     return previousRenderReadingPanel(mission);
+  };
+
+  const previousRenderHome = renderHome;
+  renderHome = function renderHomeWithoutCasesMode(...args) {
+    document.body.classList.remove("case-curadoria-mode");
+    return previousRenderHome(...args);
   };
 
   if (state?.selectedMissionId === "cases-ia-reais") {
