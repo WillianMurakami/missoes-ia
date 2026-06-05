@@ -89,7 +89,7 @@
     new MutationObserver(refreshVisuals).observe(content, { childList: true, subtree: true });
   }
 
-  ["click", "auxclick", "contextmenu"].forEach((eventName) => {
+  ["mousedown", "click", "auxclick", "contextmenu"].forEach((eventName) => {
     document.addEventListener(
       eventName,
       (event) => {
