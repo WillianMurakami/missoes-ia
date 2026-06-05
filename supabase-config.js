@@ -6,7 +6,7 @@ window.SUPABASE_CONFIG = {
 };
 
 (function loadFinalOverrides() {
-  const version = "20260604-native1";
+  const version = "20260604-native2";
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
   stylesheet.href = `./final-overrides.css?v=${version}`;
@@ -17,12 +17,22 @@ window.SUPABASE_CONFIG = {
   contentStylesheet.href = `./content-fixes.css?v=${version}`;
   document.head.appendChild(contentStylesheet);
 
+  const visualStylesheet = document.createElement("link");
+  visualStylesheet.rel = "stylesheet";
+  visualStylesheet.href = `./visual-fixes.css?v=${version}`;
+  document.head.appendChild(visualStylesheet);
+
   window.addEventListener("load", () => {
     const script = document.createElement("script");
     script.src = `./final-overrides.js?v=${version}`;
     script.onload = () => {
       const contentScript = document.createElement("script");
       contentScript.src = `./content-fixes.js?v=${version}`;
+      contentScript.onload = () => {
+        const visualScript = document.createElement("script");
+        visualScript.src = `./visual-fixes.js?v=${version}`;
+        document.body.appendChild(visualScript);
+      };
       document.body.appendChild(contentScript);
     };
     document.body.appendChild(script);
