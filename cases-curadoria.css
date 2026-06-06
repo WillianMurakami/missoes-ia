@@ -1,17 +1,20 @@
 .case-curadoria-content {
   max-height: min(76vh, 800px);
-  padding: clamp(20px, 3vw, 38px);
+  padding: 0;
   overflow-x: hidden;
 }
 
 .case-curadoria-page {
+  width: min(100%, 1080px);
+  margin: 0 auto;
+  padding: clamp(28px, 4vw, 54px);
   color: var(--text);
 }
 
 .case-curadoria-hero {
   border: 1px solid var(--border);
   border-radius: 18px;
-  padding: clamp(22px, 3.4vw, 42px);
+  padding: clamp(26px, 3.8vw, 48px);
   background:
     radial-gradient(circle at 82% 20%, rgba(255, 122, 0, 0.2), transparent 28%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 122, 0, 0.05));
@@ -57,7 +60,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
-  margin: 22px 0 12px;
+  margin: 28px 0 14px;
 }
 
 .case-curadoria-filters label {
@@ -90,7 +93,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 34px;
-  margin: 8px 0 22px;
+  margin: 10px 0 30px;
   border: 1px solid rgba(255, 122, 0, 0.35);
   border-radius: 999px;
   padding: 0 14px;
@@ -101,7 +104,7 @@
 }
 
 .case-curadoria-section {
-  margin-top: 30px;
+  margin-top: 38px;
 }
 
 .case-curadoria-section-header {
@@ -138,12 +141,12 @@
 
 .case-curadoria-list {
   display: grid;
-  gap: 18px;
+  gap: 22px;
 }
 
 .case-curadoria-card {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-columns: minmax(220px, 0.31fr) minmax(0, 1fr);
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: 18px;
@@ -216,8 +219,8 @@
 
 .case-curadoria-body {
   display: grid;
-  gap: 12px;
-  padding: clamp(20px, 2.4vw, 28px);
+  gap: 15px;
+  padding: clamp(24px, 2.8vw, 34px);
 }
 
 .case-curadoria-meta {
@@ -269,12 +272,12 @@
 .case-curadoria-insights {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px;
 }
 
 .case-curadoria-insights section {
   border-radius: 12px;
-  padding: 12px;
+  padding: 14px;
   background: var(--surface-soft);
 }
 
@@ -345,7 +348,11 @@ body.light-theme .case-curadoria-badges span {
 @media (max-width: 900px) {
   .case-curadoria-content {
     max-height: none;
-    padding: 16px;
+    padding: 0;
+  }
+
+  .case-curadoria-page {
+    padding: 22px;
   }
 
   .case-curadoria-filters {
@@ -367,8 +374,8 @@ body.light-theme .case-curadoria-badges span {
 }
 
 @media (max-width: 560px) {
-  .case-curadoria-content {
-    padding: 12px;
+  .case-curadoria-page {
+    padding: 16px;
   }
 
   .case-curadoria-hero {
