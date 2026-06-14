@@ -364,12 +364,16 @@ function renderDetail(missionId) {
     .map((resource) => {
       const url = resource.match(/https?:\/\/\S+/)?.[0] || "";
       const isUrl = Boolean(url);
+      const isSupportHeading = mission.id === "infografico-rotina-chave" && !isUrl;
       const className = ["post-treinamento-ao-vivo", "infografico-rotina-chave"].includes(mission.id)
-        ? "resource-feature"
+        ? `resource-feature ${isSupportHeading ? "resource-heading" : "resource-link"}`
         : "";
+      const displayText = className.includes("resource-link")
+        ? resource.replace(/:\s*https?:\/\/\S+/, "")
+        : resource;
       return isUrl
-        ? `<a class="${className}" href="${url}" target="_blank" rel="noreferrer">${resource}</a>`
-        : `<span class="${className}">${resource}</span>`;
+        ? `<a class="${className}" href="${url}" target="_blank" rel="noreferrer">${displayText}</a>`
+        : `<span class="${className}">${displayText}</span>`;
     })
     .join("");
   $("#submissionText").value = "";

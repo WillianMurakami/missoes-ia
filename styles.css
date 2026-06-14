@@ -996,7 +996,7 @@ textarea:focus {
 .resource-list .resource-feature {
   display: grid;
   gap: 4px;
-  width: min(620px, 100%);
+  width: 100%;
   border: 1px solid rgba(255, 118, 0, 0.46);
   border-radius: 12px;
   padding: 14px 16px;
@@ -1007,6 +1007,22 @@ textarea:focus {
   font-size: 14px;
   line-height: 1.35;
   box-shadow: 0 14px 30px rgba(255, 118, 0, 0.11);
+}
+
+.resource-list .resource-heading {
+  border: 0;
+  padding: 4px 0 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: clamp(21px, 2vw, 28px);
+  font-weight: 850;
+  line-height: 1.16;
+  box-shadow: none;
+}
+
+.resource-list .resource-link {
+  min-height: 58px;
+  align-content: center;
 }
 
 .submission-card.file-only-submission > label:first-of-type {
@@ -3009,6 +3025,13 @@ html.light .upload-zone.is-loading {
   border-color: #b84f00;
   background: #ffe7c2;
   box-shadow: 0 12px 24px rgba(184, 79, 0, 0.13);
+}
+
+html.light .resource-list .resource-heading {
+  border: 0;
+  background: transparent;
+  color: #202025;
+  box-shadow: none;
 }
 
 html.light .admin-access-view {
