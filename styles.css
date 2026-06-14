@@ -993,6 +993,26 @@ textarea:focus {
   border: 1px solid rgba(255, 118, 0, 0.38);
 }
 
+.resource-list .resource-feature {
+  display: grid;
+  gap: 4px;
+  width: min(620px, 100%);
+  border: 1px solid rgba(255, 118, 0, 0.46);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background:
+    radial-gradient(circle at 92% 18%, rgba(255, 203, 0, 0.26), transparent 26%),
+    linear-gradient(135deg, rgba(255, 244, 204, 0.96), rgba(255, 255, 255, 0.94));
+  color: #2b2f38;
+  font-size: 14px;
+  line-height: 1.35;
+  box-shadow: 0 14px 30px rgba(255, 118, 0, 0.11);
+}
+
+.submission-card.file-only-submission > label:first-of-type {
+  display: none;
+}
+
 .reading-panel {
   display: grid;
   gap: 12px;

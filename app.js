@@ -6,15 +6,16 @@ const missions = [
     icon: "01",
     accent: "yellow",
     title: "Desafio inicial",
-    short: "Publique o material criado no encontro ao vivo.",
+    short: "Envie o relatório final com os insights da atividade.",
     description:
-      "Poste a imagem criada durante o treinamento ao vivo e use o espaco de comentario para contextualizar seu aprendizado.",
+      "Compartilhe aqui o relatório final com os insights identificados na atividade realizada durante o treinamento de IA aplicada ao trabalho.",
     steps: [
-      "Reassista a gravacao do treinamento, se precisar revisar o passo a passo.",
-      "Inclua no comentario uma introducao curta sobre o que voce criou.",
-      "Anexe a imagem gerada no desafio feito durante o treinamento.",
+      "Faça a versão final do seu relatório com base nas informações da tabela.",
+      "Use sua capacidade analítica, criatividade e a ferramenta que preferir para gerar o documento executivo.",
+      "Organize o material da forma que fizer mais sentido para facilitar o consumo do conteúdo.",
     ],
-    resources: ["Link da gravacao: inserir aqui quando o material final estiver disponivel."],
+    resources: ["Reveja também o conteúdo do nosso treinamento no link abaixo: Link do treinamento - inserir aqui quando o material final estiver disponível."],
+    fileOnlySubmission: true,
   },
   {
     id: "infografico-rotina-chave",
@@ -235,6 +236,10 @@ function isContentOnlyMission(mission) {
   return Boolean(mission?.readingContent) || mission?.id === "referencias-avancadas-ia";
 }
 
+function isFileOnlyMission(mission) {
+  return Boolean(mission?.fileOnlySubmission);
+}
+
 function updateUserHeader() {
   $("#userDisplay").textContent = state.user.name;
   $("#userAreaDisplay").textContent = state.user.area;
@@ -352,18 +357,20 @@ function renderDetail(missionId) {
     .map((resource) => {
       const url = resource.match(/https?:\/\/\S+/)?.[0] || "";
       const isUrl = Boolean(url);
+      const className = mission.id === "post-treinamento-ao-vivo" ? "resource-feature" : "";
       return isUrl
-        ? `<a href="${url}" target="_blank" rel="noreferrer">${resource}</a>`
-        : `<span>${resource}</span>`;
+        ? `<a class="${className}" href="${url}" target="_blank" rel="noreferrer">${resource}</a>`
+        : `<span class="${className}">${resource}</span>`;
     })
     .join("");
   $("#submissionText").value = "";
   $("#submissionFile").value = "";
   $("#selectedFileName").textContent = "PDF, imagem, DOC ou PPT";
   document.querySelector(".upload-zone").classList.remove("is-loading");
-  $("#submissionText").required = !contentOnly;
+  $("#submissionText").required = !contentOnly && !isFileOnlyMission(mission);
   $("#submissionFile").required = !contentOnly;
   $("#submissionForm").classList.toggle("hidden", contentOnly);
+  $("#submissionForm").classList.toggle("file-only-submission", isFileOnlyMission(mission));
   document.querySelector(".submission-history").classList.toggle("hidden", contentOnly);
   renderReadingPanel(mission);
   renderBacklog();
@@ -397,7 +404,7 @@ function setSubmissionButtonState(stateName, message = "") {
     return;
   }
 
-  text.textContent = "Enviar missao";
+  text.textContent = "Enviar desafio";
 }
 
 function updateSelectedFileName() {
@@ -569,7 +576,7 @@ function renderBacklog() {
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   if (!missionRecords.length) {
-    $("#backlogList").innerHTML = `<div class="empty-state">Nenhum envio registrado para esta missao.</div>`;
+    $("#backlogList").innerHTML = `<div class="empty-state">Nenhum envio registrado para este desafio.</div>`;
     return;
   }
 
@@ -679,8 +686,13 @@ async function handleSubmission(event) {
   const file = $("#submissionFile").files[0];
   const text = $("#submissionText").value.trim();
   const mission = missions.find((item) => item.id === state.selectedMissionId);
-  if (!mission?.readingContent && (!text || !file)) {
-    alert("Para concluir esta missao, envie um comentario e um arquivo de evidencia.");
+  const requiresText = !mission?.readingContent && !isFileOnlyMission(mission);
+  if (!mission?.readingContent && ((!text && requiresText) || !file)) {
+    alert(
+      requiresText
+        ? "Para concluir este desafio, envie um comentario e um arquivo de evidencia."
+        : "Para concluir este desafio, envie o arquivo de evidencia."
+    );
     return;
   }
 
