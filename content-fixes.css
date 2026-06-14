@@ -120,6 +120,29 @@
     linear-gradient(135deg, #ff1212, #ff3b13 58%, #ff7600) !important;
 }
 
+.challenge-content-article .reference-section {
+  overflow: visible;
+}
+
+.challenge-content-article .reference-section::before,
+.challenge-content-article .reference-section::after,
+.challenge-content-article .reference-scroll-actions {
+  display: none !important;
+}
+
+.challenge-content-grid {
+  grid-auto-flow: initial !important;
+  grid-auto-columns: initial !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  overflow: visible !important;
+  cursor: default !important;
+  user-select: auto !important;
+}
+
+.challenge-content-card {
+  min-height: 230px !important;
+}
+
 .reference-total-progress {
   display: inline-flex;
   align-items: center;
@@ -225,6 +248,11 @@ html.light .theme-toggle[aria-pressed="true"]:hover {
 @media (max-width: 880px) {
   .reference-grid {
     grid-auto-columns: minmax(238px, 84%) !important;
+  }
+
+  .challenge-content-grid {
+    grid-auto-columns: initial !important;
+    grid-template-columns: 1fr !important;
   }
 
   .reference-section::before,

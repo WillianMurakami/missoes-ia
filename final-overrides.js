@@ -38,6 +38,29 @@
     { title: "Produtividade com assistentes de trabalho", company: "Google Workspace + clientes enterprise", area: "Produtividade", impact: "estudo citado pelo Google aponta economia media de 105 minutos por usuario por semana", context: "O conteudo reune exemplos de IA integrada ao trabalho diario: escrever, resumir, organizar informacoes e apoiar tomada de decisao.", whyItMatters: "E util para mostrar que ganhos pequenos, quando repetidos por muitas pessoas, podem virar impacto relevante.", link: "https://blog.google/innovation-and-ai/infrastructure-and-cloud/google-cloud/gemini-at-work-ai-agents/" },
   ];
 
+  const challengeThreeContents = [
+    { id: "video-design-solucoes", order: 1, title: "Introducao ao design de solucoes", tag: "Video", url: "https://www.youtube.com/watch?v=9hPd7KuOmIc", summary: "Assista ao conteudo para ampliar repertorio sobre construcao e estruturacao de solucoes." },
+    { id: "template-solution-design", order: 2, title: "Template de solution design", tag: "Template", url: "https://miro.com/pt/modelos/solution-design-template/", summary: "Explore um modelo visual para organizar problema, contexto, proposta e caminhos de implementacao." },
+    { id: "video-solucao-pratica", order: 3, title: "Aplicando a logica na pratica", tag: "Video", url: "https://www.youtube.com/watch?v=oYq5TzmBc7Y", summary: "Veja uma referencia complementar para conectar ideia, desenho de solucao e execucao." },
+  ];
+
+  const challengeThreeMission = missions.find((mission) => mission.id === "treinamento-no-code-startup");
+  if (challengeThreeMission) {
+    Object.assign(challengeThreeMission, {
+      type: "Conteudos",
+      short: "Acesse os 3 conteudos para concluir esta etapa.",
+      description: "Acesse os tres conteudos selecionados para ampliar seu repertorio antes do desafio final. A conclusao sera liberada depois que todos forem abertos.",
+      steps: [
+        "Abra cada conteudo indicado abaixo.",
+        "Use os materiais para refletir sobre como estruturar uma solucao aplicavel.",
+        "Depois de acessar os tres itens, marque o desafio como concluido.",
+      ],
+      resources: [],
+      readingContent: ["conteudos-desafio-3"],
+      trackedContents: challengeThreeContents,
+    });
+  }
+
   const certificateIndex = missions.findIndex((mission) => mission.id === "certificado-anthropic");
   if (certificateIndex >= 0) missions.splice(certificateIndex, 1);
 
@@ -106,6 +129,23 @@
 
   function saveReferenceClicks(clicks) {
     localStorage.setItem(clickKey(), JSON.stringify([...clicks]));
+  }
+
+  function challengeContentKey(missionId) {
+    return `uol-edtech-ai-content-clicks:${missionId}:${state.user?.id || "anon"}`;
+  }
+
+  function getChallengeContentClicks(missionId) {
+    try { return new Set(JSON.parse(localStorage.getItem(challengeContentKey(missionId)) || "[]")); } catch { return new Set(); }
+  }
+
+  function saveChallengeContentClicks(missionId, clicks) {
+    localStorage.setItem(challengeContentKey(missionId), JSON.stringify([...clicks]));
+  }
+
+  function challengeContentComplete(mission) {
+    const clicks = getChallengeContentClicks(mission.id);
+    return (mission.trackedContents || []).every((item) => clicks.has(item.id));
   }
 
   function levelItems(level) {
@@ -202,6 +242,123 @@
       </article>`;
   }
 
+  function challengeContentCard(item, visited) {
+    return `
+      <a class="reference-card challenge-content-card ${visited ? "is-visited" : ""}" data-challenge-content-id="${html(item.id)}" href="${html(item.url)}" target="_blank" rel="noreferrer">
+        <div class="reference-preview ${referenceClass(item.tag)}"><strong>${html(item.tag)}</strong></div>
+        <strong>${String(item.order).padStart(2, "0")}. ${html(item.title)}</strong>
+        <p>${html(item.summary)}</p>
+        <span class="reference-state">${visited ? "Acessado" : "Abrir conteudo"}</span>
+      </a>`;
+  }
+
+  function recordChallengeContentAccess(mission, contentId) {
+    const clicks = getChallengeContentClicks(mission.id);
+    const before = clicks.size;
+    clicks.add(contentId);
+    saveChallengeContentClicks(mission.id, clicks);
+    if (clicks.size !== before) {
+      window.setTimeout(() => renderChallengeContentMission(mission), 120);
+    }
+  }
+
+  function updateChallengeContentButton(mission) {
+    const complete = challengeContentComplete(mission);
+    if (isMissionCompleted(mission.id)) {
+      setReadingButtonState("complete");
+      document.querySelector("#markReadingBtn").textContent = "Concluido";
+      return;
+    }
+    setReadingButtonState(complete ? "ready" : "locked");
+    document.querySelector("#markReadingBtn").textContent = complete ? "Marcar como concluido" : "Acesse os 3 conteudos";
+  }
+
+  function renderChallengeContentMission(mission) {
+    const panel = document.querySelector("#readingPanel");
+    const content = document.querySelector("#readingContent");
+    const clicks = getChallengeContentClicks(mission.id);
+    panel.classList.remove("hidden");
+    content.scrollTop = 0;
+    content.innerHTML = `
+      <article class="reference-article challenge-content-article">
+        <header class="reference-hero">
+          <span class="eyebrow">Conteudos essenciais</span>
+          <h2>03. Amplie seus conhecimentos</h2>
+          <p>Acesse os 3 conteudos abaixo para concluir esta etapa. O botao de conclusao sera liberado quando todos forem abertos.</p>
+        </header>
+        <section class="reference-section">
+          <header class="reference-section-heading">
+            <span>Conteudos selecionados</span>
+            <strong>${clicks.size}/${(mission.trackedContents || []).length} acessados</strong>
+          </header>
+          <div class="reference-grid challenge-content-grid">
+            ${(mission.trackedContents || []).map((item) => challengeContentCard(item, clicks.has(item.id))).join("")}
+          </div>
+        </section>
+      </article>`;
+    content.querySelectorAll("[data-challenge-content-id]").forEach((link) => {
+      link.addEventListener("mousedown", (event) => {
+        if (event.button === 0 || event.button === 1) recordChallengeContentAccess(mission, link.dataset.challengeContentId);
+      });
+      link.addEventListener("auxclick", (event) => {
+        if (event.button === 1) recordChallengeContentAccess(mission, link.dataset.challengeContentId);
+      });
+      link.addEventListener("click", () => {
+        recordChallengeContentAccess(mission, link.dataset.challengeContentId);
+      });
+    });
+    updateChallengeContentButton(mission);
+  }
+
+  async function completeChallengeContentMission() {
+    const mission = missions.find((item) => item.id === state.selectedMissionId);
+    if (!mission || !challengeContentComplete(mission)) return;
+    const accessed = (mission.trackedContents || [])
+      .filter((item) => getChallengeContentClicks(mission.id).has(item.id))
+      .map((item) => `${String(item.order).padStart(2, "0")}. ${item.title} - ${item.url}`)
+      .join("\n");
+    const text = `Conteudos acessados no desafio:\n${accessed}`;
+
+    if (db) {
+      const { error } = await db.from("app_submissions").upsert(
+        {
+          user_id: state.user.id,
+          mission_id: mission.id,
+          text,
+          file_name: "",
+          file_path: "",
+          file_url: "",
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id,mission_id" }
+      );
+      if (error) {
+        alert(`Nao foi possivel concluir: ${error.message}`);
+        return;
+      }
+      await loadCloudSubmissions();
+    } else {
+      const existingIndex = state.submissions.findIndex((item) => item.userId === state.user.id && item.missionId === mission.id);
+      const record = {
+        id: crypto.randomUUID(),
+        missionId: mission.id,
+        userId: state.user.id,
+        userName: state.user.name,
+        userArea: state.user.area,
+        text,
+        fileName: "",
+        createdAt: new Date().toISOString(),
+      };
+      if (existingIndex >= 0) state.submissions.splice(existingIndex, 1, record);
+      else state.submissions.push(record);
+      persistSubmissions();
+    }
+
+    renderProgress();
+    renderMissions();
+    updateChallengeContentButton(mission);
+  }
+
   function recordReferenceAccess(referenceId, mission) {
     const clicks = getReferenceClicks();
     const before = clicks.size;
@@ -260,6 +417,7 @@
 
   const oldRenderReadingPanel = renderReadingPanel;
   renderReadingPanel = function renderReadingPanelFinal(mission) {
+    if (mission?.id === "treinamento-no-code-startup") return renderChallengeContentMission(mission);
     if (mission?.id === "referencias-avancadas-ia") return renderReferenceMission(mission);
     if (mission?.id === "cases-ia-reais") return renderCasesMission(mission);
     return oldRenderReadingPanel(mission);
@@ -267,9 +425,17 @@
 
   const oldHandleReadingScroll = handleReadingScroll;
   handleReadingScroll = function handleReadingScrollFinal(event) {
-    if (["referencias-avancadas-ia", "cases-ia-reais"].includes(state.selectedMissionId)) return;
+    if (["treinamento-no-code-startup", "referencias-avancadas-ia", "cases-ia-reais"].includes(state.selectedMissionId)) return;
     return oldHandleReadingScroll(event);
   };
+
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("#markReadingBtn");
+    if (!button || state.selectedMissionId !== "treinamento-no-code-startup") return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    completeChallengeContentMission();
+  }, true);
 
   const oldGetAdminRows = getAdminRows;
   getAdminRows = function getAdminRowsFinal() {
@@ -297,6 +463,6 @@
 
   window.setTimeout(() => {
     if (state.user && !document.querySelector("#homeView").classList.contains("hidden")) renderHome({ animateProgress: false });
-    if (["referencias-avancadas-ia", "cases-ia-reais"].includes(state.selectedMissionId)) renderDetail(state.selectedMissionId);
+    if (["treinamento-no-code-startup", "referencias-avancadas-ia", "cases-ia-reais"].includes(state.selectedMissionId)) renderDetail(state.selectedMissionId);
   }, 0);
 })();
