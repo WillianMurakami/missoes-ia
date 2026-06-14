@@ -357,6 +357,7 @@ function renderDetail(missionId) {
   state.selectedMissionId = missionId;
   $("#detailView").classList.toggle("reading-mode", contentOnly);
   $("#detailView").classList.toggle("references-mode", mission.id === "referencias-avancadas-ia");
+  document.querySelector(".mission-detail").classList.toggle("resources-wide", mission.id === "infografico-rotina-chave");
   $("#detailTitle").textContent = `${missionNumber}. ${mission.title}`;
   $("#detailDescription").textContent = mission.description;
   $("#detailSteps").innerHTML = mission.steps.map((step) => `<li>${step}</li>`).join("");

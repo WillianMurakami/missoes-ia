@@ -1025,6 +1025,32 @@ textarea:focus {
   align-content: center;
 }
 
+.mission-detail.resources-wide .detail-main {
+  display: contents;
+}
+
+.mission-detail.resources-wide #detailTitle,
+.mission-detail.resources-wide #detailDescription,
+.mission-detail.resources-wide #detailSteps {
+  grid-column: 1;
+}
+
+.mission-detail.resources-wide .submission-card {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+}
+
+.mission-detail.resources-wide .resource-list {
+  display: grid;
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.mission-detail.resources-wide .resource-link {
+  width: 100%;
+}
+
 .submission-card.file-only-submission > label:first-of-type {
   display: none;
 }
@@ -2166,6 +2192,25 @@ textarea:focus {
   .resource-list span {
     border-radius: 18px;
     line-height: 1.35;
+  }
+
+  .mission-detail.resources-wide .detail-main,
+  .app-shell.demo-mobile .mission-detail.resources-wide .detail-main {
+    display: grid;
+  }
+
+  .mission-detail.resources-wide #detailTitle,
+  .mission-detail.resources-wide #detailDescription,
+  .mission-detail.resources-wide #detailSteps,
+  .mission-detail.resources-wide .submission-card,
+  .mission-detail.resources-wide .resource-list,
+  .app-shell.demo-mobile .mission-detail.resources-wide #detailTitle,
+  .app-shell.demo-mobile .mission-detail.resources-wide #detailDescription,
+  .app-shell.demo-mobile .mission-detail.resources-wide #detailSteps,
+  .app-shell.demo-mobile .mission-detail.resources-wide .submission-card,
+  .app-shell.demo-mobile .mission-detail.resources-wide .resource-list {
+    grid-column: auto;
+    grid-row: auto;
   }
 
   .admin-toolbar,
