@@ -366,7 +366,7 @@ function renderDetail(missionId) {
       const url = resource.match(/https?:\/\/\S+/)?.[0] || "";
       const isUrl = Boolean(url);
       const isSupportHeading = mission.id === "infografico-rotina-chave" && !isUrl;
-      const className = ["post-treinamento-ao-vivo", "infografico-rotina-chave"].includes(mission.id)
+      const className = ["post-treinamento-ao-vivo", "infografico-rotina-chave", "treinamento-no-code-startup"].includes(mission.id)
         ? `resource-feature ${isSupportHeading ? "resource-heading" : "resource-link"}`
         : "";
       const displayText = className.includes("resource-link")

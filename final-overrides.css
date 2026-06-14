@@ -5,7 +5,7 @@
 .theme-toggle { width: 246px !important; padding-left: 64px !important; }
 .theme-toggle[aria-pressed="true"] { padding-right: 64px !important; }
 .theme-toggle[aria-pressed="true"]::before { transform: translate(192px, -50%) !important; }
-.hero-board h2 { max-width: 720px !important; font-size: clamp(40px, 5.6vw, 78px) !important; line-height: .9 !important; }
+.hero-board h2 { max-width: 940px !important; font-size: clamp(42px, 4.8vw, 66px) !important; line-height: .92 !important; }
 html.light .hero-board h2 { color: #202025 !important; }
 html.light .login-card button,
 html.light .submission-card button,
@@ -60,7 +60,7 @@ html.light .case-story-body h3, html.light .case-insight strong, html.light .cas
 html.light .case-lead, html.light .case-insight p, html.light .case-impact p { color: #596273; }
 html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.06); }
 @media (max-width: 880px) {
-  .hero-board h2 { font-size: 34px !important; }
+  .hero-board h2 { max-width: 100% !important; font-size: clamp(31px, 9vw, 42px) !important; line-height: .98 !important; }
   .optional-grid { grid-template-columns: 1fr !important; }
   .reference-grid, .case-grid { grid-template-columns: 1fr !important; }
   .reference-article, .case-article { padding: 18px !important; }

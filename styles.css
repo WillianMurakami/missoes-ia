@@ -1023,6 +1023,16 @@ textarea:focus {
 .resource-list .resource-link {
   min-height: 58px;
   align-content: center;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+.resource-list a.resource-link:hover {
+  border-color: rgba(255, 118, 0, 0.76);
+  background:
+    radial-gradient(circle at 92% 18%, rgba(255, 203, 0, 0.34), transparent 26%),
+    linear-gradient(135deg, rgba(255, 247, 221, 1), rgba(255, 255, 255, 0.98));
+  box-shadow: 0 20px 42px rgba(255, 118, 0, 0.18);
+  transform: translateY(-2px);
 }
 
 .mission-detail.resources-wide .detail-main {

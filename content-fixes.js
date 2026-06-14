@@ -30,7 +30,6 @@
     { level: "Avancado", order: 9, title: "Do zero ao seu primeiro agente de IA em 20 minutos (sem codar, com n8n)", producer: "Asimov Academy", tag: "Vídeo", url: "https://www.youtube.com/watch?v=DgxHP1LG5dM" },
     { level: "Avancado", order: 10, title: "O que é Vibe Coding?", producer: "NoCode Startup", tag: "Vídeo", url: "https://www.youtube.com/watch?v=3T3SS7r2Zpo" },
     { level: "Avancado", order: 11, title: "Arquitetura de software no Vibe Coding", producer: "Polímatas AI", tag: "Vídeo", url: "https://www.youtube.com/watch?v=kU4-2a__1YY" },
-    { level: "Avancado", order: 12, title: "Criando um CRM sozinho (com Vibe Code)", producer: "Gustavo Campos - IA", tag: "Vídeo", url: "https://www.youtube.com/watch?v=q4VaJ2ae9o0" },
   ];
 
   function patchReferences() {
