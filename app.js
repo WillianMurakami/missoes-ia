@@ -24,14 +24,21 @@ const missions = [
     icon: "02",
     accent: "orange",
     title: "Estruturando a rotina",
-    short: "Transforme uma rotina chave em visual explicativo.",
+    short: "Documente uma rotina chave com apoio de IA.",
     description:
-      "Crie um infografico sobre alguma rotina chave do seu trabalho. A ferramenta e livre, mas o processo com IA deve ficar registrado.",
+      "Seu desafio aqui é criar a documentação de alguma rotina chave do seu trabalho. O formato dessa documentação é livre, seja um fluxograma, um infográfico, POP/PAP, checklist, mapa mental, vídeo tutorial, etc. Além disso, o processo de construção desse material precisa ser feito por IA de sua escolha.",
     steps: [
-      "Escolha uma rotina relevante para seu time.",
-      "Use IA para organizar a explicacao, etapas, riscos ou boas praticas.",
-      "Anexe o infografico e o export do prompt ou conversa usada para gerar o material.",
+      "Escolha uma rotina relevante do seu trabalho.",
+      "Use uma IA de sua escolha para apoiar a construção da documentação.",
+      "Lembre-se de NÃO COMPARTILHAR INFORMAÇÕES sensíveis, que identifiquem usuários, clientes ou fornecedores de nossa base de dados.",
+      "Também não compartilhe informações sigilosas, como documentos ou contratos da CIA, nas ferramentas.",
     ],
+    resources: [
+      "Para te apoiar nesse desafio veja alguns conteúdos selecionados:",
+      "Mapeamento de processos: https://www.youtube.com/watch?v=uZ57s5R4-Jc&list=PL1txHw-3UosJRE7HA3i6_jB3Pe8MP__nV",
+      "Ideias de documentação de processos: https://pt.venngage.com/blog/como-fazer-fluxograma/",
+    ],
+    fileOnlySubmission: true,
   },
   {
     id: "treinamento-no-code-startup",
@@ -357,7 +364,9 @@ function renderDetail(missionId) {
     .map((resource) => {
       const url = resource.match(/https?:\/\/\S+/)?.[0] || "";
       const isUrl = Boolean(url);
-      const className = mission.id === "post-treinamento-ao-vivo" ? "resource-feature" : "";
+      const className = ["post-treinamento-ao-vivo", "infografico-rotina-chave"].includes(mission.id)
+        ? "resource-feature"
+        : "";
       return isUrl
         ? `<a class="${className}" href="${url}" target="_blank" rel="noreferrer">${resource}</a>`
         : `<span class="${className}">${resource}</span>`;
