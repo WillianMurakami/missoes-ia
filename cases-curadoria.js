@@ -500,3 +500,179 @@ window.CASES_IA_CURADORIA = [
     renderDetail("cases-ia-reais");
   }
 })();
+
+(function applyCleanCasesExperience() {
+  const cases = window.CASES_IA_CURADORIA || [];
+  if (!Array.isArray(cases) || !cases.length || typeof renderReadingPanel !== "function") return;
+
+  const priorityOrderClean = ["Destaque", "Apoio", "Expansão", "ExpansÃ£o"];
+  const priorityLabelClean = {
+    Destaque: "Cases em destaque",
+    Apoio: "Outras referências úteis",
+    "Expansão": "IA além do óbvio",
+    "ExpansÃ£o": "IA além do óbvio",
+  };
+  const priorityHelpClean = {
+    Destaque: "Exemplos próximos de problemas corporativos recorrentes.",
+    Apoio: "Referências para ampliar repertório sem leitura técnica profunda.",
+    "Expansão": "Aplicações menos óbvias para mostrar caminhos possíveis.",
+    "ExpansÃ£o": "Aplicações menos óbvias para mostrar caminhos possíveis.",
+  };
+
+  window.CASES_IA_FILTERS = {
+    area: Array.isArray(window.CASES_IA_FILTERS?.area) ? window.CASES_IA_FILTERS.area : [],
+    level: Array.isArray(window.CASES_IA_FILTERS?.level) ? window.CASES_IA_FILTERS.level : [],
+  };
+
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function splitValues(value) {
+    return String(value || "")
+      .split(/\s*[/;,]\s*/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  function uniqueOptions(key) {
+    return [...new Set(cases.flatMap((item) => splitValues(item[key])))]
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b, "pt-BR"));
+  }
+
+  function checkboxHtml(key) {
+    const current = new Set(window.CASES_IA_FILTERS[key] || []);
+    return uniqueOptions(key)
+      .map((value) => `
+        <label class="case-curadoria-check">
+          <input type="checkbox" data-case-filter="${escapeHtml(key)}" value="${escapeHtml(value)}" ${current.has(value) ? "checked" : ""}>
+          <span>${escapeHtml(value)}</span>
+        </label>
+      `)
+      .join("");
+  }
+
+  function matchesFilter(item, key) {
+    const selected = window.CASES_IA_FILTERS[key] || [];
+    if (!selected.length) return true;
+    const values = splitValues(item[key]);
+    return selected.some((value) => values.includes(value));
+  }
+
+  function filteredCasesClean() {
+    return cases.filter((item) => matchesFilter(item, "area") && matchesFilter(item, "level"));
+  }
+
+  function buildMediaClean(item) {
+    const fallback = `
+      <div class="case-curadoria-fallback" aria-hidden="true">
+        <span>${escapeHtml(item.company)}</span>
+        <strong>${escapeHtml(splitValues(item.area)[0] || "IA")}</strong>
+      </div>
+    `;
+    if (!item.image) return fallback;
+    return `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.alt || item.title)}" loading="lazy" decoding="async">${fallback}`;
+  }
+
+  function caseCardClean(item) {
+    return `
+      <article class="case-curadoria-card clean-case-card">
+        <figure class="case-curadoria-media ${item.image ? "has-image" : "is-fallback"}">
+          ${buildMediaClean(item)}
+        </figure>
+        <div class="case-curadoria-body">
+          <p class="case-curadoria-company">${escapeHtml(item.company)}</p>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p class="case-curadoria-summary">${escapeHtml(item.summary)}</p>
+          <div class="case-curadoria-insights">
+            <section>
+              <strong>Destaque da solução</strong>
+              <p>${escapeHtml(item.capability)}</p>
+            </section>
+          </div>
+          <a class="case-curadoria-link" href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">Acessar matéria original</a>
+        </div>
+      </article>
+    `;
+  }
+
+  function prioritySectionClean(priority, list) {
+    const ordered = list.filter((item) => item.priority === priority);
+    if (!ordered.length) return "";
+    return `
+      <section class="case-curadoria-section">
+        <header class="case-curadoria-section-header">
+          <div>
+            <span>${escapeHtml(priority)}</span>
+            <h3>${escapeHtml(priorityLabelClean[priority] || priority)}</h3>
+            <p>${escapeHtml(priorityHelpClean[priority] || "")}</p>
+          </div>
+        </header>
+        <div class="case-curadoria-list">${ordered.map(caseCardClean).join("")}</div>
+      </section>
+    `;
+  }
+
+  function renderCasesCuradoriaClean(mission) {
+    const panel = document.querySelector("#readingPanel");
+    const content = document.querySelector("#readingContent");
+    if (!panel || !content) return;
+
+    const list = filteredCasesClean();
+    panel.classList.remove("hidden");
+    document.body.classList.add("case-curadoria-mode");
+    content.scrollTop = 0;
+    content.className = "reading-content case-curadoria-content";
+    content.innerHTML = `
+      <article class="case-curadoria-page clean-cases-page">
+        <header class="case-curadoria-hero">
+          <span>Cases reais</span>
+          <h2>06. ${escapeHtml(mission.title)}</h2>
+          <p>${escapeHtml(mission.description)}</p>
+          <p class="case-curadoria-instruction">Use os filtros para navegar pelos exemplos. Se nenhuma opção estiver selecionada, todos os cases ficam visíveis.</p>
+        </header>
+        <section class="case-curadoria-filters clean-case-filters" aria-label="Filtros de cases">
+          <fieldset>
+            <legend>Área</legend>
+            <div class="case-curadoria-checks">${checkboxHtml("area")}</div>
+          </fieldset>
+          <fieldset>
+            <legend>Nível</legend>
+            <div class="case-curadoria-checks">${checkboxHtml("level")}</div>
+          </fieldset>
+        </section>
+        ${list.length ? priorityOrderClean.map((priority) => prioritySectionClean(priority, list)).join("") : `<div class="empty-state">Nenhum case encontrado com esses filtros.</div>`}
+      </article>
+    `;
+
+    content.querySelectorAll("[data-case-filter]").forEach((checkbox) => {
+      checkbox.addEventListener("change", (event) => {
+        const key = event.currentTarget.dataset.caseFilter;
+        window.CASES_IA_FILTERS[key] = [...content.querySelectorAll(`[data-case-filter="${key}"]:checked`)].map((item) => item.value);
+        renderCasesCuradoriaClean(mission);
+      });
+    });
+
+    content.querySelectorAll(".case-curadoria-media img").forEach((image) => {
+      image.addEventListener("error", () => {
+        image.closest(".case-curadoria-media")?.classList.add("image-failed");
+      });
+    });
+
+    if (typeof setReadingButtonState === "function") setReadingButtonState(isMissionCompleted(mission.id) ? "complete" : "ready");
+  }
+
+  const previousCleanCasesRender = renderReadingPanel;
+  renderReadingPanel = function renderReadingPanelWithCleanCases(mission) {
+    if (mission?.id === "cases-ia-reais") return renderCasesCuradoriaClean(mission);
+    return previousCleanCasesRender(mission);
+  };
+
+  if (state?.selectedMissionId === "cases-ia-reais") renderDetail("cases-ia-reais");
+})();
