@@ -357,21 +357,33 @@ function renderDetail(missionId) {
   state.selectedMissionId = missionId;
   $("#detailView").classList.toggle("reading-mode", contentOnly);
   $("#detailView").classList.toggle("references-mode", mission.id === "referencias-avancadas-ia");
-  document.querySelector(".mission-detail").classList.toggle("resources-wide", mission.id === "infografico-rotina-chave");
+  document.querySelector(".mission-detail").classList.toggle(
+    "resources-wide",
+    ["infografico-rotina-chave", "solucao-performance-ia"].includes(mission.id)
+  );
+  document.querySelector(".mission-detail").classList.toggle("final-challenge", mission.id === "solucao-performance-ia");
   $("#detailTitle").textContent = `${missionNumber}. ${mission.title}`;
-  $("#detailDescription").textContent = mission.description;
+  $("#detailDescription").innerHTML = mission.descriptionHtml || mission.description;
   $("#detailSteps").innerHTML = mission.steps.map((step) => `<li>${step}</li>`).join("");
   $("#resourceList").innerHTML = mission.id === "referencias-avancadas-ia" ? "" : (mission.resources || [])
     .map((resource) => {
+      const isHeading = resource.startsWith("heading::");
+      const isDisabledLink = resource.startsWith("disabled-link::");
+      const isNote = resource.startsWith("note::");
+      const cleanResource = resource.replace(/^(heading|disabled-link|note)::/, "");
       const url = resource.match(/https?:\/\/\S+/)?.[0] || "";
       const isUrl = Boolean(url);
-      const isSupportHeading = mission.id === "infografico-rotina-chave" && !isUrl;
+      const isSupportHeading = isHeading || (mission.id === "infografico-rotina-chave" && !isUrl);
       const className = ["post-treinamento-ao-vivo", "infografico-rotina-chave", "treinamento-no-code-startup"].includes(mission.id)
         ? `resource-feature ${isSupportHeading ? "resource-heading" : "resource-link"}`
+        : mission.id === "solucao-performance-ia"
+          ? `resource-feature ${isSupportHeading ? "resource-heading" : isNote ? "resource-note" : "resource-link"}`
         : "";
+      if (isDisabledLink) return `<span class="resource-feature resource-link resource-disabled">${cleanResource}</span>`;
+      if (isNote) return `<div class="${className}">${cleanResource}</div>`;
       const displayText = className.includes("resource-link")
-        ? resource.replace(/:\s*https?:\/\/\S+/, "")
-        : resource;
+        ? cleanResource.replace(/:\s*https?:\/\/\S+/, "")
+        : cleanResource;
       return isUrl
         ? `<a class="${className}" href="${url}" target="_blank" rel="noreferrer">${displayText}</a>`
         : `<span class="${className}">${displayText}</span>`;

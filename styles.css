@@ -1035,6 +1035,37 @@ textarea:focus {
   transform: translateY(-2px);
 }
 
+.resource-list .resource-disabled {
+  color: rgba(43, 47, 56, 0.58);
+  border-color: rgba(109, 117, 130, 0.24);
+  background: linear-gradient(135deg, rgba(244, 246, 249, 0.95), rgba(255, 255, 255, 0.92));
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.resource-list .resource-note {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--ink);
+  box-shadow: none;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.resource-list .resource-note p {
+  margin: 0 0 10px;
+}
+
+.resource-list .resource-note ul {
+  margin: 8px 0 0 20px;
+  padding: 0;
+}
+
+.resource-list .resource-note li + li {
+  margin-top: 6px;
+}
+
 .mission-detail.resources-wide .detail-main {
   display: contents;
 }
@@ -1059,6 +1090,15 @@ textarea:focus {
 
 .mission-detail.resources-wide .resource-link {
   width: 100%;
+}
+
+.mission-detail.final-challenge #detailDescription p {
+  margin: 0 0 12px;
+}
+
+.mission-detail.final-challenge .resource-list {
+  gap: 12px;
+  padding-top: 4px;
 }
 
 .submission-card.file-only-submission > label:first-of-type {

@@ -39,21 +39,44 @@
   ];
 
   const challengeThreeContents = [
-    { id: "video-design-solucoes", order: 1, title: "Introducao ao design de solucoes", tag: "Video", url: "https://www.youtube.com/watch?v=9hPd7KuOmIc", summary: "Assista ao conteudo para ampliar repertorio sobre construcao e estruturacao de solucoes." },
-    { id: "template-solution-design", order: 2, title: "Template de solution design", tag: "Template", url: "https://miro.com/pt/modelos/solution-design-template/", summary: "Explore um modelo visual para organizar problema, contexto, proposta e caminhos de implementacao." },
-    { id: "video-solucao-pratica", order: 3, title: "Aplicando a logica na pratica", tag: "Video", url: "https://www.youtube.com/watch?v=oYq5TzmBc7Y", summary: "Veja uma referencia complementar para conectar ideia, desenho de solucao e execucao." },
+    { id: "video-design-solucoes", order: 1, title: "Introdução ao design de soluções", tag: "Vídeo", url: "https://www.youtube.com/watch?v=9hPd7KuOmIc", summary: "Assista ao conteúdo para ampliar repertório sobre construção e estruturação de soluções." },
+    { id: "template-solution-design", order: 2, title: "Template de solution design", tag: "Template", url: "https://miro.com/pt/modelos/solution-design-template/", summary: "Explore um modelo visual para organizar problema, contexto, proposta e caminhos de implementação." },
+    { id: "video-solucao-pratica", order: 3, title: "Aplicando a lógica na prática", tag: "Vídeo", url: "https://www.youtube.com/watch?v=oYq5TzmBc7Y", summary: "Veja uma referência complementar para conectar ideia, desenho de solução e execução." },
   ];
+
+  const initialMission = missions.find((mission) => mission.id === "post-treinamento-ao-vivo");
+  if (initialMission) {
+    Object.assign(initialMission, {
+      resources: [
+        "heading::Reveja o treinamento do dia 17/06/26 pelo link abaixo:",
+        "disabled-link::Link da gravação",
+      ],
+    });
+  }
+
+  const routineMission = missions.find((mission) => mission.id === "infografico-rotina-chave");
+  if (routineMission) {
+    Object.assign(routineMission, {
+      steps: [
+        "Escolha uma rotina relevante do seu trabalho.",
+        "Use uma IA de sua escolha para apoiar a construção da documentação.",
+        "Lembre-se de <strong>NÃO COMPARTILHAR INFORMAÇÕES</strong> sensíveis, que identifiquem usuários, clientes ou fornecedores de nossa base de dados.",
+        "Também <strong>NÃO COMPARTILHE INFORMAÇÕES</strong> sigilosas, como documentos ou contratos da CIA, nas ferramentas.",
+      ],
+    });
+  }
 
   const challengeThreeMission = missions.find((mission) => mission.id === "treinamento-no-code-startup");
   if (challengeThreeMission) {
     Object.assign(challengeThreeMission, {
-      type: "Conteudos",
-      short: "Acesse os 3 conteudos para concluir esta etapa.",
-      description: "Para preparacao separamos alguns conteudos para te dar mais visao sobre o processo de ideacao de projetos de melhoria, que se aplicam para casos de IA e outros tambem.",
+      type: "Conteúdos",
+      title: "Preparação final",
+      short: "Acesse os 3 conteúdos essenciais.",
+      description: "Para preparação separamos alguns conteúdos para te dar mais visão sobre o processo de ideação de projetos de melhoria, que se aplicam para casos de IA e outros também.",
       steps: [
-        "Abra cada conteudo indicado abaixo.",
-        "Use os materiais para refletir sobre como estruturar uma solucao aplicavel.",
-        "O check de desafio concluido sera feito automaticamente quando os 3 conteudos forem consumidos.",
+        "Abra cada conteúdo indicado abaixo.",
+        "Use os materiais para refletir sobre como estruturar uma solução aplicável.",
+        "O check de desafio concluído será feito automaticamente quando os 3 conteúdos forem consumidos.",
       ],
       resources: [],
       readingContent: ["conteudos-desafio-3"],
@@ -77,6 +100,27 @@
         "A avaliação das soluções será feita por todos os líderes nos seguintes indicadores: potencial de impacto positivo (relevância e alcance), aplicabilidade do projeto, qualidade da proposta/protótipo e segurança/uso responsável.",
         "🤖 Construa o futuro do seu trabalho e participe desse desafio. Boa sorte! 🚀🚀🚀",
         "Em caso de dúvidas, procure Thais Brasil ou Willian Murakami.",
+      ],
+      fileOnlySubmission: true,
+    });
+  }
+
+  if (finalChallengeMission) {
+    Object.assign(finalChallengeMission, {
+      description: "",
+      descriptionHtml: "<p>Chegamos no desafio final dessa jornada, e essa é a hora de você mostrar sua solução de melhoria utilizando todos os novos aprendizados em IA.</p><p>A ideia é simples aqui, estruture uma descrição e breve demonstração do projeto de implementação de Inteligência Artificial, lembrando que essa proposta precisa ter:</p>",
+      steps: [
+        "1. Nome do projeto",
+        "2. Problema / oportunidade",
+        "3. Solução proposta + ferramenta(s) utilizada(s)",
+        "4. Impacto esperado",
+        "5. Plano de implementação",
+        "6. Protótipo / demonstração visual",
+      ],
+      resources: [
+        "note::<strong>⚠️ IMPORTANTE: esse documento tem formato livre, mas precisa ser feito em 1 FOLHA (1 PÁGINA)!!!</strong>",
+        "note::<p><strong>A avaliação das soluções será feita por todos os líderes nos seguintes indicadores:</strong></p><ul><li>Potencial de impacto positivo (relevância e alcance);</li><li>Aplicabilidade do projeto;</li><li>Qualidade da proposta/protótipo;</li><li>Segurança/uso responsável.</li></ul>",
+        "note::<p>🤖 Construa o futuro do seu trabalho, e participe desse desafio. Boa sorte! 🚀🚀🚀</p><p>Em caso de dúvidas, procure Thais Brasil ou Willian Murakami.</p>",
       ],
       fileOnlySubmission: true,
     });
@@ -107,10 +151,10 @@
       group: "optional",
       icon: "05",
       accent: "silver",
-      title: "Estudos avancados",
-      short: "Siga uma curadoria de IA por nivel de maturidade.",
-      description: "Acesse uma curadoria de conteudos para continuar estudando IA depois da trilha.",
-      steps: ["Complete todos os links iniciantes para liberar o intermediario.", "Complete o intermediario para liberar o avancado.", "A conclusao so libera depois de acessar todos os conteudos avancados."],
+      title: "Materiais complementares sobre IA",
+      short: "Siga uma curadoria de IA por nível de maturidade.",
+      description: "Acesse uma curadoria de conteúdos para continuar estudando IA depois da trilha.",
+      steps: ["Complete todos os links iniciantes para liberar o intermediário.", "Complete o intermediário para liberar o avançado.", "A conclusão só libera depois de acessar todos os conteúdos avançados."],
       resources: [],
       references,
     });
@@ -446,6 +490,50 @@
     if (mission?.id === "referencias-avancadas-ia") return renderReferenceMission(mission);
     if (mission?.id === "cases-ia-reais") return renderCasesMission(mission);
     return oldRenderReadingPanel(mission);
+  };
+
+  function renderChallengeContentMissionClean(mission) {
+    const panel = document.querySelector("#readingPanel");
+    const content = document.querySelector("#readingContent");
+    const clicks = getChallengeContentClicks(mission.id);
+    panel.classList.remove("hidden");
+    content.scrollTop = 0;
+    content.innerHTML = `
+      <article class="reference-article challenge-content-article">
+        <header class="reference-hero">
+          <span class="eyebrow">Conteúdos essenciais</span>
+          <h2>03. Preparação para o desafio final</h2>
+          <p>Para preparação separamos alguns conteúdos para te dar mais visão sobre o processo de ideação de projetos de melhoria, que se aplicam para casos de IA (e outros também). Acesse os 3 conteúdos abaixo para concluir esta etapa.</p>
+          <p>O check de desafio concluído será feito automaticamente quando os 3 conteúdos forem consumidos.</p>
+        </header>
+        <section class="reference-section">
+          <header class="reference-section-heading">
+            <span>Conteúdos selecionados</span>
+            <strong>${clicks.size}/${(mission.trackedContents || []).length} acessados</strong>
+          </header>
+          <div class="reference-grid challenge-content-grid">
+            ${(mission.trackedContents || []).map((item) => challengeContentCard(item, clicks.has(item.id))).join("")}
+          </div>
+        </section>
+      </article>`;
+    content.querySelectorAll("[data-challenge-content-id]").forEach((link) => {
+      link.addEventListener("mousedown", (event) => {
+        if (event.button === 0 || event.button === 1) recordChallengeContentAccess(mission, link.dataset.challengeContentId);
+      });
+      link.addEventListener("auxclick", (event) => {
+        if (event.button === 1) recordChallengeContentAccess(mission, link.dataset.challengeContentId);
+      });
+      link.addEventListener("click", () => {
+        recordChallengeContentAccess(mission, link.dataset.challengeContentId);
+      });
+    });
+    updateChallengeContentButton(mission);
+  }
+
+  const renderReadingPanelBeforeCleanChallenge = renderReadingPanel;
+  renderReadingPanel = function renderReadingPanelCleanChallenge(mission) {
+    if (mission?.id === "treinamento-no-code-startup") return renderChallengeContentMissionClean(mission);
+    return renderReadingPanelBeforeCleanChallenge(mission);
   };
 
   const oldHandleReadingScroll = handleReadingScroll;
