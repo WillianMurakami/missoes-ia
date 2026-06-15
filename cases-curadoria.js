@@ -683,7 +683,7 @@ window.CASES_IA_CURADORIA = [
     `;
   }
 
-  function renderCasesCuradoriaClean(mission) {
+  function renderCasesCuradoriaClean(mission, openFilterKey = "") {
     const panel = document.querySelector("#readingPanel");
     const content = document.querySelector("#readingContent");
     if (!panel || !content) return;
@@ -702,11 +702,11 @@ window.CASES_IA_CURADORIA = [
           <p class="case-curadoria-instruction">Use os filtros para navegar pelos exemplos. Se nenhuma opção estiver selecionada, todos os cases ficam visíveis.</p>
         </header>
         <section class="case-curadoria-filters clean-case-filters" aria-label="Filtros de cases">
-          <details class="case-filter-menu">
+          <details class="case-filter-menu" data-case-filter-menu="area" ${openFilterKey === "area" ? "open" : ""}>
             <summary><span>Área</span><strong>${escapeHtml(filterSummary("area", "Todas"))}</strong></summary>
             <div class="case-curadoria-checks">${checkboxHtml("area")}</div>
           </details>
-          <details class="case-filter-menu">
+          <details class="case-filter-menu" data-case-filter-menu="level" ${openFilterKey === "level" ? "open" : ""}>
             <summary><span>Nível</span><strong>${escapeHtml(filterSummary("level", "Todos"))}</strong></summary>
             <div class="case-curadoria-checks">${checkboxHtml("level")}</div>
           </details>
@@ -723,7 +723,7 @@ window.CASES_IA_CURADORIA = [
         } else {
           window.CASES_IA_FILTERS[key] = [...content.querySelectorAll(`[data-case-filter="${key}"]:checked`)].map((item) => item.value);
         }
-        renderCasesCuradoriaClean(mission);
+        renderCasesCuradoriaClean(mission, key === "area" ? "area" : "");
       });
     });
 
@@ -741,6 +741,15 @@ window.CASES_IA_CURADORIA = [
     if (mission?.id === "cases-ia-reais") return renderCasesCuradoriaClean(mission);
     return previousCleanCasesRender(mission);
   };
+
+  if (!window.CASES_IA_FILTER_OUTSIDE_CLOSE_BOUND) {
+    window.CASES_IA_FILTER_OUTSIDE_CLOSE_BOUND = true;
+    document.addEventListener("click", (event) => {
+      if (!document.body.classList.contains("case-curadoria-mode")) return;
+      if (event.target.closest(".case-filter-menu")) return;
+      document.querySelectorAll(".case-filter-menu[open]").forEach((menu) => menu.removeAttribute("open"));
+    });
+  }
 
   if (state?.selectedMissionId === "cases-ia-reais") renderDetail("cases-ia-reais");
 })();
