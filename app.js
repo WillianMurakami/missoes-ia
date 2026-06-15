@@ -964,11 +964,14 @@ function getAdminRows() {
   return state.adminSubmissions.map((item) => {
     const profile = profilesById.get(item.user_id) || {};
     const mission = missions.find((missionItem) => missionItem.id === item.mission_id);
+    const missionIndex = missions.findIndex((missionItem) => missionItem.id === item.mission_id);
+    const missionNumber = missionIndex >= 0 ? String(missionIndex + 1).padStart(2, "0") : "-";
     return {
       type: "submission",
       name: profile.name || item.user_id,
       email: profile.email || item.user_id,
       area: profile.area || "Area nao informada",
+      missionNumber,
       mission: mission?.title || item.mission_id,
       missionType: mission?.type || "",
       comment: item.text || "",
@@ -1091,6 +1094,7 @@ function renderAdminTable() {
             <th>${sortableHeader("Data/hora", "updatedAt")}</th>
             <th>${sortableHeader("Participante", "name")}</th>
             <th>${sortableHeader("Area", "area")}</th>
+            <th>${sortableHeader("Ativ.", "missionNumber")}</th>
             <th>${sortableHeader("Desafio", "mission")}</th>
             <th>Comentario</th>
             <th>Arquivo</th>
@@ -1104,6 +1108,7 @@ function renderAdminTable() {
                 <td>${row.updatedAt ? new Date(row.updatedAt).toLocaleString("pt-BR") : "-"}</td>
                 <td><strong>${row.name}</strong><small>${row.email}</small></td>
                 <td>${row.area}</td>
+                <td><span class="admin-mission-number">${row.missionNumber}</span></td>
                 <td>${row.mission}</td>
                 <td>${row.comment}</td>
                 <td>${
@@ -1160,6 +1165,7 @@ function exportAdminXlsx() {
       Participante: row.name,
       Email: row.email,
       Area: row.area,
+      "Nº atividade": row.missionNumber,
       Desafio: row.mission,
       Comentario: row.comment,
       Arquivo: row.fileUrl,

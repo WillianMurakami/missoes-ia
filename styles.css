@@ -1700,6 +1700,18 @@ textarea:focus {
   font-weight: 900;
 }
 
+.admin-mission-number {
+  display: inline-flex;
+  min-width: 34px;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: rgba(255, 122, 0, 0.14);
+  color: var(--uol-orange);
+  font-weight: 950;
+  line-height: 1;
+}
+
 .app-shell.demo-mobile .login-view,
 .app-shell.demo-mobile .mission-detail,
 .app-shell.demo-mobile .progress-panel,
