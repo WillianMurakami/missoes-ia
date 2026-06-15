@@ -447,7 +447,7 @@
       <article class="reference-article">
         <header class="reference-hero">
           <span class="eyebrow">Curadoria complementar</span>
-          <h2>05. Estudos avancados</h2>
+          <h2>05. Materiais complementares sobre IA</h2>
           <p>Uma trilha de repertorio para guiar o aprendizado em IA. Complete cada nivel para liberar o proximo bloco.</p>
         </header>
         ${referenceSections(mission.references || [])}
