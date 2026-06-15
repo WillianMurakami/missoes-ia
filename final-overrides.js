@@ -49,11 +49,11 @@
     Object.assign(challengeThreeMission, {
       type: "Conteudos",
       short: "Acesse os 3 conteudos para concluir esta etapa.",
-      description: "Acesse os tres conteudos selecionados para ampliar seu repertorio antes do desafio final. A conclusao sera liberada depois que todos forem abertos.",
+      description: "Para preparacao separamos alguns conteudos para te dar mais visao sobre o processo de ideacao de projetos de melhoria, que se aplicam para casos de IA e outros tambem.",
       steps: [
         "Abra cada conteudo indicado abaixo.",
         "Use os materiais para refletir sobre como estruturar uma solucao aplicavel.",
-        "Depois de acessar os tres itens, marque o desafio como concluido.",
+        "O check de desafio concluido sera feito automaticamente quando os 3 conteudos forem consumidos.",
       ],
       resources: [],
       readingContent: ["conteudos-desafio-3"],
@@ -258,6 +258,9 @@
     clicks.add(contentId);
     saveChallengeContentClicks(mission.id, clicks);
     if (clicks.size !== before) {
+      if (challengeContentComplete(mission) && !isMissionCompleted(mission.id)) {
+        window.setTimeout(() => completeChallengeContentMission(), 80);
+      }
       window.setTimeout(() => renderChallengeContentMission(mission), 120);
     }
   }
@@ -270,7 +273,7 @@
       return;
     }
     setReadingButtonState(complete ? "ready" : "locked");
-    document.querySelector("#markReadingBtn").textContent = complete ? "Marcar como concluido" : "Acesse os 3 conteudos";
+    document.querySelector("#markReadingBtn").textContent = complete ? "Concluindo automaticamente..." : "Acesse os 3 conteudos";
   }
 
   function renderChallengeContentMission(mission) {
@@ -283,8 +286,9 @@
       <article class="reference-article challenge-content-article">
         <header class="reference-hero">
           <span class="eyebrow">Conteudos essenciais</span>
-          <h2>03. Amplie seus conhecimentos</h2>
-          <p>Acesse os 3 conteudos abaixo para concluir esta etapa. O botao de conclusao sera liberado quando todos forem abertos.</p>
+          <h2>03. Preparação para o desafio final</h2>
+          <p>Para preparação separamos alguns conteúdos para te dar mais visão sobre o processo de ideação de projetos de melhoria, que se aplicam para casos de IA (e outros também). Acesse os 3 conteúdos abaixo para concluir esta etapa.</p>
+          <p>O check de desafio concluído será feito automaticamente quando os 3 conteúdos forem consumidos.</p>
         </header>
         <section class="reference-section">
           <header class="reference-section-heading">

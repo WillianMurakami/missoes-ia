@@ -124,6 +124,24 @@
   overflow: visible;
 }
 
+.challenge-content-article .reference-hero {
+  width: 100%;
+}
+
+.challenge-content-article .reference-hero h2,
+.challenge-content-article .reference-hero p {
+  max-width: none !important;
+}
+
+.challenge-content-article .reference-hero h2 {
+  font-size: clamp(40px, 4.6vw, 68px) !important;
+  white-space: nowrap;
+}
+
+.challenge-content-article .reference-hero p {
+  width: 100%;
+}
+
 .challenge-content-article .reference-section::before,
 .challenge-content-article .reference-section::after,
 .challenge-content-article .reference-scroll-actions {
@@ -253,6 +271,11 @@ html.light .theme-toggle[aria-pressed="true"]:hover {
   .challenge-content-grid {
     grid-auto-columns: initial !important;
     grid-template-columns: 1fr !important;
+  }
+
+  .challenge-content-article .reference-hero h2 {
+    font-size: clamp(32px, 8.5vw, 44px) !important;
+    white-space: normal;
   }
 
   .reference-section::before,
