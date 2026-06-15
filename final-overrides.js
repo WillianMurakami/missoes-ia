@@ -61,6 +61,27 @@
     });
   }
 
+  const finalChallengeMission = missions.find((mission) => mission.id === "solucao-performance-ia");
+  if (finalChallengeMission) {
+    Object.assign(finalChallengeMission, {
+      short: "Envie sua proposta final de melhoria com IA.",
+      description: "Chegamos no desafio final dessa jornada, e essa é a hora de você mostrar sua solução de melhoria utilizando todos os novos aprendizados em IA. A ideia é simples aqui, estruture uma descrição e breve demonstração do projeto de implementação de Inteligência Artificial, lembrando que essa proposta precisa ter:",
+      steps: [
+        "1. Nome do projeto",
+        "2. Problema / oportunidade",
+        "3. Solução proposta + ferramenta(s) utilizada(s)",
+        "4. Impacto esperado",
+        "5. Plano de implementação",
+        "6. Protótipo / demonstração visual",
+        "⚠️ IMPORTANTE: esse documento tem formato livre, mas precisa ser feito em 1 FOLHA (1 PÁGINA)!!!",
+        "A avaliação das soluções será feita por todos os líderes nos seguintes indicadores: potencial de impacto positivo (relevância e alcance), aplicabilidade do projeto, qualidade da proposta/protótipo e segurança/uso responsável.",
+        "🤖 Construa o futuro do seu trabalho e participe desse desafio. Boa sorte! 🚀🚀🚀",
+        "Em caso de dúvidas, procure Thais Brasil ou Willian Murakami.",
+      ],
+      fileOnlySubmission: true,
+    });
+  }
+
   const certificateIndex = missions.findIndex((mission) => mission.id === "certificado-anthropic");
   if (certificateIndex >= 0) missions.splice(certificateIndex, 1);
 

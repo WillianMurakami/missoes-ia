@@ -6,7 +6,7 @@ window.SUPABASE_CONFIG = {
 };
 
 (function loadFinalOverrides() {
-  const version = "20260614-desafio3-scale";
+  const version = "20260614-desafio4-final";
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
   stylesheet.href = `./final-overrides.css?v=${version}`;
