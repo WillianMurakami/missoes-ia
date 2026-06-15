@@ -605,14 +605,26 @@ window.CASES_IA_CURADORIA = [
   function checkboxHtml(key) {
     const current = new Set(window.CASES_IA_FILTERS[key] || []);
     const inputType = key === "level" ? "radio" : "checkbox";
-    return uniqueOptions(key)
+    const allLevelOption =
+      key === "level"
+        ? `
+        <label class="case-curadoria-check">
+          <input type="radio" name="case-filter-${escapeHtml(key)}" data-case-filter="${escapeHtml(key)}" value="" ${current.size ? "" : "checked"}>
+          <span>Todas</span>
+        </label>
+      `
+        : "";
+    return (
+      allLevelOption +
+      uniqueOptions(key)
       .map((value) => `
         <label class="case-curadoria-check">
           <input type="${inputType}" name="case-filter-${escapeHtml(key)}" data-case-filter="${escapeHtml(key)}" value="${escapeHtml(value)}" ${current.has(value) ? "checked" : ""}>
           <span>${escapeHtml(value)}</span>
         </label>
       `)
-      .join("");
+      .join("")
+    );
   }
 
   function filterSummary(key, fallback) {
@@ -711,7 +723,11 @@ window.CASES_IA_CURADORIA = [
             <div class="case-curadoria-checks">${checkboxHtml("level")}</div>
           </details>
         </section>
-        ${list.length ? priorityOrderClean.map((priority) => prioritySectionClean(priority, list)).join("") : `<div class="empty-state">Nenhum case encontrado com esses filtros.</div>`}
+        ${
+          list.length
+            ? `<div class="case-curadoria-list case-curadoria-list-single">${list.map(caseCardClean).join("")}</div>`
+            : `<div class="empty-state">Nenhum case encontrado com esses filtros.</div>`
+        }
       </article>
     `;
 
@@ -719,7 +735,7 @@ window.CASES_IA_CURADORIA = [
       checkbox.addEventListener("change", (event) => {
         const key = event.currentTarget.dataset.caseFilter;
         if (key === "level") {
-          window.CASES_IA_FILTERS[key] = event.currentTarget.checked ? [event.currentTarget.value] : [];
+          window.CASES_IA_FILTERS[key] = event.currentTarget.checked && event.currentTarget.value ? [event.currentTarget.value] : [];
         } else {
           window.CASES_IA_FILTERS[key] = [...content.querySelectorAll(`[data-case-filter="${key}"]:checked`)].map((item) => item.value);
         }
