@@ -523,6 +523,41 @@ window.CASES_IA_CURADORIA = [
     area: Array.isArray(window.CASES_IA_FILTERS?.area) ? window.CASES_IA_FILTERS.area : [],
     level: Array.isArray(window.CASES_IA_FILTERS?.level) ? window.CASES_IA_FILTERS.level : [],
   };
+  const validDepartments = [
+    "Administrativo",
+    "Atendimento",
+    "Comercial",
+    "Compras",
+    "Financeiro",
+    "Gestão",
+    "Jurídico",
+    "Logística",
+    "Marketing e Conteúdo",
+    "Operações",
+    "Produção",
+    "RH",
+    "Tecnologia",
+  ];
+  const departmentMap = {
+    administrativo: "Administrativo",
+    atendimento: "Atendimento",
+    vendas: "Comercial",
+    comercial: "Comercial",
+    compras: "Compras",
+    financeiro: "Financeiro",
+    gestao: "Gestão",
+    juridico: "Jurídico",
+    logistica: "Logística",
+    marketing: "Marketing e Conteúdo",
+    "marketing e conteudo": "Marketing e Conteúdo",
+    operacoes: "Operações",
+    producao: "Produção",
+    rh: "RH",
+    ti: "Tecnologia",
+    "engenharia de software": "Tecnologia",
+    implementacao: "Tecnologia",
+    tecnologia: "Tecnologia",
+  };
 
   function escapeHtml(value) {
     return String(value || "")
@@ -540,28 +575,57 @@ window.CASES_IA_CURADORIA = [
       .filter(Boolean);
   }
 
+  function normalizedKey(value) {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function itemDepartments(item) {
+    return [...new Set(splitValues(item.area).map((value) => departmentMap[normalizedKey(value)]).filter(Boolean))];
+  }
+
+  function itemLevels(item) {
+    return [...new Set(splitValues(item.level))];
+  }
+
   function uniqueOptions(key) {
+    if (key === "area") return validDepartments.filter((department) => cases.some((item) => itemDepartments(item).includes(department)));
+    if (key === "level") return [...new Set(cases.flatMap(itemLevels))].filter(Boolean).sort((a, b) => a.localeCompare(b, "pt-BR"));
     return [...new Set(cases.flatMap((item) => splitValues(item[key])))]
       .filter(Boolean)
       .sort((a, b) => a.localeCompare(b, "pt-BR"));
   }
 
+  window.CASES_IA_FILTERS.area = window.CASES_IA_FILTERS.area.filter((value) => uniqueOptions("area").includes(value));
+  window.CASES_IA_FILTERS.level = window.CASES_IA_FILTERS.level.filter((value) => uniqueOptions("level").includes(value)).slice(0, 1);
+
   function checkboxHtml(key) {
     const current = new Set(window.CASES_IA_FILTERS[key] || []);
+    const inputType = key === "level" ? "radio" : "checkbox";
     return uniqueOptions(key)
       .map((value) => `
         <label class="case-curadoria-check">
-          <input type="checkbox" data-case-filter="${escapeHtml(key)}" value="${escapeHtml(value)}" ${current.has(value) ? "checked" : ""}>
+          <input type="${inputType}" name="case-filter-${escapeHtml(key)}" data-case-filter="${escapeHtml(key)}" value="${escapeHtml(value)}" ${current.has(value) ? "checked" : ""}>
           <span>${escapeHtml(value)}</span>
         </label>
       `)
       .join("");
   }
 
+  function filterSummary(key, fallback) {
+    const selected = window.CASES_IA_FILTERS[key] || [];
+    if (!selected.length) return fallback;
+    if (selected.length === 1) return selected[0];
+    return `${selected.length} selecionadas`;
+  }
+
   function matchesFilter(item, key) {
     const selected = window.CASES_IA_FILTERS[key] || [];
     if (!selected.length) return true;
-    const values = splitValues(item[key]);
+    const values = key === "area" ? itemDepartments(item) : key === "level" ? itemLevels(item) : splitValues(item[key]);
     return selected.some((value) => values.includes(value));
   }
 
@@ -638,14 +702,14 @@ window.CASES_IA_CURADORIA = [
           <p class="case-curadoria-instruction">Use os filtros para navegar pelos exemplos. Se nenhuma opção estiver selecionada, todos os cases ficam visíveis.</p>
         </header>
         <section class="case-curadoria-filters clean-case-filters" aria-label="Filtros de cases">
-          <fieldset>
-            <legend>Área</legend>
+          <details class="case-filter-menu">
+            <summary><span>Área</span><strong>${escapeHtml(filterSummary("area", "Todas"))}</strong></summary>
             <div class="case-curadoria-checks">${checkboxHtml("area")}</div>
-          </fieldset>
-          <fieldset>
-            <legend>Nível</legend>
+          </details>
+          <details class="case-filter-menu">
+            <summary><span>Nível</span><strong>${escapeHtml(filterSummary("level", "Todos"))}</strong></summary>
             <div class="case-curadoria-checks">${checkboxHtml("level")}</div>
-          </fieldset>
+          </details>
         </section>
         ${list.length ? priorityOrderClean.map((priority) => prioritySectionClean(priority, list)).join("") : `<div class="empty-state">Nenhum case encontrado com esses filtros.</div>`}
       </article>
@@ -654,7 +718,11 @@ window.CASES_IA_CURADORIA = [
     content.querySelectorAll("[data-case-filter]").forEach((checkbox) => {
       checkbox.addEventListener("change", (event) => {
         const key = event.currentTarget.dataset.caseFilter;
-        window.CASES_IA_FILTERS[key] = [...content.querySelectorAll(`[data-case-filter="${key}"]:checked`)].map((item) => item.value);
+        if (key === "level") {
+          window.CASES_IA_FILTERS[key] = event.currentTarget.checked ? [event.currentTarget.value] : [];
+        } else {
+          window.CASES_IA_FILTERS[key] = [...content.querySelectorAll(`[data-case-filter="${key}"]:checked`)].map((item) => item.value);
+        }
         renderCasesCuradoriaClean(mission);
       });
     });
