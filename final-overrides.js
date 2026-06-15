@@ -48,7 +48,7 @@
   if (initialMission) {
     Object.assign(initialMission, {
       resources: [
-        "heading::Reveja o treinamento do dia 17/06/26 pelo link abaixo:",
+        "heading::Reveja o treinamento pelo link abaixo:",
         "disabled-link::Link da gravação",
       ],
     });
