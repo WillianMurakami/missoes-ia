@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:wght@300;400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260615-admin-activity-number" />
+    <link rel="stylesheet" href="./styles.css?v=20260617-upload-limit-5mb" />
   </head>
   <body>
     <main id="appShell" class="app-shell">
@@ -175,7 +175,7 @@
               <span class="upload-zone">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v1H4V6Zm0 4h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8Zm8 7a1 1 0 0 0 1-1v-2.6l.8.8a1 1 0 0 0 1.4-1.4l-2.5-2.5a1 1 0 0 0-1.4 0l-2.5 2.5a1 1 0 1 0 1.4 1.4l.8-.8V16a1 1 0 0 0 1 1Z"/></svg>
                 <strong>Arraste ou selecione o arquivo</strong>
-                <small id="selectedFileName">PDF, imagem, DOC ou PPT</small>
+                <small id="selectedFileName">PDF, imagem, DOC ou PPT ate 5 MB</small>
               </span>
               <input id="submissionFile" type="file" accept="image/*,.pdf,.doc,.docx,.ppt,.pptx" required />
             </label>
@@ -238,10 +238,10 @@
       </section>
     </main>
 
-    <script src="./supabase-config.js?v=20260615-admin-activity-number"></script>
+    <script src="./supabase-config.js?v=20260617-upload-limit-5mb"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="./app.js?v=20260615-admin-activity-number"></script>
-    <script src="./db-fix.js?v=20260615-admin-activity-number"></script>
+    <script src="./app.js?v=20260617-upload-limit-5mb"></script>
+    <script src="./db-fix.js?v=20260617-upload-limit-5mb"></script>
   </body>
 </html>

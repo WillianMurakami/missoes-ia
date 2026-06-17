@@ -144,6 +144,9 @@ const missions = [
 const storageKey = "uol-edtech-ai-missions";
 const sessionKey = "uol-edtech-ai-current-user";
 const themeKey = "uol-edtech-ai-theme";
+const maxUploadSizeMb = 5;
+const maxUploadSizeBytes = maxUploadSizeMb * 1024 * 1024;
+const uploadHelperText = `PDF, imagem, DOC ou PPT ate ${maxUploadSizeMb} MB`;
 const supabaseConfig = window.SUPABASE_CONFIG || {};
 const hasSupabaseConfig = Boolean(supabaseConfig.url && supabaseConfig.anonKey && window.supabase);
 const db = hasSupabaseConfig ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey) : null;
@@ -387,11 +390,11 @@ function renderDetail(missionId) {
       return isUrl
         ? `<a class="${className}" href="${url}" target="_blank" rel="noreferrer">${displayText}</a>`
         : `<span class="${className}">${displayText}</span>`;
-    })
+  })
     .join("");
   $("#submissionText").value = "";
   $("#submissionFile").value = "";
-  $("#selectedFileName").textContent = "PDF, imagem, DOC ou PPT";
+  $("#selectedFileName").textContent = uploadHelperText;
   document.querySelector(".upload-zone").classList.remove("is-loading");
   $("#submissionText").required = !contentOnly && !isFileOnlyMission(mission);
   $("#submissionFile").required = !contentOnly;
@@ -434,15 +437,26 @@ function setSubmissionButtonState(stateName, message = "") {
 }
 
 function updateSelectedFileName() {
-  const file = $("#submissionFile").files[0];
+  const input = $("#submissionFile");
+  const file = input.files[0];
   const fileName = $("#selectedFileName");
   const uploadZone = document.querySelector(".upload-zone");
   window.clearTimeout(state.uploadPreviewTimer);
+
+  if (file && file.size > maxUploadSizeBytes) {
+    input.value = "";
+    uploadZone.classList.remove("is-loading");
+    fileName.textContent = uploadHelperText;
+    setSubmissionButtonState("idle", `O arquivo selecionado tem mais de ${maxUploadSizeMb} MB. Envie uma versao mais leve.`);
+    alert(`O arquivo selecionado tem mais de ${maxUploadSizeMb} MB. Comprima o arquivo e tente novamente.`);
+    return;
+  }
+
   uploadZone.classList.toggle("is-loading", Boolean(file));
-  fileName.textContent = file ? "Carregando arquivo..." : "PDF, imagem, DOC ou PPT";
+  fileName.textContent = file ? "Carregando arquivo..." : uploadHelperText;
   state.uploadPreviewTimer = window.setTimeout(() => {
     uploadZone.classList.remove("is-loading");
-    fileName.textContent = file ? file.name : "PDF, imagem, DOC ou PPT";
+    fileName.textContent = file ? file.name : uploadHelperText;
   }, file ? 650 : 0);
   setSubmissionButtonState("idle");
 }
@@ -719,6 +733,12 @@ async function handleSubmission(event) {
         ? "Para concluir este desafio, envie um comentario e um arquivo de evidencia."
         : "Para concluir este desafio, envie o arquivo de evidencia."
     );
+    return;
+  }
+
+  if (file && file.size > maxUploadSizeBytes) {
+    setSubmissionButtonState("idle", `O arquivo selecionado tem mais de ${maxUploadSizeMb} MB. Envie uma versao mais leve.`);
+    alert(`O arquivo selecionado tem mais de ${maxUploadSizeMb} MB. Comprima o arquivo e tente novamente.`);
     return;
   }
 
