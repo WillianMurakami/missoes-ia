@@ -6,7 +6,7 @@ window.SUPABASE_CONFIG = {
 };
 
 (function loadFinalOverrides() {
-  const version = "20260617-training-links";
+  const version = "20260618-uolinc-email";
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
   stylesheet.href = `./final-overrides.css?v=${version}`;
@@ -72,6 +72,10 @@ window.addEventListener("load", () => {
     setAuthStatus(`${prefix}: ${databaseErrorMessage(error)}. Rode o supabase-schema.sql atualizado no Supabase.`);
   }
 
+  function isAllowedCorporateEmail(email) {
+    return /^[^@\s]+@uolinc(?:\.|$)/i.test(email);
+  }
+
   form.addEventListener(
     "submit",
     async (event) => {
@@ -83,8 +87,8 @@ window.addEventListener("load", () => {
       const email = document.querySelector("#userEmail").value.trim();
       const userId = email.toLowerCase().replace(/[^a-z0-9@._-]/g, "");
 
-      if (!userId) {
-        setAuthStatus("Digite um e-mail ou identificador para acessar.");
+      if (!userId || !isAllowedCorporateEmail(email)) {
+        setAuthStatus("Digite seu e-mail corporativo no formato nome@uolinc.com.");
         return;
       }
 

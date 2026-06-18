@@ -164,6 +164,10 @@ const state = {
 
 const $ = (selector) => document.querySelector(selector);
 
+function isAllowedCorporateEmail(email) {
+  return /^[^@\s]+@uolinc(?:\.|$)/i.test(email);
+}
+
 async function loadState() {
   if (db) {
     state.user = JSON.parse(localStorage.getItem(sessionKey) || "null");
@@ -653,8 +657,8 @@ async function handleLogin(event) {
   const area = $("#userArea").value.trim() || "Nao informado";
   const email = $("#userEmail").value.trim();
   const userId = email.toLowerCase().replace(/[^a-z0-9@._-]/g, "");
-  if (!userId) {
-    setAuthStatus("Digite um e-mail ou identificador para acessar.");
+  if (!userId || !isAllowedCorporateEmail(email)) {
+    setAuthStatus("Digite seu e-mail corporativo no formato nome@uolinc.com.");
     return;
   }
 
