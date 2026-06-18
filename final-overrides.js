@@ -51,6 +51,7 @@
         "heading::Materiais do treinamento:",
         "Slide do treinamento: https://uolinc-my.sharepoint.com/:b:/r/personal/mpaiva_uolinc_com/Documents/%C3%81rea%20de%20Qualidade%20-%20OPM/Neg%C3%B3cios/Treinamento/Treinamento%20PFD%20Equipe%20(17-06-2026).pdf?csf=1&web=1&e=f5Dq9o",
         "Grava\u00e7\u00e3o do treinamento: https://teams.microsoft.com/l/meetingrecap?driveId=b%21ORUEUeg69E-LGR6Is6yvDJXPOLrOZ5RJlvlCBLzAhqpOUdgtP6dmRKoo7yrNve1I&driveItemId=014VIPYUWDH77KFWZ62NG2ZJX3HV5G2JJT&sitePath=https%3A%2F%2Fuolinc-my.sharepoint.com%2F%3Av%3A%2Fp%2Fwmurakami%2FIQDDP_6i2z7TTaym-z16bSUzAQ1hV5eJQCr_zIaQsHiTKGA&fileUrl=https%3A%2F%2Fuolinc-my.sharepoint.com%2F%3Av%3A%2Fp%2Fwmurakami%2FIQDDP_6i2z7TTaym-z16bSUzAQ1hV5eJQCr_zIaQsHiTKGA&iCalUid=040000008200e00074c5b7101a82e00800000000e30905b6f9d3dc0100000000000000001000000084a24198aab91849bc4bc9abad5d9877&threadId=19%3Ameeting_MjQ5NGMwMjAtZTY5ZS00ZTk1LThkN2MtMGNhZTkyMzE2MjA2%40thread.v2&organizerId=f554a0ab-b9e4-4751-8905-1f7cf211c8c8&tenantId=7575b092-fc5f-4f6c-b7a5-9e9ef7aca80d&callId=864c4e78-9e0f-4aed-be50-337c94fb6a17&threadType=Meeting&meetingType=Scheduled&subType=RecapSharingLink_RecapChiclet",
+        "Material extra: https://uolinc-my.sharepoint.com/:u:/p/mpaiva/IQA8uEyMiVnyTKEWF2lbAPb1AUQm_NJusmwUo4HQPn6wApA?e=FMd7ZC",
       ],
     });
   }
