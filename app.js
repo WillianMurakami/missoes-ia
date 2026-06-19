@@ -147,7 +147,6 @@ const themeKey = "uol-edtech-ai-theme";
 const maxUploadSizeMb = 5;
 const maxUploadSizeBytes = maxUploadSizeMb * 1024 * 1024;
 const uploadHelperText = `PDF, imagem, DOC ou PPT ate ${maxUploadSizeMb} MB`;
-const deadlineBannerHiddenKey = "uol-edtech-ai-deadline-banner-hidden";
 const finalChallengeDeadline = new Date("2026-06-24T18:00:00-03:00");
 const supabaseConfig = window.SUPABASE_CONFIG || {};
 const hasSupabaseConfig = Boolean(supabaseConfig.url && supabaseConfig.anonKey && window.supabase);
@@ -267,8 +266,7 @@ function syncDeadlineBanner(viewId) {
   const banner = $("#deadlineBanner");
   if (!banner) return;
 
-  const hiddenInSession = sessionStorage.getItem(deadlineBannerHiddenKey) === "1";
-  const shouldShow = viewId === "#homeView" && Boolean(state.user) && !hiddenInSession;
+  const shouldShow = viewId === "#homeView" && Boolean(state.user);
   banner.classList.toggle("hidden", !shouldShow);
 
   if (!shouldShow) {
@@ -282,8 +280,9 @@ function syncDeadlineBanner(viewId) {
 }
 
 function closeDeadlineBanner() {
-  sessionStorage.setItem(deadlineBannerHiddenKey, "1");
-  syncDeadlineBanner(null);
+  const banner = $("#deadlineBanner");
+  if (banner) banner.classList.add("hidden");
+  stopDeadlineTimer();
 }
 
 function openFinalChallengeFromBanner() {
