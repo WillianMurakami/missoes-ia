@@ -73,3 +73,193 @@ html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.0
   .theme-toggle { right: 10px !important; bottom: 10px !important; width: 224px !important; }
   .theme-toggle[aria-pressed="true"]::before { transform: translate(170px, -50%) !important; }
 }
+
+.deadline-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 80;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 14px;
+  width: min(1080px, calc(100vw - 36px));
+  overflow: hidden;
+  border: 1px solid rgba(255, 184, 0, 0.58);
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: linear-gradient(110deg, rgba(28, 22, 19, 0.97), rgba(48, 28, 16, 0.97));
+  color: #fffaf0;
+  box-shadow:
+    0 22px 70px rgba(0, 0, 0, 0.34),
+    0 0 34px rgba(255, 118, 0, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+  transform: translateX(-50%);
+  backdrop-filter: blur(18px);
+  animation: deadlineBannerIn 0.42s ease both;
+}
+
+.deadline-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, var(--uol-yellow), var(--uol-orange), var(--uol-red), var(--uol-orange));
+  background-size: 180% 100%;
+  animation: deadlineAccent 3.2s ease-in-out infinite alternate;
+}
+
+.deadline-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.deadline-kicker {
+  color: #ffc400;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.deadline-copy strong {
+  overflow: hidden;
+  font-size: 16px;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.deadline-countdown {
+  display: flex;
+  gap: 7px;
+}
+
+.deadline-countdown span {
+  display: grid;
+  min-width: 58px;
+  justify-items: center;
+  border: 1px solid rgba(255, 222, 108, 0.4);
+  border-radius: 11px;
+  padding: 7px 9px 6px;
+  background: linear-gradient(145deg, #ff5a00, #ff8a00 58%, #ffc400);
+  color: #ffffff;
+  box-shadow: 0 14px 32px rgba(255, 118, 0, 0.3);
+}
+
+.deadline-countdown strong {
+  font-size: 19px;
+  line-height: 1;
+}
+
+.deadline-countdown small {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.deadline-action,
+.deadline-close {
+  min-height: 38px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.deadline-action {
+  padding: 0 16px;
+  background: linear-gradient(135deg, #f04400, #ff7600);
+  box-shadow: 0 14px 34px rgba(240, 68, 0, 0.24);
+}
+
+.deadline-action:hover {
+  background: linear-gradient(135deg, #ff6100, #ff9d00);
+  transform: translateY(-1px);
+}
+
+.deadline-close {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.deadline-close:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.deadline-ended .deadline-countdown span {
+  background: linear-gradient(135deg, #5e636b, #3c3f45);
+  box-shadow: none;
+}
+
+html.light .deadline-banner {
+  background: linear-gradient(110deg, rgba(255, 253, 248, 0.98), rgba(255, 239, 216, 0.98));
+  color: #202025;
+  box-shadow:
+    0 22px 70px rgba(35, 35, 38, 0.18),
+    0 0 34px rgba(255, 118, 0, 0.14),
+    0 0 0 1px rgba(255, 118, 0, 0.12) inset;
+}
+
+html.light .deadline-kicker {
+  color: #d94a00;
+}
+
+html.light .deadline-close {
+  background: rgba(32, 32, 37, 0.08);
+  color: #202025;
+}
+
+html.light .deadline-close:hover {
+  background: rgba(32, 32, 37, 0.14);
+}
+
+@keyframes deadlineBannerIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 16px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes deadlineAccent {
+  from { background-position: 0 0; }
+  to { background-position: 100% 0; }
+}
+
+@media (max-width: 760px) {
+  .deadline-banner {
+    bottom: 82px;
+    grid-template-columns: minmax(0, 1fr) 38px;
+    width: calc(100vw - 22px);
+    gap: 10px;
+    padding: 13px;
+  }
+
+  .deadline-copy strong {
+    font-size: 14px;
+    white-space: normal;
+  }
+
+  .deadline-countdown {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .deadline-countdown span {
+    min-width: 0;
+  }
+
+  .deadline-action {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
