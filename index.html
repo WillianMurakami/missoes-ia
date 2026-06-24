@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:wght@300;400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260619-deadline-banner" />
+    <link rel="stylesheet" href="./styles.css?v=20260624-remove-deadline" />
   </head>
   <body>
     <main id="appShell" class="app-shell">
@@ -21,19 +21,6 @@
         <span class="motion-shape shape-four"></span>
       </div>
       <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false">Tema claro</button>
-      <aside id="deadlineBanner" class="deadline-banner hidden" aria-live="polite">
-        <div class="deadline-copy">
-          <span class="deadline-kicker">Prazo final do desafio 4</span>
-          <strong>Envie seu projeto ate 24/06 as 18h</strong>
-        </div>
-        <div class="deadline-countdown" aria-label="Contagem regressiva">
-          <span><strong id="deadlineDays">00</strong><small>dias</small></span>
-          <span><strong id="deadlineHours">00</strong><small>horas</small></span>
-          <span><strong id="deadlineMinutes">00</strong><small>min</small></span>
-        </div>
-        <button id="deadlineOpenBtn" class="deadline-action" type="button">Abrir desafio final</button>
-        <button id="deadlineCloseBtn" class="deadline-close" type="button" aria-label="Ocultar aviso">x</button>
-      </aside>
 
       <section id="loginView" class="login-view">
         <div class="brand-panel">
@@ -251,10 +238,10 @@
       </section>
     </main>
 
-    <script src="./supabase-config.js?v=20260619-deadline-banner"></script>
+    <script src="./supabase-config.js?v=20260624-remove-deadline"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="./app.js?v=20260619-deadline-banner"></script>
-    <script src="./db-fix.js?v=20260619-deadline-banner"></script>
+    <script src="./app.js?v=20260624-remove-deadline"></script>
+    <script src="./db-fix.js?v=20260624-remove-deadline"></script>
   </body>
 </html>

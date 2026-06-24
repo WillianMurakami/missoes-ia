@@ -6,7 +6,7 @@ window.SUPABASE_CONFIG = {
 };
 
 (function loadFinalOverrides() {
-  const version = "20260619-deadline-banner";
+  const version = "20260624-remove-deadline";
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
   stylesheet.href = `./final-overrides.css?v=${version}`;
