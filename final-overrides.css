@@ -80,15 +80,15 @@ html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.0
   bottom: 24px;
   z-index: 80;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 14px;
   width: min(1080px, calc(100vw - 36px));
   overflow: hidden;
-  border: 1px solid rgba(255, 184, 0, 0.58);
+  border: 1px solid rgba(255, 184, 0, 0.42);
   border-radius: 16px;
   padding: 14px 16px;
-  background: linear-gradient(110deg, rgba(28, 22, 19, 0.97), rgba(48, 28, 16, 0.97));
+  background: linear-gradient(110deg, rgba(23, 24, 28, 0.98), rgba(43, 34, 24, 0.98));
   color: #fffaf0;
   box-shadow:
     0 22px 70px rgba(0, 0, 0, 0.34),
@@ -131,36 +131,13 @@ html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.0
   white-space: nowrap;
 }
 
-.deadline-countdown {
-  display: flex;
-  gap: 7px;
+.deadline-copy small {
+  color: rgba(255, 250, 240, 0.74);
+  font-size: 12px;
+  font-weight: 700;
 }
 
-.deadline-countdown span {
-  display: grid;
-  min-width: 58px;
-  justify-items: center;
-  border: 1px solid rgba(255, 222, 108, 0.4);
-  border-radius: 11px;
-  padding: 7px 9px 6px;
-  background: linear-gradient(145deg, #ff5a00, #ff8a00 58%, #ffc400);
-  color: #ffffff;
-  box-shadow: 0 14px 32px rgba(255, 118, 0, 0.3);
-}
-
-.deadline-countdown strong {
-  font-size: 19px;
-  line-height: 1;
-}
-
-.deadline-countdown small {
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.deadline-action,
+.deadline-status-pill,
 .deadline-close {
   min-height: 38px;
   border-radius: 999px;
@@ -168,15 +145,13 @@ html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.0
   font-weight: 900;
 }
 
-.deadline-action {
-  padding: 0 16px;
-  background: linear-gradient(135deg, #f04400, #ff7600);
-  box-shadow: 0 14px 34px rgba(240, 68, 0, 0.24);
-}
-
-.deadline-action:hover {
-  background: linear-gradient(135deg, #ff6100, #ff9d00);
-  transform: translateY(-1px);
+.deadline-status-pill {
+  display: inline-grid;
+  place-items: center;
+  padding: 0 15px;
+  background: linear-gradient(135deg, #ff7600, #ffc400);
+  box-shadow: 0 14px 34px rgba(255, 118, 0, 0.22);
+  white-space: nowrap;
 }
 
 .deadline-close {
@@ -191,13 +166,8 @@ html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.0
   background: rgba(255, 255, 255, 0.18);
 }
 
-.deadline-ended .deadline-countdown span {
-  background: linear-gradient(135deg, #5e636b, #3c3f45);
-  box-shadow: none;
-}
-
 html.light .deadline-banner {
-  background: linear-gradient(110deg, rgba(255, 253, 248, 0.98), rgba(255, 239, 216, 0.98));
+  background: linear-gradient(110deg, rgba(255, 253, 248, 0.98), rgba(255, 243, 226, 0.98));
   color: #202025;
   box-shadow:
     0 22px 70px rgba(35, 35, 38, 0.18),
@@ -207,6 +177,10 @@ html.light .deadline-banner {
 
 html.light .deadline-kicker {
   color: #d94a00;
+}
+
+html.light .deadline-copy small {
+  color: rgba(32, 32, 37, 0.62);
 }
 
 html.light .deadline-close {
@@ -248,18 +222,9 @@ html.light .deadline-close:hover {
     white-space: normal;
   }
 
-  .deadline-countdown {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .deadline-countdown span {
-    min-width: 0;
-  }
-
-  .deadline-action {
+  .deadline-status-pill {
     grid-column: 1 / -1;
     width: 100%;
+    min-height: 34px;
   }
 }

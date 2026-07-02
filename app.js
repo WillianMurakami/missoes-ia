@@ -147,7 +147,6 @@ const themeKey = "uol-edtech-ai-theme";
 const maxUploadSizeMb = 5;
 const maxUploadSizeBytes = maxUploadSizeMb * 1024 * 1024;
 const uploadHelperText = `PDF, imagem, DOC ou PPT ate ${maxUploadSizeMb} MB`;
-const finalChallengeDeadline = new Date("2026-07-01T23:59:00-03:00");
 const supabaseConfig = window.SUPABASE_CONFIG || {};
 const hasSupabaseConfig = Boolean(supabaseConfig.url && supabaseConfig.anonKey && window.supabase);
 const db = hasSupabaseConfig ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey) : null;
@@ -161,7 +160,6 @@ const state = {
   adminSort: { key: "name", direction: "asc" },
   animateNextHomeProgress: true,
   uploadPreviewTimer: null,
-  deadlineTimer: null,
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -233,60 +231,17 @@ function show(viewId) {
   syncDeadlineBanner(viewId);
 }
 
-function stopDeadlineTimer() {
-  if (!state.deadlineTimer) return;
-  window.clearInterval(state.deadlineTimer);
-  state.deadlineTimer = null;
-}
-
-function updateDeadlineCountdown() {
-  const banner = $("#deadlineBanner");
-  if (!banner) return;
-
-  const remainingMs = finalChallengeDeadline.getTime() - Date.now();
-  const remainingMinutes = Math.max(0, Math.floor(remainingMs / 60000));
-  const days = Math.floor(remainingMinutes / 1440);
-  const hours = Math.floor((remainingMinutes % 1440) / 60);
-  const minutes = remainingMinutes % 60;
-
-  $("#deadlineDays").textContent = String(days).padStart(2, "0");
-  $("#deadlineHours").textContent = String(hours).padStart(2, "0");
-  $("#deadlineMinutes").textContent = String(minutes).padStart(2, "0");
-
-  const isEnded = remainingMs <= 0;
-  banner.classList.toggle("deadline-ended", isEnded);
-  if (isEnded) {
-    banner.querySelector(".deadline-copy strong").textContent = "Prazo encerrado em 01/07 às 23h59";
-    $("#deadlineOpenBtn").textContent = "Ver desafio final";
-    stopDeadlineTimer();
-  }
-}
-
 function syncDeadlineBanner(viewId) {
   const banner = $("#deadlineBanner");
   if (!banner) return;
 
   const shouldShow = viewId === "#homeView" && Boolean(state.user);
   banner.classList.toggle("hidden", !shouldShow);
-
-  if (!shouldShow) {
-    stopDeadlineTimer();
-    return;
-  }
-
-  updateDeadlineCountdown();
-  stopDeadlineTimer();
-  state.deadlineTimer = window.setInterval(updateDeadlineCountdown, 1000);
 }
 
 function closeDeadlineBanner() {
   const banner = $("#deadlineBanner");
   if (banner) banner.classList.add("hidden");
-  stopDeadlineTimer();
-}
-
-function openFinalChallengeFromBanner() {
-  renderDetail("solucao-performance-ia");
 }
 
 function getUserSubmissions() {
@@ -1295,9 +1250,7 @@ function bindEvents() {
   $("#adminExportBtn").addEventListener("click", exportAdminXlsx);
   const deviceToggle = $("#deviceToggle");
   if (deviceToggle) deviceToggle.addEventListener("click", toggleDevicePreview);
-  const deadlineOpenBtn = $("#deadlineOpenBtn");
   const deadlineCloseBtn = $("#deadlineCloseBtn");
-  if (deadlineOpenBtn) deadlineOpenBtn.addEventListener("click", openFinalChallengeFromBanner);
   if (deadlineCloseBtn) deadlineCloseBtn.addEventListener("click", closeDeadlineBanner);
   $("#themeToggle").addEventListener("click", toggleTheme);
   $("#readingContent").addEventListener("scroll", handleReadingScroll);
