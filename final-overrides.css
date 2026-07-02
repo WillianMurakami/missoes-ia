@@ -80,14 +80,14 @@ html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.0
   bottom: 24px;
   z-index: 80;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
   width: min(1080px, calc(100vw - 36px));
   overflow: hidden;
   border: 1px solid rgba(255, 184, 0, 0.42);
   border-radius: 16px;
-  padding: 14px 16px;
+  padding: 18px 18px 18px 22px;
   background: linear-gradient(110deg, rgba(23, 24, 28, 0.98), rgba(43, 34, 24, 0.98));
   color: #fffaf0;
   box-shadow:
@@ -111,7 +111,7 @@ html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.0
 
 .deadline-copy {
   display: grid;
-  gap: 3px;
+  gap: 5px;
   min-width: 0;
 }
 
@@ -125,7 +125,7 @@ html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.0
 
 .deadline-copy strong {
   overflow: hidden;
-  font-size: 16px;
+  font-size: clamp(18px, 2vw, 25px);
   line-height: 1.15;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -133,25 +133,15 @@ html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.0
 
 .deadline-copy small {
   color: rgba(255, 250, 240, 0.74);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
 
-.deadline-status-pill,
 .deadline-close {
   min-height: 38px;
   border-radius: 999px;
   color: #ffffff;
   font-weight: 900;
-}
-
-.deadline-status-pill {
-  display: inline-grid;
-  place-items: center;
-  padding: 0 15px;
-  background: linear-gradient(135deg, #ff7600, #ffc400);
-  box-shadow: 0 14px 34px rgba(255, 118, 0, 0.22);
-  white-space: nowrap;
 }
 
 .deadline-close {
@@ -214,17 +204,11 @@ html.light .deadline-close:hover {
     grid-template-columns: minmax(0, 1fr) 38px;
     width: calc(100vw - 22px);
     gap: 10px;
-    padding: 13px;
+    padding: 15px;
   }
 
   .deadline-copy strong {
-    font-size: 14px;
+    font-size: 17px;
     white-space: normal;
-  }
-
-  .deadline-status-pill {
-    grid-column: 1 / -1;
-    width: 100%;
-    min-height: 34px;
   }
 }
