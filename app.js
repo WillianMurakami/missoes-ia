@@ -164,17 +164,8 @@ const state = {
 
 const $ = (selector) => document.querySelector(selector);
 
-function contentUser() {
-  return {
-    id: "conteudo-continuo",
-    name: "Visitante",
-    area: "Conteúdo contínuo",
-    email: "",
-  };
-}
-
 function isAllowedCorporateEmail(email) {
-  return /^[^@\s]+@uolinc(?:\.|$)/i.test(email);
+  return /^[^@\s]+@uolinc\.com$/i.test(email);
 }
 
 async function loadState() {
@@ -655,10 +646,21 @@ function renderBacklog() {
 
 async function handleLogin(event) {
   event?.preventDefault?.();
-  const name = $("#userName").value.trim() || "Visitante";
-  const area = $("#userArea").value.trim() || "Conteúdo contínuo";
-  const email = $("#userEmail").value.trim();
-  const userId = email.toLowerCase().replace(/[^a-z0-9@._-]/g, "") || "conteudo-continuo";
+  const name = $("#userName").value.trim();
+  const area = $("#userArea").value.trim();
+  const email = $("#userEmail").value.trim().toLowerCase();
+
+  if (!name || !area || !email) {
+    setAuthStatus("Preencha nome, e-mail corporativo e area para acessar.");
+    return;
+  }
+
+  if (!isAllowedCorporateEmail(email)) {
+    setAuthStatus("Use seu e-mail corporativo com final @uolinc.com.");
+    return;
+  }
+
+  const userId = email.replace(/[^a-z0-9@._-]/g, "");
   setAuthStatus("");
   loginLocally({ id: userId, name, area, email });
 }
@@ -1195,13 +1197,10 @@ function bindEvents() {
   $("#markReadingBtn").addEventListener("click", markReadingDone);
   $("#logoutBtn").addEventListener("click", () => {
     localStorage.removeItem(sessionKey);
-    state.user = {
-      id: "conteudo-continuo",
-      name: "Trilha de IA",
-      area: "Conteudo continuo",
-      email: "",
-    };
-    renderHome({ animateProgress: false });
+    state.user = null;
+    state.submissions = [];
+    fillLoginFromSession();
+    show("#loginView");
   });
   $("#backHomeBtn").addEventListener("click", () => renderHome({ animateProgress: false }));
   $("#submissionForm").addEventListener("submit", handleSubmission);
@@ -1264,10 +1263,10 @@ async function start() {
   applyTheme(localStorage.getItem(themeKey) || "dark");
   await loadState();
   localStorage.removeItem(sessionKey);
-  state.user = contentUser();
+  state.user = null;
   bindEvents();
   fillLoginFromSession();
-  renderHome({ animateProgress: true });
+  show("#loginView");
 }
 
 start();
