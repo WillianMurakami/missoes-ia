@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:wght@300;400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260702-evaluation-message" />
+    <link rel="stylesheet" href="./styles.css?v=20260722-content-only" />
   </head>
   <body>
     <main id="appShell" class="app-shell">
@@ -81,7 +81,7 @@
               <strong id="userDisplay">Participante</strong>
               <small id="userAreaDisplay">Area</small>
             </div>
-            <button id="logoutBtn" class="ghost-button" type="button">Sair</button>
+              <button id="logoutBtn" class="ghost-button" type="button">Home</button>
           </div>
         </header>
 
@@ -99,8 +99,8 @@
 
         <section class="progress-panel">
           <div class="progress-copy">
-            <span class="eyebrow">Progresso individual</span>
-            <h2><span id="completedCount">0</span>/<span id="totalCount">0</span> missoes concluidas</h2>
+              <span class="eyebrow">Acervo contínuo</span>
+              <h2>Conteúdos disponíveis para consulta</h2>
           </div>
           <div class="progress-area">
             <div class="progress-track" id="progressTrack" aria-label="Progresso das missoes">
@@ -126,7 +126,7 @@
           <div class="section-heading">
             <div>
               <span class="eyebrow">Desafios principais</span>
-              <h2>Conclua ate o desafio 4 para concorrer aos premios.</h2>
+              <h2>Revise os principais conteúdos da jornada de IA.</h2>
             </div>
           </div>
           <section id="mainMissionGrid" class="mission-grid" aria-label="Desafios principais"></section>
@@ -136,7 +136,7 @@
           <div class="section-heading">
             <div>
               <span class="eyebrow">Desafios complementares</span>
-              <h2>Para quem quiser ir alem e buscar a conclusao completa da trilha.</h2>
+              <h2>Aprofunde repertório com materiais complementares e cases.</h2>
             </div>
           </div>
           <section id="optionalMissionGrid" class="mission-grid optional-grid" aria-label="Desafios complementares"></section>
@@ -246,10 +246,8 @@
       </section>
     </main>
 
-    <script src="./supabase-config.js?v=20260702-evaluation-message"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./supabase-config.js?v=20260722-content-only"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="./app.js?v=20260702-evaluation-message"></script>
-    <script src="./db-fix.js?v=20260702-evaluation-message"></script>
+    <script src="./app.js?v=20260722-content-only"></script>
   </body>
 </html>

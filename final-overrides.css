@@ -212,3 +212,44 @@ html.light .deadline-close:hover {
     white-space: normal;
   }
 }
+
+/* Versao conteudista: sem progresso, envios, admin ou marcadores de conclusao. */
+.progress-panel,
+.status-pill,
+.submission-card,
+.submission-history,
+.admin-link-button,
+#adminAccessView,
+#adminView,
+#markReadingBtn,
+.reference-total-progress,
+.reference-state {
+  display: none !important;
+}
+
+.mission-card footer button,
+.step-button,
+.ghost-button {
+  cursor: pointer;
+}
+
+.mission-detail {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.mission-detail .detail-main {
+  max-width: none;
+}
+
+.reading-mode .reading-panel {
+  display: block;
+}
+
+.reading-mode #readingContent {
+  max-height: min(68vh, 820px);
+}
+
+.reference-card,
+.challenge-content-card {
+  cursor: pointer;
+}

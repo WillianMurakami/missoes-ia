@@ -169,14 +169,8 @@ function isAllowedCorporateEmail(email) {
 }
 
 async function loadState() {
-  if (db) {
-    state.user = JSON.parse(localStorage.getItem(sessionKey) || "null");
-    if (state.user) await loadCloudSubmissions();
-    return;
-  }
-
-  state.submissions = JSON.parse(localStorage.getItem(storageKey) || "[]");
-  state.user = JSON.parse(localStorage.getItem(sessionKey) || "null");
+  state.submissions = [];
+  state.user = null;
 }
 
 function persistSubmissions() {
@@ -261,7 +255,7 @@ function isMissionCompleted(missionId) {
 }
 
 function isContentOnlyMission(mission) {
-  return Boolean(mission?.readingContent) || mission?.id === "referencias-avancadas-ia";
+  return Boolean(mission);
 }
 
 function isFileOnlyMission(mission) {
@@ -337,11 +331,9 @@ function launchCertificateConfetti() {
 function buildMissionCards(items) {
   return items
     .map((mission) => {
-      const completed = isMissionCompleted(mission.id);
       return `
         <article class="mission-card accent-${mission.accent}" data-open-mission="${mission.id}">
           <div class="mission-art" aria-hidden="true">
-            <span class="status-pill ${completed ? "" : "pending"}">${completed ? "Concluida" : "Pendente"}</span>
             <span>${mission.icon}</span>
           </div>
           <div class="mission-copy">
@@ -410,18 +402,11 @@ function renderDetail(missionId) {
         : `<span class="${className}">${displayText}</span>`;
   })
     .join("");
-  $("#submissionText").value = "";
-  $("#submissionFile").value = "";
-  $("#selectedFileName").textContent = uploadHelperText;
-  document.querySelector(".upload-zone").classList.remove("is-loading");
-  $("#submissionText").required = !contentOnly && !isFileOnlyMission(mission);
-  $("#submissionFile").required = !contentOnly;
-  $("#submissionForm").classList.toggle("hidden", contentOnly);
-  $("#submissionForm").classList.toggle("file-only-submission", isFileOnlyMission(mission));
-  document.querySelector(".submission-history").classList.toggle("hidden", contentOnly);
+  $("#submissionText").required = false;
+  $("#submissionFile").required = false;
+  $("#submissionForm").classList.add("hidden");
+  document.querySelector(".submission-history").classList.add("hidden");
   renderReadingPanel(mission);
-  renderBacklog();
-  setSubmissionButtonState(isMissionCompleted(missionId) ? "sent" : "idle");
   updateMissionNavigation();
   show("#detailView");
 }
@@ -500,7 +485,7 @@ function renderReadingPanel(mission) {
   const panel = $("#readingPanel");
   const content = $("#readingContent");
   const button = $("#markReadingBtn");
-  if (!isContentOnlyMission(mission)) {
+  if (!isContentOnlyMission(mission) || (!mission.readingContent && mission.id !== "referencias-avancadas-ia")) {
     panel.classList.add("hidden");
     return;
   }
@@ -1257,8 +1242,13 @@ function bindEvents() {
   $("#markReadingBtn").addEventListener("click", markReadingDone);
   $("#logoutBtn").addEventListener("click", () => {
     localStorage.removeItem(sessionKey);
-    state.user = null;
-    show("#loginView");
+    state.user = {
+      id: "conteudo-continuo",
+      name: "Trilha de IA",
+      area: "Conteudo continuo",
+      email: "",
+    };
+    renderHome({ animateProgress: false });
   });
   $("#backHomeBtn").addEventListener("click", () => renderHome({ animateProgress: false }));
   $("#submissionForm").addEventListener("submit", handleSubmission);
@@ -1320,14 +1310,16 @@ function bindEvents() {
 async function start() {
   applyTheme(localStorage.getItem(themeKey) || "dark");
   await loadState();
+  state.user = state.user || {
+    id: "conteudo-continuo",
+    name: "Trilha de IA",
+    area: "Conteudo continuo",
+    email: "",
+  };
   bindEvents();
   fillLoginFromSession();
 
-  if (state.user) {
-    renderHome({ animateProgress: true });
-  } else {
-    show("#loginView");
-  }
+  renderHome({ animateProgress: true });
 }
 
 start();

@@ -1,12 +1,12 @@
 window.SUPABASE_CONFIG = {
-  url: "https://kaahlnmidxkxigggqagc.supabase.co",
-  anonKey: "sb_publishable_l0woXs4gxOrA17qgwspY-A_jKL_5TMG",
+  url: "",
+  anonKey: "",
   evidenceBucket: "mission-evidence",
   adminCode: "uol-ia-2026",
 };
 
 (function loadFinalOverrides() {
-  const version = "20260702-evaluation-message";
+  const version = "20260722-content-only";
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
   stylesheet.href = `./final-overrides.css?v=${version}`;
