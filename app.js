@@ -230,20 +230,6 @@ function show(viewId) {
     $(id).classList.add("hidden")
   );
   $(viewId).classList.remove("hidden");
-  syncDeadlineBanner(viewId);
-}
-
-function syncDeadlineBanner(viewId) {
-  const banner = $("#deadlineBanner");
-  if (!banner) return;
-
-  const shouldShow = viewId === "#homeView" && Boolean(state.user);
-  banner.classList.toggle("hidden", !shouldShow);
-}
-
-function closeDeadlineBanner() {
-  const banner = $("#deadlineBanner");
-  if (banner) banner.classList.add("hidden");
 }
 
 function getUserSubmissions() {
@@ -262,7 +248,10 @@ function isMissionCompleted(missionId) {
 }
 
 function isContentOnlyMission(mission) {
-  return Boolean(mission);
+  return Boolean(
+    mission?.readingContent ||
+      ["treinamento-no-code-startup", "referencias-avancadas-ia", "cases-ia-reais"].includes(mission?.id)
+  );
 }
 
 function isFileOnlyMission(mission) {
@@ -1201,8 +1190,6 @@ function bindEvents() {
   $("#adminExportBtn").addEventListener("click", exportAdminXlsx);
   const deviceToggle = $("#deviceToggle");
   if (deviceToggle) deviceToggle.addEventListener("click", toggleDevicePreview);
-  const deadlineCloseBtn = $("#deadlineCloseBtn");
-  if (deadlineCloseBtn) deadlineCloseBtn.addEventListener("click", closeDeadlineBanner);
   $("#themeToggle").addEventListener("click", toggleTheme);
   $("#readingContent").addEventListener("scroll", handleReadingScroll);
   $("#markReadingBtn").addEventListener("click", markReadingDone);
