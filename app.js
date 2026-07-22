@@ -652,61 +652,12 @@ function renderBacklog() {
 
 async function handleLogin(event) {
   event.preventDefault();
-  const name = $("#userName").value.trim() || "Participante";
-  const area = $("#userArea").value.trim() || "Nao informado";
+  const name = $("#userName").value.trim() || "Trilha de IA";
+  const area = $("#userArea").value.trim() || "Conteudo continuo";
   const email = $("#userEmail").value.trim();
-  const userId = email.toLowerCase().replace(/[^a-z0-9@._-]/g, "");
-  if (!userId || !isAllowedCorporateEmail(email)) {
-    setAuthStatus("Digite seu e-mail corporativo no formato nome@uolinc.com.");
-    return;
-  }
-
-  if (db) {
-    setAuthStatus("Acessando trilha...");
-    const { data: existingProfile, error: profileReadError } = await db
-      .from("app_profiles")
-      .select("*")
-      .eq("id", userId)
-      .maybeSingle();
-    if (profileReadError) {
-      setAuthStatus("Banco ainda nao configurado. Abrindo pre-visualizacao local sem salvar na nuvem.");
-      loginLocally({ id: userId, name, area, email });
-      return;
-    }
-    const profile = {
-      id: userId,
-      email,
-      name: name !== "Participante" ? name : existingProfile?.name || name,
-      area: area !== "Nao informado" ? area : existingProfile?.area || area,
-      updated_at: new Date().toISOString(),
-    };
-    const { error } = await db.from("app_profiles").upsert(profile);
-    if (error) {
-      setAuthStatus("Banco ainda nao configurado. Abrindo pre-visualizacao local sem salvar na nuvem.");
-      loginLocally({ id: userId, name, area, email });
-      return;
-    }
-
-    state.user = {
-      id: profile.id,
-      name: profile.name,
-      area: profile.area,
-      email: profile.email,
-    };
-    localStorage.setItem(sessionKey, JSON.stringify(state.user));
-    await loadCloudSubmissions();
-    setAuthStatus("");
-    renderHome({ animateProgress: true });
-    return;
-  }
-
-  state.user = {
-    id: userId,
-    name,
-    area,
-    email,
-  };
-  loginLocally(state.user);
+  const userId = email.toLowerCase().replace(/[^a-z0-9@._-]/g, "") || "conteudo-continuo";
+  setAuthStatus("");
+  loginLocally({ id: userId, name, area, email });
 }
 
 async function uploadEvidence(file) {

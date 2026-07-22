@@ -6,7 +6,7 @@ window.SUPABASE_CONFIG = {
 };
 
 (function loadFinalOverrides() {
-  const version = "20260722-content-only";
+  const version = "20260722-login-fix";
   const stylesheet = document.createElement("link");
   stylesheet.rel = "stylesheet";
   stylesheet.href = `./final-overrides.css?v=${version}`;
@@ -58,83 +58,3 @@ window.SUPABASE_CONFIG = {
     document.body.appendChild(script);
   });
 })();
-
-window.addEventListener("load", () => {
-  const form = document.querySelector("#loginForm");
-  if (!form || !window.supabase) return;
-
-  function databaseErrorMessage(error) {
-    return error?.message || error?.details || error?.hint || "erro desconhecido";
-  }
-
-  function showDatabaseError(prefix, error) {
-    console.error(prefix, error);
-    setAuthStatus(`${prefix}: ${databaseErrorMessage(error)}. Rode o supabase-schema.sql atualizado no Supabase.`);
-  }
-
-  function isAllowedCorporateEmail(email) {
-    return /^[^@\s]+@uolinc(?:\.|$)/i.test(email);
-  }
-
-  form.addEventListener(
-    "submit",
-    async (event) => {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-
-      const name = document.querySelector("#userName").value.trim() || "Participante";
-      const area = document.querySelector("#userArea").value.trim() || "Nao informado";
-      const email = document.querySelector("#userEmail").value.trim();
-      const userId = email.toLowerCase().replace(/[^a-z0-9@._-]/g, "");
-
-      if (!userId || !isAllowedCorporateEmail(email)) {
-        setAuthStatus("Digite seu e-mail corporativo no formato nome@uolinc.com.");
-        return;
-      }
-
-      if (!db) {
-        loginLocally({ id: userId, name, area, email });
-        return;
-      }
-
-      setAuthStatus("Acessando trilha...");
-
-      const { data: existingProfile, error: profileReadError } = await db
-        .from("app_profiles")
-        .select("*")
-        .eq("id", userId)
-        .maybeSingle();
-
-      if (profileReadError) {
-        showDatabaseError("Nao foi possivel ler seu perfil no banco", profileReadError);
-        return;
-      }
-
-      const profile = {
-        id: userId,
-        email,
-        name: name !== "Participante" ? name : existingProfile?.name || name,
-        area: area !== "Nao informado" ? area : existingProfile?.area || area,
-        updated_at: new Date().toISOString(),
-      };
-
-      const { error } = await db.from("app_profiles").upsert(profile, { onConflict: "id" });
-      if (error) {
-        showDatabaseError("Nao foi possivel salvar seu perfil no banco", error);
-        return;
-      }
-
-      state.user = {
-        id: profile.id,
-        name: profile.name,
-        area: profile.area,
-        email: profile.email,
-      };
-      localStorage.setItem(sessionKey, JSON.stringify(state.user));
-      await loadCloudSubmissions();
-      setAuthStatus("");
-      renderHome({ animateProgress: true });
-    },
-    true
-  );
-});
