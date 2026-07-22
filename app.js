@@ -164,6 +164,15 @@ const state = {
 
 const $ = (selector) => document.querySelector(selector);
 
+function contentUser() {
+  return {
+    id: "conteudo-continuo",
+    name: "Visitante",
+    area: "Conteúdo contínuo",
+    email: "",
+  };
+}
+
 function isAllowedCorporateEmail(email) {
   return /^[^@\s]+@uolinc(?:\.|$)/i.test(email);
 }
@@ -212,8 +221,7 @@ function setAuthStatus(message) {
 
 function loginLocally({ id, name, area, email }) {
   state.user = { id, name, area, email };
-  localStorage.setItem(sessionKey, JSON.stringify(state.user));
-  state.submissions = JSON.parse(localStorage.getItem(storageKey) || "[]");
+  state.submissions = [];
   renderHome({ animateProgress: true });
 }
 
@@ -244,10 +252,9 @@ function getUserSubmissions() {
 }
 
 function fillLoginFromSession() {
-  if (!state.user) return;
-  $("#userName").value = state.user.name || "";
-  $("#userArea").value = state.user.area || "";
-  $("#userEmail").value = state.user.email || "";
+  $("#userName").value = "";
+  $("#userArea").value = "";
+  $("#userEmail").value = "";
 }
 
 function isMissionCompleted(missionId) {
@@ -652,8 +659,8 @@ function renderBacklog() {
 
 async function handleLogin(event) {
   event.preventDefault();
-  const name = $("#userName").value.trim() || "Trilha de IA";
-  const area = $("#userArea").value.trim() || "Conteudo continuo";
+  const name = $("#userName").value.trim() || "Visitante";
+  const area = $("#userArea").value.trim() || "Conteúdo contínuo";
   const email = $("#userEmail").value.trim();
   const userId = email.toLowerCase().replace(/[^a-z0-9@._-]/g, "") || "conteudo-continuo";
   setAuthStatus("");
@@ -1261,16 +1268,11 @@ function bindEvents() {
 async function start() {
   applyTheme(localStorage.getItem(themeKey) || "dark");
   await loadState();
-  state.user = state.user || {
-    id: "conteudo-continuo",
-    name: "Trilha de IA",
-    area: "Conteudo continuo",
-    email: "",
-  };
+  localStorage.removeItem(sessionKey);
+  state.user = null;
   bindEvents();
   fillLoginFromSession();
-
-  renderHome({ animateProgress: true });
+  show("#loginView");
 }
 
 start();
