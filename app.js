@@ -290,13 +290,20 @@ function renderProgress({ animate = false } = {}) {
   const percent = Math.round((completed / missions.length) * 100);
   const completedPrize = isMissionCompleted("solucao-performance-ia");
   const completedCertificate = completed === missions.length;
-  $("#completedCount").textContent = completed;
-  $("#totalCount").textContent = missions.length;
-  $("#progressPercent").textContent = `${percent}%`;
+  const completedCount = $("#completedCount");
+  const totalCount = $("#totalCount");
+  const progressPercent = $("#progressPercent");
+  if (completedCount) completedCount.textContent = completed;
+  if (totalCount) totalCount.textContent = missions.length;
+  if (progressPercent) progressPercent.textContent = `${percent}%`;
   animateProgressFill(percent, animate);
-  document.querySelector(".milestone-prize").classList.toggle("reached", completedPrize);
-  document.querySelector(".milestone-certificate").classList.toggle("reached", completedCertificate);
-  document.querySelector(".milestone-certificate").classList.toggle("celebrate", completedCertificate && animate);
+  const prizeMarker = document.querySelector(".milestone-prize");
+  const certificateMarker = document.querySelector(".milestone-certificate");
+  if (prizeMarker) prizeMarker.classList.toggle("reached", completedPrize);
+  if (certificateMarker) {
+    certificateMarker.classList.toggle("reached", completedCertificate);
+    certificateMarker.classList.toggle("celebrate", completedCertificate && animate);
+  }
   if (completedCertificate && animate) launchCertificateConfetti();
 }
 
@@ -658,7 +665,7 @@ function renderBacklog() {
 }
 
 async function handleLogin(event) {
-  event.preventDefault();
+  event?.preventDefault?.();
   const name = $("#userName").value.trim() || "Visitante";
   const area = $("#userArea").value.trim() || "Conteúdo contínuo";
   const email = $("#userEmail").value.trim();
@@ -1169,6 +1176,7 @@ function exportAdminXlsx() {
 
 function bindEvents() {
   $("#loginForm").addEventListener("submit", handleLogin);
+  $("#authSubmitBtn").addEventListener("click", handleLogin);
   $("#adminOpenBtn").addEventListener("click", openAdminAccess);
   $("#adminAccessForm").addEventListener("submit", handleAdminAccess);
   $("#adminBackLoginBtn").addEventListener("click", () => show("#loginView"));
@@ -1269,10 +1277,10 @@ async function start() {
   applyTheme(localStorage.getItem(themeKey) || "dark");
   await loadState();
   localStorage.removeItem(sessionKey);
-  state.user = null;
+  state.user = contentUser();
   bindEvents();
   fillLoginFromSession();
-  show("#loginView");
+  renderHome({ animateProgress: true });
 }
 
 start();
