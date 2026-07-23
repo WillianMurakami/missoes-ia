@@ -230,6 +230,7 @@ function syncFeedbackBanner(viewId) {
 
   const shouldShow = viewId === "#homeView" && Boolean(state.user);
   banner.classList.toggle("hidden", !shouldShow);
+  $("#appShell").classList.toggle("feedback-open", shouldShow);
   if (shouldShow) {
     banner.classList.remove("feedback-banner-enter");
     void banner.offsetWidth;
@@ -240,6 +241,7 @@ function syncFeedbackBanner(viewId) {
 function closeFeedbackBanner() {
   const banner = $("#feedbackBanner");
   if (banner) banner.classList.add("hidden");
+  $("#appShell").classList.remove("feedback-open");
 }
 
 function getUserSubmissions() {

@@ -24,7 +24,11 @@
 }
 html.light .hero-board.compact-hero h2 { color: #202025 !important; }
 .home-view {
-  padding-top: 0 !important;
+  padding-top: 22px !important;
+  transition: padding-top .28s ease;
+}
+.app-shell.feedback-open .home-view {
+  padding-top: 126px !important;
 }
 .home-view .topbar {
   position: relative !important;
@@ -110,9 +114,9 @@ html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.0
 }
 
 .deadline-banner {
-  position: relative;
-  left: auto;
-  top: auto;
+  position: fixed;
+  left: 50%;
+  top: 14px;
   z-index: 80;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -129,8 +133,8 @@ html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.0
     0 22px 70px rgba(0, 0, 0, 0.34),
     0 0 34px rgba(255, 118, 0, 0.18),
     0 0 0 1px rgba(255, 255, 255, 0.06) inset;
-  transform: none;
-  margin: 12px auto 16px;
+  transform: translateX(-50%);
+  margin: 0;
   backdrop-filter: blur(18px);
   animation: feedbackBannerIn 0.48s cubic-bezier(0.2, 0.9, 0.2, 1) both;
 }
@@ -265,15 +269,15 @@ html.light .feedback-cta {
 @keyframes feedbackBannerIn {
   from {
     opacity: 0;
-    transform: translateY(-18px);
+    transform: translate(-50%, -18px);
   }
   64% {
     opacity: 1;
-    transform: translateY(4px);
+    transform: translate(-50%, 4px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate(-50%, 0);
   }
 }
 
@@ -283,7 +287,12 @@ html.light .feedback-cta {
 }
 
 @media (max-width: 760px) {
+  .app-shell.feedback-open .home-view {
+    padding-top: 178px !important;
+  }
+
   .deadline-banner {
+    top: 10px;
     grid-template-columns: 1fr;
     width: calc(100vw - 22px);
     gap: 10px;
