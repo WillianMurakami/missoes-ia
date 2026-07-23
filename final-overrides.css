@@ -5,8 +5,24 @@
 .theme-toggle { width: 246px !important; padding-left: 64px !important; }
 .theme-toggle[aria-pressed="true"] { padding-right: 64px !important; }
 .theme-toggle[aria-pressed="true"]::before { transform: translate(192px, -50%) !important; }
-.hero-board h2 { max-width: 940px !important; font-size: clamp(42px, 4.8vw, 66px) !important; line-height: .92 !important; }
-html.light .hero-board h2 { color: #202025 !important; }
+.hero-board.compact-hero {
+  min-height: 108px !important;
+  padding: clamp(18px, 2.2vw, 28px) !important;
+  align-items: center !important;
+}
+.hero-board.compact-hero .hero-summary {
+  margin: 6px 0 0;
+  max-width: 680px;
+  color: var(--mock-muted);
+  font-size: clamp(18px, 1.6vw, 22px);
+  font-weight: 800;
+  line-height: 1.2;
+}
+.hero-board.compact-hero .hero-visual {
+  transform: scale(.72);
+  transform-origin: right center;
+}
+html.light .hero-board.compact-hero .hero-summary { color: #202025 !important; }
 html.light .login-card button,
 html.light .submission-card button,
 html.light .mission-card button,
@@ -60,7 +76,18 @@ html.light .case-story-body h3, html.light .case-insight strong, html.light .cas
 html.light .case-lead, html.light .case-insight p, html.light .case-impact p { color: #596273; }
 html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.06); }
 @media (max-width: 880px) {
-  .hero-board h2 { max-width: 100% !important; font-size: clamp(31px, 9vw, 42px) !important; line-height: .98 !important; }
+  .hero-board.compact-hero {
+    min-height: 96px !important;
+    grid-template-columns: 1fr auto !important;
+    gap: 14px !important;
+  }
+  .hero-board.compact-hero .hero-summary {
+    max-width: 100%;
+    font-size: 16px;
+  }
+  .hero-board.compact-hero .hero-visual {
+    transform: scale(.54);
+  }
   .optional-grid { grid-template-columns: 1fr !important; }
   .reference-grid, .case-grid { grid-template-columns: 1fr !important; }
   .reference-article, .case-article { padding: 18px !important; }
