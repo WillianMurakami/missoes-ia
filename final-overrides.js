@@ -4,7 +4,7 @@
   const references = [
     { level: "Iniciante", order: 1, title: "IA Todo Dia", producer: "Sommers e Helena", tag: "Podcast", url: "https://open.spotify.com/show/2FHimuESqvjBL4x8AKur2b" },
     { level: "Iniciante", order: 2, title: "Nao existe automacao sem Padronizacao", producer: "Leticia Mirelli", tag: "Post Instagram", url: "https://www.instagram.com/p/DYFMJMLlGtG/?igsh=MXczeXM5N3AybmxteA==" },
-    { level: "Iniciante", order: 3, title: "Google AI Essentials", producer: "Google", tag: "Curso", url: "https://grow.google/ai-essentials/" },
+    { level: "Iniciante", order: 3, title: "Treinamento interno da ferramenta principal", producer: "Uni UOL", tag: "Curso interno", url: "https://uni.uol.com.br/missions/Qf8wPJQ3ZSfmb8Td1vc4" },
     { level: "Iniciante", order: 4, title: "Prompt Engineering Guide", producer: "OpenAI", tag: "Artigo", url: "https://developers.openai.com/api/docs/guides/prompt-guidance?model=gpt-5.5" },
     { level: "Iniciante", order: 5, title: "Elements of AI", producer: "University of Helsinki / MinnaLearn", tag: "Curso", url: "https://course.elementsofai.com/pt/" },
     { level: "Iniciante", order: 6, title: "DeepLearning.AI", producer: "Andrew Ng", tag: "Plataforma", url: "https://learn.deeplearning.ai/" },
