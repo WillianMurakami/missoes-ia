@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:wght@300;400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260722-corporate-login" />
+    <link rel="stylesheet" href="./styles.css?v=20260723-feedback-banner" />
   </head>
   <body>
     <main id="appShell" class="app-shell">
@@ -21,6 +21,23 @@
         <span class="motion-shape shape-four"></span>
       </div>
       <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false">Tema claro</button>
+      <aside id="feedbackBanner" class="deadline-banner feedback-banner hidden" aria-live="polite">
+        <div class="deadline-copy">
+          <span class="deadline-kicker">Feedback da trilha</span>
+          <strong>Conte para nós o que achou do treinamento de IA</strong>
+          <small>Sua resposta ajuda a melhorar os próximos conteúdos e encontros.</small>
+        </div>
+        <div class="feedback-actions">
+          <a
+            id="feedbackFormsLink"
+            class="feedback-cta"
+            href="https://docs.google.com/forms/d/14bPCATJHBVWgbgw3_R7YnBDICRdR7ZV-IymMjTJKBYI/edit#responses"
+            target="_blank"
+            rel="noreferrer"
+          >Responder Forms</a>
+          <button id="feedbackCloseBtn" class="deadline-close" type="button" aria-label="Ocultar aviso">x</button>
+        </div>
+      </aside>
       <section id="loginView" class="login-view">
         <div class="brand-panel">
           <div class="brand-mark">AI</div>
@@ -237,8 +254,8 @@
       </section>
     </main>
 
-    <script src="./supabase-config.js?v=20260722-corporate-login"></script>
+    <script src="./supabase-config.js?v=20260723-feedback-banner"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="./app.js?v=20260722-corporate-login"></script>
+    <script src="./app.js?v=20260723-feedback-banner"></script>
   </body>
 </html>

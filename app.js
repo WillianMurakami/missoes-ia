@@ -221,6 +221,25 @@ function show(viewId) {
     $(id).classList.add("hidden")
   );
   $(viewId).classList.remove("hidden");
+  syncFeedbackBanner(viewId);
+}
+
+function syncFeedbackBanner(viewId) {
+  const banner = $("#feedbackBanner");
+  if (!banner) return;
+
+  const shouldShow = viewId === "#homeView" && Boolean(state.user);
+  banner.classList.toggle("hidden", !shouldShow);
+  if (shouldShow) {
+    banner.classList.remove("feedback-banner-enter");
+    void banner.offsetWidth;
+    banner.classList.add("feedback-banner-enter");
+  }
+}
+
+function closeFeedbackBanner() {
+  const banner = $("#feedbackBanner");
+  if (banner) banner.classList.add("hidden");
 }
 
 function getUserSubmissions() {
@@ -1192,6 +1211,10 @@ function bindEvents() {
   $("#adminExportBtn").addEventListener("click", exportAdminXlsx);
   const deviceToggle = $("#deviceToggle");
   if (deviceToggle) deviceToggle.addEventListener("click", toggleDevicePreview);
+  const feedbackCloseBtn = $("#feedbackCloseBtn");
+  if (feedbackCloseBtn) feedbackCloseBtn.addEventListener("click", closeFeedbackBanner);
+  const feedbackFormsLink = $("#feedbackFormsLink");
+  if (feedbackFormsLink) feedbackFormsLink.addEventListener("click", closeFeedbackBanner);
   $("#themeToggle").addEventListener("click", toggleTheme);
   $("#readingContent").addEventListener("scroll", handleReadingScroll);
   $("#markReadingBtn").addEventListener("click", markReadingDone);
