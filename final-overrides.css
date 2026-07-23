@@ -12,9 +12,9 @@
 }
 .hero-board.compact-hero h2 {
   margin: 6px 0 0;
-  max-width: 780px !important;
+  max-width: 900px !important;
   color: var(--mock-text);
-  font-size: clamp(40px, 5.2vw, 72px) !important;
+  font-size: clamp(38px, 4.6vw, 64px) !important;
   font-weight: 400;
   line-height: .9 !important;
 }
@@ -28,7 +28,7 @@ html.light .hero-board.compact-hero h2 { color: #202025 !important; }
   transition: padding-top .28s ease;
 }
 .app-shell.feedback-open .home-view {
-  padding-top: 126px !important;
+  padding-top: 22px !important;
 }
 .home-view .topbar {
   position: relative !important;
@@ -111,6 +111,11 @@ html.light .case-insight, html.light .case-impact { background: rgba(45,45,45,.0
 @media (max-width: 520px) {
   .theme-toggle { right: 10px !important; bottom: 10px !important; width: 224px !important; }
   .theme-toggle[aria-pressed="true"]::before { transform: translate(170px, -50%) !important; }
+}
+@media (min-width: 881px) {
+  .hero-board.compact-hero h2 {
+    white-space: nowrap;
+  }
 }
 
 .deadline-banner {
@@ -288,7 +293,7 @@ html.light .feedback-cta {
 
 @media (max-width: 760px) {
   .app-shell.feedback-open .home-view {
-    padding-top: 178px !important;
+    padding-top: 22px !important;
   }
 
   .deadline-banner {
